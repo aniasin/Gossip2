@@ -22,6 +22,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void LoadMenu();
+	UFUNCTION(BlueprintCallable)
+		void LoadGameMenu();
 
 	UFUNCTION()
 		void Host() override;

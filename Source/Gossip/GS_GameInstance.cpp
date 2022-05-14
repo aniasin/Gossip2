@@ -17,6 +17,12 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 		MenuClass = MainMenuBPClass.Class;
 		if (!MenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find MenuClass in GameInstance!"));
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> GameMenuBPClass(TEXT("/Game/MenuSystem/BP_GameMenu"));
+	if (GameMenuBPClass.Class != NULL)
+	{
+		GameMenuClass = GameMenuBPClass.Class;
+		if (!GameMenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find GameMenuClass in GameInstance!"));
+	}
 }
 
 void UGS_GameInstance::Init()
@@ -49,6 +55,16 @@ void UGS_GameInstance::LoadMenu()
 	if (!Menu) return;
 	Menu->SetMenuInterface(this);
 	Menu->SetUp();
+}
+
+void UGS_GameInstance::LoadGameMenu()
+{
+	if (!GameMenuClass) return;
+
+	UMenuBase* GameMenu = CreateWidget<UMenuBase>(this, GameMenuClass);
+	if (!GameMenu) return;
+	GameMenu->SetMenuInterface(this);
+	GameMenu->SetUp();
 }
 
 void UGS_GameInstance::Host()
@@ -163,7 +179,7 @@ void UGS_GameInstance::NetworkError(UWorld* World, UNetDriver* NetDriver, ENetwo
 void UGS_GameInstance::LoadMainMenu()
 {
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Main Menu... "));
-	GetFirstLocalPlayerController()->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+	GetFirstLocalPlayerController()->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 }
 
 void UGS_GameInstance::QuitGame()
