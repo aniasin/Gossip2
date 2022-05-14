@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "Gossip/MenuSystem/MenuInterface.h"
 #include "GS_GameInstance.generated.h"
 
@@ -29,8 +30,6 @@ public:
 	UFUNCTION()
 		void SearchSession() override;
 	UFUNCTION()
-		void CancelSearchSession() override;
-	UFUNCTION()
 		void LoadMainMenu() override;
 	UFUNCTION()
 		void QuitGame() override;
@@ -39,4 +38,17 @@ private:
 	class UMenuBase* Menu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
+
+	IOnlineSessionPtr SessionInterface;
+	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
+
+	void CreateSession();
+	void DestroySession();
+
+	void SessionCreated(FName SessionName, bool bSuccess);
+	void SessionDestroyed(FName SessionName, bool bSuccess);
+	void FoundSession(bool bSuccess);
+	void JoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
+	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 };

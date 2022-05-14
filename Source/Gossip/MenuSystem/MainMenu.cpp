@@ -2,13 +2,46 @@
 
 
 #include "MainMenu.h"
+#include "ServerResult.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Button.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 {
+	static ConstructorHelpers::FClassFinder<UUserWidget> ServerResultBPClass(TEXT("/Game/MenuSystem/BP_ServerResult"));
+	if (ServerResultBPClass.Class != NULL)
+	{
+		ServerResultClass = ServerResultBPClass.Class;
+		if (!ServerResultClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find ServerResultWidget in MainMenu!"));
+	}
+}
 
+void UMainMenu::FoundSessions(TArray<FString> Sessions)
+{
+	uint32 i = 0;
+	for (const FString Session : Sessions)
+	{
+		UServerResult* ServerResult = CreateWidget<UServerResult>(this, ServerResultClass);
+		ScrollBox_ServerList->AddChild(ServerResult);
+		ServerResult->SetUp(this, i, Session);
+		i++;
+	}
+}
+
+void UMainMenu::SetSelectedSession(uint32 Index)
+{
+	SelectedSession = Index;
+	for (UWidget* ResultWidget : ScrollBox_ServerList->GetAllChildren())
+	{
+		UServerResult* ServerResult = Cast<UServerResult>(ResultWidget);
+		if (ServerResult && ServerResult != ScrollBox_ServerList->GetAllChildren()[Index])
+		{
+			ServerResult->SetColorAndOpacity(FLinearColor::White);
+		}
+	}
 }
 
 bool UMainMenu::Initialize()

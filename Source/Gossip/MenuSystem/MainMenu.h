@@ -15,7 +15,7 @@ class GOSSIP_API UMainMenu : public UMenuBase
 	GENERATED_BODY()
 
 	UMainMenu(const FObjectInitializer& ObjectInitializer);
-
+	TSubclassOf<class UUserWidget> ServerResultClass;
 
 public:
 	UPROPERTY(meta = (BindWidget))
@@ -36,6 +36,16 @@ public:
 		class UWidget* MainMenu;
 	UPROPERTY(meta = (BindWidget))
 		class UWidget* JoinMenu;
+
+	UPROPERTY(meta = (BindWidget))
+		class UPanelWidget* ScrollBox_ServerList;
+
+	UPROPERTY()
+		TArray<UUserWidget*> ServerResults;
+
+	virtual void FoundSessions(TArray<FString> Sessions) override;
+
+	void SetSelectedSession(uint32 Index);
 
 protected:
 	virtual bool Initialize();

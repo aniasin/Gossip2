@@ -25,7 +25,6 @@ public:
 	virtual void Join(const int32& Index) = 0;
 	virtual void LoadMainMenu() = 0;
 	virtual void SearchSession() = 0;
-	virtual void CancelSearchSession() = 0;
 	virtual void QuitGame() = 0;
 
 };
