@@ -16,6 +16,16 @@ enum class EAlignmentState : uint8
 	Masterful		UMETA(DisplayName = "Masterful"),
 };
 
+UENUM(BlueprintType)
+enum class ESocialPosition : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Noble			UMETA(DisplayName = "Noble"),
+	Bourgeois		UMETA(DisplayName = "Bourgeois"),
+	Worker			UMETA(DisplayName = "Worker"),
+	Tchandala		UMETA(DisplayName = "Tchandala"),
+};
+
 USTRUCT(BlueprintType)
 struct FAlignment
 {
@@ -46,8 +56,19 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESocialPosition SocialPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
+	ESocialPosition SocialPositionLike;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
+	ESocialPosition SocialPositionHate;
+
 private:
 	TMap<FString, FAlignment> KnownOther;
+
+
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>
@@ -56,5 +77,4 @@ private:
 		if (!enumPtr) return FString("Invalid");
 		return enumPtr->GetNameByValue((int64)Value).ToString();
 	}
-
 };

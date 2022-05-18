@@ -22,6 +22,8 @@ void UAlignmentComponent::BeginPlay()
 
 void UAlignmentComponent::NewActorInVincinity(AActor* Other)
 {
+	UAlignmentComponent* OtherAlignmentComp = Cast<UAlignmentComponent>(Other->GetComponentByClass(UAlignmentComponent::StaticClass()));
+
 	FString Name = Other->GetName();
 	if (!KnownOther.Contains(Name))
 	{

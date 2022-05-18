@@ -60,3 +60,17 @@ void ANonPlayerCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,
 	}
 }
 
+bool ANonPlayerCharacter::HandleRaycast(APlayerController* PlayerController)
+{
+	if (PlayerController->IsInputKeyDown("LeftMouseButton") && !bRaycastHandled)
+	{
+		bRaycastHandled = true;
+		UE_LOG(LogTemp, Warning, TEXT("Clicked!"))
+	}
+	if (!PlayerController->IsInputKeyDown("LeftMouseButton") && bRaycastHandled)
+	{
+		bRaycastHandled = false;
+	}
+	return true;
+}
+

@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Gossip/Interfaces/HandleRaycast.h"
 #include "GameFramework/Character.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()
-class GOSSIP_API ANonPlayerCharacter : public ACharacter
+class GOSSIP_API ANonPlayerCharacter : public ACharacter, public IHandleRaycast
 {
 	GENERATED_BODY()
 
@@ -37,5 +38,8 @@ public:
 
 private:
 	AActor* ActorInVincinity;
+
+	virtual bool HandleRaycast(APlayerController* PlayerController) override;
+	bool bRaycastHandled;
 
 };

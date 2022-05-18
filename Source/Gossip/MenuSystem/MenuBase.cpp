@@ -31,9 +31,9 @@ void UMenuBase::TearDown()
 	APlayerController* PC = World->GetFirstPlayerController();
 	if (!PC) return;
 
-	FInputModeGameOnly InputMode;
+	FInputModeGameAndUI InputMode;
 	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(false);
+	PC->SetShowMouseCursor(true);
 }
 
 void UMenuBase::FoundSessions(TArray<FString> Sessions)
