@@ -61,7 +61,6 @@ void APlayerPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	Interaction();
-
 }
 
 void APlayerPawn::Interaction()
@@ -74,35 +73,32 @@ void APlayerPawn::Interaction()
 			bool bHandled = iface->HandleRaycast(PC);
 			if (bHandled)
 			{
-				if (CurrentSelection)
-				{
-					IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
-					if (OldIface)
-					{
-						OldIface->SetSelected(false);
-					}
-				}
+				ClearSelection();
 				CurrentSelection = HitResult.GetActor();
 				iface->SetSelected(true);
-				UE_LOG(LogTemp, Warning, TEXT("Selection: %s"), *CurrentSelection->GetName())
 			}
 		}
 		else if (PC->IsInputKeyDown("LeftMouseButton"))
 		{
-			if (CurrentSelection)
-			{
-				IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
-				if (OldIface)
-				{
-					OldIface->SetSelected(false);
-				}
-			}
-			CurrentSelection = nullptr;
-			UE_LOG(LogTemp, Warning, TEXT("No Selection!"))
+			ClearSelection();
 		}
 	}
 }
 
+void APlayerPawn::ClearSelection()
+{
+	if (CurrentSelection)
+	{
+		IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
+		if (OldIface)
+		{
+			OldIface->SetSelected(false);
+			CurrentSelection = nullptr;
+		}
+	}
+}
+
+// Input
 void APlayerPawn::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))

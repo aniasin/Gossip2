@@ -36,8 +36,10 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FString Message;
-	bSelected ? Message = "True" : Message = "False";
-	DrawDebugString(GetWorld(), FVector(0, 0, 100), Message, this, FColor::Green, DeltaTime);
+	if (bSelected)
+	{
+		DrawDebugString(GetWorld(), FVector(0, 0, 100), "Selected", this, FColor::Green, DeltaTime);
+	}	
 }
 
 void ANonPlayerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 

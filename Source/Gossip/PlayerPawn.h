@@ -41,6 +41,8 @@ public:
 
 	void Interaction();
 
+	void ClearSelection();
+
 	void SetCurrentSelection(AActor* Selection) { CurrentSelection = Selection; }
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
