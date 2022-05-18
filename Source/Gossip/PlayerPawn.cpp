@@ -60,16 +60,47 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Interaction();
+
+}
+
+void APlayerPawn::Interaction()
+{
 	FHitResult HitResult;
 	if (PC->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult))
 	{
 		if (IHandleRaycast* iface = Cast<IHandleRaycast>(HitResult.GetActor()))
 		{
-			iface->HandleRaycast(PC);
+			bool bHandled = iface->HandleRaycast(PC);
+			if (bHandled)
+			{
+				if (CurrentSelection)
+				{
+					IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
+					if (OldIface)
+					{
+						OldIface->SetSelected(false);
+					}
+				}
+				CurrentSelection = HitResult.GetActor();
+				iface->SetSelected(true);
+				UE_LOG(LogTemp, Warning, TEXT("Selection: %s"), *CurrentSelection->GetName())
+			}
+		}
+		else if (PC->IsInputKeyDown("LeftMouseButton"))
+		{
+			if (CurrentSelection)
+			{
+				IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
+				if (OldIface)
+				{
+					OldIface->SetSelected(false);
+				}
+			}
+			CurrentSelection = nullptr;
+			UE_LOG(LogTemp, Warning, TEXT("No Selection!"))
 		}
 	}
-	
-
 }
 
 void APlayerPawn::MoveForward(float Value)

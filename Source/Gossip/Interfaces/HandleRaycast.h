@@ -22,4 +22,5 @@ class GOSSIP_API IHandleRaycast
 
 public:
 	virtual bool HandleRaycast(APlayerController* PlayerController) = 0;
+	virtual void SetSelected(bool Value) = 0;
 };

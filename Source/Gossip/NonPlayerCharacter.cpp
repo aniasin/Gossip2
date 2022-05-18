@@ -35,6 +35,9 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FString Message;
+	bSelected ? Message = "True" : Message = "False";
+	DrawDebugString(GetWorld(), FVector(0, 0, 100), Message, this, FColor::Green, DeltaTime);
 }
 
 void ANonPlayerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
@@ -65,12 +68,13 @@ bool ANonPlayerCharacter::HandleRaycast(APlayerController* PlayerController)
 	if (PlayerController->IsInputKeyDown("LeftMouseButton") && !bRaycastHandled)
 	{
 		bRaycastHandled = true;
-		UE_LOG(LogTemp, Warning, TEXT("Clicked!"))
+		return true;		
 	}
 	if (!PlayerController->IsInputKeyDown("LeftMouseButton") && bRaycastHandled)
 	{
 		bRaycastHandled = false;
+		return false;
 	}
-	return true;
+	return false;
 }
 

@@ -15,7 +15,6 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 	if (MainMenuBPClass.Class != NULL)
 	{
 		MenuClass = MainMenuBPClass.Class;
-		if (!MenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find MenuClass in GameInstance!"));
 	}
 	static ConstructorHelpers::FClassFinder<UUserWidget> GameMenuBPClass(TEXT("/Game/MenuSystem/BP_GameMenu"));
 	if (GameMenuBPClass.Class != NULL)

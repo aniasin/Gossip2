@@ -39,10 +39,15 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	void Interaction();
+
+	void SetCurrentSelection(AActor* Selection) { CurrentSelection = Selection; }
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	class APlayerController* PC;
+	AActor* CurrentSelection;
 
 	bool bRightClick;
 

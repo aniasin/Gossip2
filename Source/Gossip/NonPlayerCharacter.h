@@ -39,7 +39,10 @@ public:
 private:
 	AActor* ActorInVincinity;
 
+	// HandleRaycast Interface
 	virtual bool HandleRaycast(APlayerController* PlayerController) override;
+	virtual void SetSelected(bool Value) override { bSelected = Value; }
 	bool bRaycastHandled;
+	bool bSelected;
 
 };
