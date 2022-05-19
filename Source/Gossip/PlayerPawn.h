@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "PlayerPawn.generated.h"
 
+class ANonPlayerCharacter;
+
 UCLASS()
 class GOSSIP_API APlayerPawn : public APawn
 {
@@ -41,12 +43,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	void Interaction();
-	void ClearSelection();
 	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
 	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
 	bool GetSelectionActive() { return bSelectionActive; }
-	void SetCurrentSelection(AActor* Selection) { CurrentSelection = Selection; }
+	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
 
 	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
 	FVector2D GetMousePosition();
@@ -55,7 +55,7 @@ public:
 
 private:
 	class APlayerController* PC;
-	AActor* CurrentSelection;
+	TArray<ANonPlayerCharacter*>CurrentSelections;
 
 	FVector SelectionBoxStartPosition;
 	FVector SelectionBoxEndPosition;

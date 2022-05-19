@@ -4,6 +4,7 @@
 #include "HUDCanvas.h"
 #include "Engine/Canvas.h"
 #include "Gossip/PlayerPawn.h"
+#include "Gossip/NonPlayerCharacter.h"
 
 
 
@@ -53,6 +54,10 @@ void AHUDCanvas::DrawSelectionGrid(FVector2D GridStartPos)
 
 	TileItem.Position = GridStartPos + FVector2D(EndPosition.X, 0);
 	Canvas->DrawItem(TileItem);
+
+	TArray<ANonPlayerCharacter*> SelectedActors;
+	GetActorsInSelectionRectangle(GridStartPos, MousePosition, SelectedActors, false, false);
+	GetPlayer()->SetCurrentSelections(SelectedActors);
 }
 
 APlayerPawn* AHUDCanvas::GetPlayer() const

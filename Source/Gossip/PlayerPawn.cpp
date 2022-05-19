@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Gossip//Interfaces/HandleRaycast.h"
+#include "Gossip/NonPlayerCharacter.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -62,47 +63,14 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Interaction();
-}
-
-void APlayerPawn::Interaction()
-{
-
-	FHitResult HitResult;
-	if (PC->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult))
-	{
-		if (IHandleRaycast* iface = Cast<IHandleRaycast>(HitResult.GetActor()))
-		{
-			bool bHandled = iface->HandleRaycast(PC);
-			if (bHandled)
-			{
-				ClearSelection();
-				CurrentSelection = HitResult.GetActor();
-				iface->SetSelected(true);
-			}
-		}
-		else if (PC->IsInputKeyDown("LeftMouseButton"))
-		{
-			ClearSelection();
-		}
-	}
-}
-
-void APlayerPawn::ClearSelection()
-{
-	if (CurrentSelection)
-	{
-		IHandleRaycast* OldIface = Cast<IHandleRaycast>(CurrentSelection);
-		if (OldIface)
-		{
-			OldIface->SetSelected(false);
-			CurrentSelection = nullptr;
-		}
-	}
 }
 
 void APlayerPawn::StartBoxSelection()
 {
+	for (ANonPlayerCharacter* Selected : CurrentSelections)
+	{
+		Selected->SetSelected(false);
+	}
 	MousePositionAtStart = GetMousePosition();
 	bSelectionActive = true;
 }
@@ -110,6 +78,10 @@ void APlayerPawn::StartBoxSelection()
 void APlayerPawn::EndBoxSelection()
 {
 	bSelectionActive = false;
+	for (ANonPlayerCharacter* Selected : CurrentSelections)
+	{
+		Selected->SetSelected(true);
+	}
 }
 
 FVector2D APlayerPawn::GetMousePosition()

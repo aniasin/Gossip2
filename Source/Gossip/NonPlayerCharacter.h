@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gossip/Interfaces/HandleRaycast.h"
 #include "GameFramework/Character.h"
 #include "NonPlayerCharacter.generated.h"
 
 UCLASS()
-class GOSSIP_API ANonPlayerCharacter : public ACharacter, public IHandleRaycast
+class GOSSIP_API ANonPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -36,13 +35,11 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	void SetSelected(bool Value) { bSelected = Value; }
+
 private:
 	AActor* ActorInVincinity;
 
-	// HandleRaycast Interface
-	virtual bool HandleRaycast(APlayerController* PlayerController) override;
-	virtual void SetSelected(bool Value) override { bSelected = Value; }
-	bool bRaycastHandled;
 	bool bSelected;
 
 };
