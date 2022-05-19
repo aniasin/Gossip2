@@ -31,6 +31,8 @@ protected:
 	void InputPitch(float Value);
 // 	void TurnAtRate(float Rate);
 // 	void LookUpAtRate(float Rate);
+	void LeftClickPressed();
+	void LeftClickReleased();
 	void RightClickPressed();
 	void RightClickReleased();
 
@@ -40,10 +42,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void Interaction();
-
 	void ClearSelection();
-
+	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
+	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
+	bool GetSelectionActive() { return bSelectionActive; }
 	void SetCurrentSelection(AActor* Selection) { CurrentSelection = Selection; }
+
+	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
+	FVector2D GetMousePosition();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -51,6 +57,13 @@ private:
 	class APlayerController* PC;
 	AActor* CurrentSelection;
 
+	FVector SelectionBoxStartPosition;
+	FVector SelectionBoxEndPosition;
+	FVector2D MousePositionAtStart;
+	bool bSelectionActive;
 	bool bRightClick;
+
+	void StartBoxSelection();
+	void EndBoxSelection();
 
 };

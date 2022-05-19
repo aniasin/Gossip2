@@ -28,7 +28,6 @@ APlayerPawn::APlayerPawn()
 	MovementComp = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComp"));
 }
 
-
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -39,6 +38,8 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APlayerPawn::InputPitch);
 
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerPawn::EscapeMenu);
+	PlayerInputComponent->BindAction("LeftClick", IE_Pressed, this, &APlayerPawn::LeftClickPressed);
+	PlayerInputComponent->BindAction("LeftClick", IE_Released, this, &APlayerPawn::LeftClickReleased);
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &APlayerPawn::RightClickPressed);
 	PlayerInputComponent->BindAction("RightClick", IE_Released, this, &APlayerPawn::RightClickReleased);
 
@@ -52,6 +53,7 @@ void APlayerPawn::BeginPlay()
 	{
 		PC->SetShowMouseCursor(true);
 		FInputModeGameAndUI InputMode;
+		InputMode.SetHideCursorDuringCapture(false);
 		PC->SetInputMode(InputMode);
 	}
 }
@@ -60,11 +62,12 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Interaction();
+	//Interaction();
 }
 
 void APlayerPawn::Interaction()
 {
+
 	FHitResult HitResult;
 	if (PC->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult))
 	{
@@ -96,6 +99,24 @@ void APlayerPawn::ClearSelection()
 			CurrentSelection = nullptr;
 		}
 	}
+}
+
+void APlayerPawn::StartBoxSelection()
+{
+	MousePositionAtStart = GetMousePosition();
+	bSelectionActive = true;
+}
+
+void APlayerPawn::EndBoxSelection()
+{
+	bSelectionActive = false;
+}
+
+FVector2D APlayerPawn::GetMousePosition()
+{
+	FVector2D MousePosition;
+	PC->GetMousePosition(MousePosition.X, MousePosition.Y);
+	return MousePosition;
 }
 
 // Input
@@ -138,6 +159,16 @@ void APlayerPawn::InputPitch(float Value)
 {
 	if (!bRightClick) return;
 	AddControllerPitchInput(Value);
+}
+
+void APlayerPawn::LeftClickPressed()
+{
+	StartBoxSelection();
+}
+
+void APlayerPawn::LeftClickReleased()
+{
+	EndBoxSelection();
 }
 
 void APlayerPawn::RightClickPressed()

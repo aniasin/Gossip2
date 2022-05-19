@@ -32,6 +32,7 @@ void UMenuBase::TearDown()
 	if (!PC) return;
 
 	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
 }
