@@ -27,6 +27,19 @@ enum class ESocialPosition : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FBasicInstincts
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta =(ClampMin = -1), meta =(ClampMax = 1))
+	float Feed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Sleep;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Sex;
+};
+
+USTRUCT(BlueprintType)
 struct FAlignment
 {
 	GENERATED_BODY()
@@ -48,6 +61,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;
+
+	UPROPERTY(EditAnywhere, Category = "Instincts")
+	FBasicInstincts BasicInstincts;
 
 	void NewActorInVincinity(AActor* Other);
 	EAlignmentState GetAlignment(float Respect, float Love);

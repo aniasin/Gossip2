@@ -3,6 +3,7 @@
 
 #include "NonPlayerCharacter.h"
 #include "Components/SphereComponent.h"
+#include "AI/GS_AIController.h"
 #include "AI/AlignmentComponent.h"
 
 // Sets default values
@@ -10,6 +11,8 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	AIControllerClass = AGS_AIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	AlignmentComp = CreateDefaultSubobject<UAlignmentComponent>(TEXT("AlignmentComp"));
