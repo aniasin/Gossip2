@@ -56,7 +56,7 @@ void AHUDCanvas::DrawSelectionGrid(FVector2D GridStartPos)
 	Canvas->DrawItem(TileItem);
 
 	TArray<ANonPlayerCharacter*> SelectedActors;
-	GetActorsInSelectionRectangle(GridStartPos, MousePosition, SelectedActors, false, false);
+	GetActorsInSelectionRectangle<ANonPlayerCharacter>(GridStartPos, MousePosition, SelectedActors, true, true);
 	GetPlayer()->SetCurrentSelections(SelectedActors);
 }
 

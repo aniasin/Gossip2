@@ -31,8 +31,6 @@ protected:
 	void MoveRight(float Value);
 	void InputYaw(float Value);
 	void InputPitch(float Value);
-// 	void TurnAtRate(float Rate);
-// 	void LookUpAtRate(float Rate);
 	void LeftClickPressed();
 	void LeftClickReleased();
 	void RightClickPressed();
@@ -61,7 +59,6 @@ private:
 	FVector SelectionBoxEndPosition;
 	FVector2D MousePositionAtStart;
 	bool bSelectionActive;
-	bool bRightClick;
 
 	void StartBoxSelection();
 	void EndBoxSelection();

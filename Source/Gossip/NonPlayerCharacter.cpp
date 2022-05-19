@@ -12,10 +12,6 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	RedCircle = CreateDefaultSubobject<USphereComponent>(TEXT("RedCircle"));
-	RedCircle->SetupAttachment(RootComponent);
-	RedCircle->SetSphereRadius(200);
-
 	AlignmentComp = CreateDefaultSubobject<UAlignmentComponent>(TEXT("AlignmentComp"));
 
 }
@@ -24,9 +20,6 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	RedCircle->OnComponentBeginOverlap.AddDynamic(this, &ANonPlayerCharacter::OnOverlapBegin);
-	RedCircle->OnComponentEndOverlap.AddDynamic(this, &ANonPlayerCharacter::OnOverlapEnd);
 
 }
 
@@ -40,28 +33,5 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 	{
 		DrawDebugString(GetWorld(), FVector(0, 0, 100), "Selected", this, FColor::Green, DeltaTime);
 	}	
-}
-
-void ANonPlayerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (ActorInVincinity) return;
-
-	if (OtherActor->IsA(ACharacter::StaticClass()) && OtherActor != this)
-	{
-		ActorInVincinity = OtherActor;
-		AlignmentComp->NewActorInVincinity(OtherActor);
-	}	
-}
-
-void ANonPlayerCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor->IsA(ACharacter::StaticClass()) && OtherActor != this)
-	{
-		if (ActorInVincinity && OtherActor == ActorInVincinity)
-		{
-			ActorInVincinity = nullptr;
-		}
-	}
 }
 

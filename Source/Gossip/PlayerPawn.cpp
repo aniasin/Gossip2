@@ -8,7 +8,6 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Gossip//Interfaces/HandleRaycast.h"
 #include "Gossip/NonPlayerCharacter.h"
 
 // Sets default values
@@ -35,7 +34,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APlayerPawn::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APlayerPawn::MoveRight);
-	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APlayerPawn::InputYaw);
+	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &APlayerPawn::InputYaw);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APlayerPawn::InputPitch);
 
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerPawn::EscapeMenu);
@@ -123,14 +122,12 @@ void APlayerPawn::MoveRight(float Value)
 
 void APlayerPawn::InputYaw(float Value)
 {
-	if (!bRightClick) return;
 	AddControllerYawInput(Value);
 }
 
 void APlayerPawn::InputPitch(float Value)
 {
-	if (!bRightClick) return;
-	AddControllerPitchInput(Value);
+
 }
 
 void APlayerPawn::LeftClickPressed()
@@ -145,18 +142,12 @@ void APlayerPawn::LeftClickReleased()
 
 void APlayerPawn::RightClickPressed()
 {
-	PC->SetShowMouseCursor(false);
-	FInputModeGameOnly InputMode;
-	PC->SetInputMode(InputMode);
-	bRightClick = true;
+
 }
 
 void APlayerPawn::RightClickReleased()
 {
-	PC->SetShowMouseCursor(true);
-	FInputModeGameAndUI InputMode;
-	PC->SetInputMode(InputMode);
-	bRightClick = false;
+
 }
 
 void APlayerPawn::EscapeMenu()
