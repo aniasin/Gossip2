@@ -19,22 +19,27 @@ void UAlignmentComponent::BeginPlay()
 void UAlignmentComponent::SetCurrentGoal()
 {
 	if (!AIController) return;
+	bool bRun = false;
+	uint8 PreviousGoal = AIController->GetAIGoal();
+	uint8 NewGoal = (uint8)EAIGoal::None;
 	if (BasicInstincts.Feed > 0.8)
 	{
-		AIController->SetAIGoal(EAIGoal::Food);
-		return;
+		NewGoal = (uint8)EAIGoal::Food;
+		bRun = true;
 	}
 	if (BasicInstincts.Sleep > 0.8)
 	{
-		AIController->SetAIGoal(EAIGoal::Sleep);
-		return;
+		NewGoal = (uint8)EAIGoal::Sleep;
 	}
 	if (BasicInstincts.Sex > 0.8)
 	{
-		AIController->SetAIGoal(EAIGoal::Sex);
-		return;
+		NewGoal = (uint8)EAIGoal::Sex;
 	}
-	AIController->SetAIGoal(EAIGoal::None);
+	if (NewGoal != PreviousGoal)
+	{
+		AIController->SetAIGoal(NewGoal);
+		OnAIGoalChanged.Broadcast(bRun);
+	}
 }
 
 void UAlignmentComponent::NewActorInVincinity(AActor* Other)

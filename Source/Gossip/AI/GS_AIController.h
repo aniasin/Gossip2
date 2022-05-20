@@ -47,7 +47,8 @@ public:
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
 	void AIMoveToLocation(FVector Location);
-	void SetAIGoal(EAIGoal Value);
+	void SetAIGoal(uint8 Value);
+	uint8 GetAIGoal();
 
 private:
 

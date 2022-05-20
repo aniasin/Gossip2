@@ -21,6 +21,7 @@ public:
 	class UAlignmentComponent* AlignmentComp;
 
 	void OrderMove(FVector Location);
+	void SetMoveSpeed(bool bRunning);
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,5 +40,8 @@ private:
 	AActor* ActorInVincinity;
 
 	bool bSelected;
+
+	UFUNCTION()
+	void OnAiGoalChanded(bool bRun);
 
 };

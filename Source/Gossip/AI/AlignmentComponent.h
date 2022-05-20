@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "AlignmentComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
+
 UENUM(BlueprintType)
 enum class EAlignmentState : uint8
 {
@@ -58,6 +60,9 @@ class GOSSIP_API UAlignmentComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UAlignmentComponent();
+
+	UPROPERTY()
+	FOnAIGoalChangedSignature OnAIGoalChanged;
 
 	class AGS_AIController* AIController;
 
