@@ -2,6 +2,7 @@
 
 
 #include "Gossip/AI/AlignmentComponent.h"
+#include "Gossip/Items/InventoryComponent.h"
 #include "GS_AIController.h"
 
 // Sets default values for this component's properties
@@ -12,13 +13,13 @@ UAlignmentComponent::UAlignmentComponent()
 
 void UAlignmentComponent::BeginPlay()
 {
-	Super::BeginPlay();		;
+	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(SetGoalTimerHandle, this, &UAlignmentComponent::SetCurrentGoal, 1, true);
 }
 
 void UAlignmentComponent::SetCurrentGoal()
 {
-	if (!AIController) return;
+	if (!AIController || !InventoryComp) return;
 	bool bRun = false;
 	uint8 PreviousGoal = AIController->GetAIGoal();
 	uint8 NewGoal = (uint8)EAIGoal::None;
@@ -34,6 +35,18 @@ void UAlignmentComponent::SetCurrentGoal()
 	if (BasicInstincts.Sex > 0.8)
 	{
 		NewGoal = (uint8)EAIGoal::Sex;
+	}
+	if (BasicInstincts.Feed > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchFood) < 1)
+	{
+		NewGoal = (uint8)EAIGoal::SearchFood;
+	}
+	if (BasicInstincts.Sleep > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchSleep) < 1)
+	{
+		NewGoal = (uint8)EAIGoal::SearchSleep;
+	}
+	if (BasicInstincts.Sex > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchSex) < 1)
+	{
+		NewGoal = (uint8)EAIGoal::SearchSex;
 	}
 	if (NewGoal != PreviousGoal)
 	{

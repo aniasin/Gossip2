@@ -6,6 +6,8 @@
 #include "Components/SphereComponent.h"
 #include "AI/GS_AIController.h"
 #include "AI/AlignmentComponent.h"
+#include "Items/InventoryComponent.h"
+#include "Items/Ressource.h"
 
 // Sets default values
 ANonPlayerCharacter::ANonPlayerCharacter()
@@ -26,7 +28,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
 	AlignmentComp = CreateDefaultSubobject<UAlignmentComponent>(TEXT("AlignmentComp"));
-
+	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +37,9 @@ void ANonPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AIController = Cast<AGS_AIController>(Controller);
-	AlignmentComp->AIController = AIController;
+	AlignmentComp->AIController = AIController;	
+	AlignmentComp->InventoryComp = InventoryComp;
+
 	AlignmentComp->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 }
 
@@ -43,6 +47,7 @@ void ANonPlayerCharacter::BeginPlay()
 void ANonPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("Search Food Count: %i"), InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchFood))
 
 	FString Message;
 	if (bSelected)
@@ -62,9 +67,15 @@ void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 	bRunning ? Speed = 500 : Speed = 100;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
+
+void ANonPlayerCharacter::FoundRessource(ARessource* RessourceActor)
+{
+	InventoryComp->AddKnownRessource(RessourceActor);
+}
+
+// Broadcast from AlignmentComp
 void ANonPlayerCharacter::OnAiGoalChanded(bool bRun)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Broadcast Gaoal Changed!!"));
 	SetMoveSpeed(bRun);
 }
 

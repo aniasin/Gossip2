@@ -9,6 +9,20 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
 
 UENUM(BlueprintType)
+enum class EEmotionalState : uint8
+{
+	None		UMETA(DisplayName = "None"),
+	Happy		UMETA(DisplayName = "Happy"),
+	Sad			UMETA(DisplayName = "Sad"),
+	Tragic		UMETA(DisplayName = "Tragic"),
+	Energic		UMETA(DisplayName = "Energic"),
+	Tired		UMETA(DisplayName = "Tired"),
+	Confident	UMETA(DisplayName = "Confident"),
+	Affraid		UMETA(DisplayName = "Affraid"),
+	Panicked    UMETA(DisplayName = "Panicked"),
+};
+
+UENUM(BlueprintType)
 enum class EAlignmentState : uint8
 {
 	None			UMETA(DisplayName = "None"),
@@ -65,6 +79,7 @@ public:
 	FOnAIGoalChangedSignature OnAIGoalChanged;
 
 	class AGS_AIController* AIController;
+	class UInventoryComponent* InventoryComp;
 
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;
@@ -88,10 +103,11 @@ protected:
 
 private:
 	TMap<FString, FAlignment> KnownOther;
+	EEmotionalState EmotionalState;
+
 	FTimerHandle SetGoalTimerHandle;
 
 	void SetCurrentGoal();
-
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

@@ -7,6 +7,7 @@
 #include "Gossip/AI/GS_AIController.h"
 #include "Ressource.generated.h"
 
+
 UCLASS()
 class GOSSIP_API ARessource : public AActor
 {
@@ -15,8 +16,15 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UBoxComponent* BoxComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAIGoal RessourceType;
+
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	virtual void BeginPlay() override;

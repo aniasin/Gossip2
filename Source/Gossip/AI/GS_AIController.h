@@ -10,10 +10,13 @@
 UENUM(BlueprintType)
 enum class EAIGoal : uint8 
 {
-	None       UMETA(DisplayName = "None"),
-	Food       UMETA(DisplayName = "Food"),
-	Sleep      UMETA(DisplayName = "Sleep"),
-	Sex        UMETA(DisplayName = "Sex"),
+	None				UMETA(DisplayName = "None"),
+	Food				UMETA(DisplayName = "Food"),
+	Sleep				UMETA(DisplayName = "Sleep"),
+	Sex					UMETA(DisplayName = "Sex"),
+	SearchFood			UMETA(DisplayName = "SearchFood"),
+	SearchSleep			UMETA(DisplayName = "SearchSleep"),
+	SearchSex			UMETA(DisplayName = "SearchSex"),
 };
 
 UCLASS()

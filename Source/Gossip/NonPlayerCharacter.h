@@ -7,6 +7,7 @@
 #include "NonPlayerCharacter.generated.h"
 
 class AGS_AIController;
+class ARessource;
 
 UCLASS()
 class GOSSIP_API ANonPlayerCharacter : public ACharacter
@@ -19,9 +20,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UAlignmentComponent* AlignmentComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UInventoryComponent* InventoryComp;
 
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);
+
+	void FoundRessource(ARessource* RessourceActor);
 
 protected:
 	// Called when the game starts or when spawned
