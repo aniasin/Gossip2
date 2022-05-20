@@ -7,9 +7,8 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "GS_AIController.generated.h"
 
-/**
- * 
- */
+ 
+
 UCLASS()
 class GOSSIP_API AGS_AIController : public AAIController
 {
@@ -21,6 +20,12 @@ public:
 	class UAIPerceptionComponent* PerceptionComponent;
 	class UAISenseConfig_Sight* SightConfig;
 	class UAISenseConfig_Hearing* HearingConfig;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* BehaviorTree;
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBlackboardData* BlackboardToSet;
+	UBlackboardComponent* BlackboardComponent;
 
 	UPROPERTY()
 	float SightRange = 2000;
@@ -34,7 +39,10 @@ public:
 	UFUNCTION()
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
+	void AIMoveToLocation(FVector Location);
+
 private:
+
 	bool bCanSeeHostile;
 	
 };

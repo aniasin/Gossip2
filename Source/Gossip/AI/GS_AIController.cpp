@@ -7,6 +7,8 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISenseConfig_Hearing.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 
 
@@ -42,7 +44,16 @@ void AGS_AIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
+	BlackboardComponent = GetBlackboardComponent();
+	if (!BlackboardComponent)
+	{
+		UseBlackboard(BlackboardToSet, BlackboardComponent);
+	}
+	BlackboardComponent->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
+	
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AGS_AIController::OnTargetPerceptionUpdate);
+
+	RunBehaviorTree(BehaviorTree);
 }
 
 void AGS_AIController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
@@ -57,4 +68,9 @@ void AGS_AIController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimu
 			UE_LOG(LogTemp, Warning, TEXT("Can see %s"), *Actor->GetName());
 		}
 	}
+}
+
+void AGS_AIController::AIMoveToLocation(FVector Location)
+{
+	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
 }

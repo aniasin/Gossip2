@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "NonPlayerCharacter.generated.h"
 
+class AGS_AIController;
+
 UCLASS()
 class GOSSIP_API ANonPlayerCharacter : public ACharacter
 {
@@ -16,7 +18,9 @@ public:
 	ANonPlayerCharacter();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UAlignmentComponent* AlignmentComp;
+	class UAlignmentComponent* AlignmentComp;
+
+	void OrderMove(FVector Location);
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,9 +30,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	AGS_AIController* GetAIController() { return AIController; }
+
 	void SetSelected(bool Value) { bSelected = Value; }
 
 private:
+	AGS_AIController* AIController;
 	AActor* ActorInVincinity;
 
 	bool bSelected;

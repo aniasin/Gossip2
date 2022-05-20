@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Gossip/NonPlayerCharacter.h"
 
+
 // Sets default values
 APlayerPawn::APlayerPawn()
 { 	
@@ -42,7 +43,6 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftClick", IE_Released, this, &APlayerPawn::LeftClickReleased);
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &APlayerPawn::RightClickPressed);
 	PlayerInputComponent->BindAction("RightClick", IE_Released, this, &APlayerPawn::RightClickReleased);
-
 }
 
 void APlayerPawn::BeginPlay()
@@ -142,12 +142,25 @@ void APlayerPawn::LeftClickReleased()
 
 void APlayerPawn::RightClickPressed()
 {
+	if (CurrentSelections.Num() > 0)
+	{
+		for (const ANonPlayerCharacter* Selected : CurrentSelections)
+		{
 
+		}
+	}
 }
 
 void APlayerPawn::RightClickReleased()
 {
+	FHitResult Hit;
+	PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
+	FVector Location = Hit.Location;
+	for (ANonPlayerCharacter* Selected : CurrentSelections)
+	{
+		Selected->OrderMove(Location);
+	}
 }
 
 void APlayerPawn::EscapeMenu()

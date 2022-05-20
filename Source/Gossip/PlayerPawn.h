@@ -24,6 +24,17 @@ class GOSSIP_API APlayerPawn : public APawn
 public:
 	APlayerPawn();
 
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
+	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
+	bool GetSelectionActive() { return bSelectionActive; }
+	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
+	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
+	FVector2D GetMousePosition();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,26 +46,12 @@ protected:
 	void LeftClickReleased();
 	void RightClickPressed();
 	void RightClickReleased();
-
 	void EscapeMenu();
-
-public:	
-	virtual void Tick(float DeltaTime) override;
-
-	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
-	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
-	bool GetSelectionActive() { return bSelectionActive; }
-	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
-
-	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
-	FVector2D GetMousePosition();
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	class APlayerController* PC;
-	TArray<ANonPlayerCharacter*>CurrentSelections;
 
+	TArray<ANonPlayerCharacter*>CurrentSelections;
 	FVector SelectionBoxStartPosition;
 	FVector SelectionBoxEndPosition;
 	FVector2D MousePositionAtStart;
