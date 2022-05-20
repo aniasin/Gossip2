@@ -2,22 +2,39 @@
 
 
 #include "Gossip/AI/AlignmentComponent.h"
+#include "GS_AIController.h"
 
 // Sets default values for this component's properties
 UAlignmentComponent::UAlignmentComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
 }
 
-// Called when the game starts
 void UAlignmentComponent::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay();		;
+	GetWorld()->GetTimerManager().SetTimer(SetGoalTimerHandle, this, &UAlignmentComponent::SetCurrentGoal, 1, true);
+}
 
-	
+void UAlignmentComponent::SetCurrentGoal()
+{
+	if (!AIController) return;
+	if (BasicInstincts.Feed > 0.8)
+	{
+		AIController->SetAIGoal(EAIGoal::Food);
+		return;
+	}
+	if (BasicInstincts.Sleep > 0.8)
+	{
+		AIController->SetAIGoal(EAIGoal::Sleep);
+		return;
+	}
+	if (BasicInstincts.Sex > 0.8)
+	{
+		AIController->SetAIGoal(EAIGoal::Sex);
+		return;
+	}
+	AIController->SetAIGoal(EAIGoal::None);
 }
 
 void UAlignmentComponent::NewActorInVincinity(AActor* Other)

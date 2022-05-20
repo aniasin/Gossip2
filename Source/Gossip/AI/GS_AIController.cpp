@@ -74,3 +74,8 @@ void AGS_AIController::AIMoveToLocation(FVector Location)
 {
 	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
 }
+
+void AGS_AIController::SetAIGoal(EAIGoal Value)
+{
+	BlackboardComponent->SetValueAsEnum("Goal", (uint8)Value);
+}

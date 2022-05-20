@@ -22,6 +22,7 @@ void ANonPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AIController = Cast<AGS_AIController>(Controller);
+	AlignmentComp->AIController = AIController;
 }
 
 // Called every frame

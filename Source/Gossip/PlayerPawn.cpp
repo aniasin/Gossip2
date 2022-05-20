@@ -9,6 +9,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Gossip/NonPlayerCharacter.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
 
 // Sets default values
@@ -142,25 +144,24 @@ void APlayerPawn::LeftClickReleased()
 
 void APlayerPawn::RightClickPressed()
 {
-	if (CurrentSelections.Num() > 0)
-	{
-		for (const ANonPlayerCharacter* Selected : CurrentSelections)
-		{
+	FHitResult Hit;
+	PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	FVector Location = Hit.Location;
 
-		}
+	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (!NavigationSystem) return;
+ 
+	for (ANonPlayerCharacter* Selected : CurrentSelections)
+	{
+		UNavigationPath* Path = NavigationSystem->FindPathToLocationSynchronously(GetWorld(), Selected->GetActorLocation(), Location);
+		if (!Path->IsValid()) break;
+		Selected->OrderMove(Location);
 	}
 }
 
 void APlayerPawn::RightClickReleased()
 {
-	FHitResult Hit;
-	PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	FVector Location = Hit.Location;
-	for (ANonPlayerCharacter* Selected : CurrentSelections)
-	{
-		Selected->OrderMove(Location);
-	}
 }
 
 void APlayerPawn::EscapeMenu()

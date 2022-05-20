@@ -7,7 +7,14 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "GS_AIController.generated.h"
 
- 
+UENUM(BlueprintType)
+enum class EAIGoal : uint8 
+{
+	None       UMETA(DisplayName = "None"),
+	Food       UMETA(DisplayName = "Food"),
+	Sleep      UMETA(DisplayName = "Sleep"),
+	Sex        UMETA(DisplayName = "Sex"),
+};
 
 UCLASS()
 class GOSSIP_API AGS_AIController : public AAIController
@@ -40,6 +47,7 @@ public:
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
 	void AIMoveToLocation(FVector Location);
+	void SetAIGoal(EAIGoal Value);
 
 private:
 

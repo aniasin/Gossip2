@@ -34,9 +34,9 @@ struct FBasicInstincts
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta =(ClampMin = -1), meta =(ClampMax = 1))
 	float Feed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Sleep;
+	float Sleep;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Sex;
+	float Sex;
 };
 
 USTRUCT(BlueprintType)
@@ -59,6 +59,8 @@ public:
 	// Sets default values for this component's properties
 	UAlignmentComponent();
 
+	class AGS_AIController* AIController;
+
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;
 
@@ -74,16 +76,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESocialPosition SocialPosition;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionLike;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionHate;
 
 private:
 	TMap<FString, FAlignment> KnownOther;
+	FTimerHandle SetGoalTimerHandle;
 
+	void SetCurrentGoal();
 
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
