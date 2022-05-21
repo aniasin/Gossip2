@@ -2,7 +2,7 @@
 
 
 #include "InstinctsComponent.h"
-#include "GS_AIController.h"
+
 
 // Sets default values for this component's properties
 UInstinctsComponent::UInstinctsComponent()
@@ -11,7 +11,7 @@ UInstinctsComponent::UInstinctsComponent()
 
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-		BasicInstincts.Add((uint8)Goal, 0);
+		BasicInstincts.Add(Goal, 0);
 	}
 }
 

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
+#include "GS_AIController.h"
 #include "InstinctsComponent.generated.h"
 
 
@@ -15,9 +17,8 @@ class GOSSIP_API UInstinctsComponent : public UActorComponent
 public:	
 	UInstinctsComponent();
 
-
 	UPROPERTY(EditAnywhere, Category = "Instincts") //TODO EditAnywhere for test purpose
-	TMap<uint8, float> BasicInstincts;
+	TMap<EAIGoal, float> BasicInstincts;
 
 protected:
 	virtual void BeginPlay() override;

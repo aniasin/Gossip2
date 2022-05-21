@@ -65,7 +65,7 @@ void ANonPlayerCharacter::OrderMove(FVector Location)
 void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 {
 	float Speed;
-	bRunning ? Speed = 500 : Speed = 100;
+	bRunning ? Speed = RunSpeed : Speed = WalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 

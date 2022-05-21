@@ -85,3 +85,14 @@ uint8 AGS_AIController::GetAIGoal()
 {
 	return BlackboardComponent->GetValueAsEnum("Goal");
 }
+
+uint8 AGS_AIController::GetAIAction()
+{
+	return BlackboardComponent->GetValueAsEnum("Action");
+}
+
+void AGS_AIController::SetTargetActor(AActor* TargetActor)
+{
+	BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
+}
+

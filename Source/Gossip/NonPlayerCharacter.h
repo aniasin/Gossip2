@@ -25,20 +25,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UInstinctsComponent* InstinctsComp;
 
+	UPROPERTY(EditAnywhere)
+	float WalkSpeed = 200;
+	UPROPERTY(EditAnywhere)
+	float RunSpeed = 500;
+
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	AGS_AIController* GetAIController() { return AIController; }
 
 	void SetSelected(bool Value) { bSelected = Value; }
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	AGS_AIController* AIController;

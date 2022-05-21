@@ -29,12 +29,16 @@ class GOSSIP_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 
+	UFUNCTION(BlueprintCallable)
+	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
+
 	void AddKnownRessource(ARessource* RessourceActor);
 	int32 GetKnownRessourcesCount(EAIGoal RessourceType);
+	// Warning can return nullptr
+	AActor* SearchNearestKnownRessource(EAIGoal RessourceType);
 
 private:
 	TArray<FInventoryItem> InventoryItems;
 	TArray<ARessource*> KnownRessources;
-		
 
 };

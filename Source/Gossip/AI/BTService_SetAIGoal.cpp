@@ -37,12 +37,13 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if (!InventoryComp) return;
 
 	uint8 PreviousGoal = AIController->GetAIGoal();
+	uint8 PreviousAction = AIController->GetAIAction();
 	uint8 NewGoal = (uint8)EAIGoal::None;
 	uint8 NewAction = (uint8)EAIAction::None;
 
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-		float InstinctValue = *InstinctsComp->BasicInstincts.Find((uint8)Goal);
+		float InstinctValue = *InstinctsComp->BasicInstincts.Find(Goal);
 		NewGoal = CheckGoal(InstinctValue, Goal);
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
@@ -51,8 +52,13 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		}
 	}
 
-	if (NewGoal != PreviousGoal)
+	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
 	{
+		if (NewAction == (uint8)EAIAction::Travel)
+		{
+			AActor* TargetActor = InventoryComp->SearchNearestKnownRessource((EAIGoal)NewGoal);
+			AIController->SetTargetActor(TargetActor);
+		}
 		AIController->SetAIGoal(NewGoal, NewAction);
 		AIController->OnAIGoalChanged.Broadcast(bRun);
 	}
@@ -67,12 +73,16 @@ uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 	return (uint8)EAIGoal::None;
 }
 
-uint8 UBTService_SetAIGoal::CheckAction(int32 Inventory)
+uint8 UBTService_SetAIGoal::CheckAction(int32 KnownRessource)
 {
-	if (Inventory < 1)
+	if (KnownRessource < 1)
 	{
 		return (uint8)EAIAction::Search;
 	}
-	return (uint8)EAIAction::Satisfy;
+	if (KnownRessource > 0)
+	{
+		return (uint8)EAIAction::Travel;
+	}
+	return (uint8)EAIAction::Transform;
 }
 
