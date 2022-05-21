@@ -14,6 +14,7 @@ UAlignmentComponent::UAlignmentComponent()
 void UAlignmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void UAlignmentComponent::NewActorInVincinity(AActor* Other)
@@ -42,7 +43,4 @@ EAlignmentState UAlignmentComponent::GetAlignment(float Respect, float Love)
 	if (Love < 0 && Respect > 0) return EAlignmentState::Submissive;
 	return EAlignmentState::None;
 }
-
-
-
 

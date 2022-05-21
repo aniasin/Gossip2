@@ -17,9 +17,15 @@ enum class EAIGoal : uint8
 	Food				UMETA(DisplayName = "Food"),
 	Sleep				UMETA(DisplayName = "Sleep"),
 	Sex					UMETA(DisplayName = "Sex"),
-	SearchFood			UMETA(DisplayName = "SearchFood"),
-	SearchSleep			UMETA(DisplayName = "SearchSleep"),
-	SearchSex			UMETA(DisplayName = "SearchSex"),
+};
+ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Sex);
+
+UENUM(BlueprintType)
+enum class EAIAction : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	Search				UMETA(DisplayName = "Search"),
+	Satisfy				UMETA(DisplayName = "Satisfy"),
 };
 
 UCLASS()
@@ -56,7 +62,7 @@ public:
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
 	void AIMoveToLocation(FVector Location);
-	void SetAIGoal(uint8 Value);
+	void SetAIGoal(uint8 Instinct, uint8 Action);
 	uint8 GetAIGoal();
 
 private:

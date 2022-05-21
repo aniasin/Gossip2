@@ -28,6 +28,9 @@ class GOSSIP_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 
+	UPROPERTY(EditAnywhere, Category = "Instincts")
+	TMap<uint8, float> BasicInstincts;
+
 	void AddKnownRessource(ARessource* RessourceActor);
 	int32 GetKnownRessourcesCount(EAIGoal RessourceType);
 
@@ -35,4 +38,5 @@ private:
 	TArray<FInventoryItem> InventoryItems;
 	TArray<ARessource*> KnownRessources;
 		
+
 };

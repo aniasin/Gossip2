@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
+#include "GS_AIController.h"
 #include "BTService_SetAIGoal.generated.h"
 
 /**
@@ -19,4 +20,10 @@ class GOSSIP_API UBTService_SetAIGoal : public UBTService
 protected:
 	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+private:
+	bool bRun;
+
+	uint8 CheckGoal(float InstinctValue, EAIGoal Goal);
+	uint8 CheckAction(int32 Inventory);
 };
