@@ -25,11 +25,10 @@ void ARessource::BeginPlay()
 void ARessource::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlap Ressource!"))
-	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OtherActor);
-	if (NPC)
+	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(OtherActor->FindComponentByClass(UInventoryComponent::StaticClass()));
+	if (InventoryComp)
 	{
-		NPC->FoundRessource(this);
+		InventoryComp->AddKnownRessource(this);
 		
 	}
 }

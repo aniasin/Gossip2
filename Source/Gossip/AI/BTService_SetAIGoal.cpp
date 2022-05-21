@@ -3,7 +3,7 @@
 
 #include "BTService_SetAIGoal.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "AlignmentComponent.h"
+#include "InstinctsComponent.h"
 
 #include "Gossip/Items/InventoryComponent.h"
 
@@ -31,10 +31,10 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(Inventory);
 	if (!InventoryComp) return;
 
-	UActorComponent* Alignment = AIController->GetPawn()->FindComponentByClass(UAlignmentComponent::StaticClass());
-	if (!Alignment) return;
-	UAlignmentComponent* AlignmentComp = Cast<UAlignmentComponent>(Alignment);
-	if (!AlignmentComp) return;
+	UActorComponent* Instincts = AIController->GetPawn()->FindComponentByClass(UInstinctsComponent::StaticClass());
+	if (!Inventory) return;
+	UInstinctsComponent* InstinctsComp = Cast<UInstinctsComponent>(Instincts);
+	if (!InventoryComp) return;
 
 	uint8 PreviousGoal = AIController->GetAIGoal();
 	uint8 NewGoal = (uint8)EAIGoal::None;
@@ -42,8 +42,8 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-		float InventoryCount = *InventoryComp->BasicInstincts.Find((uint8)Goal);
-		NewGoal = CheckGoal(InventoryCount, Goal);
+		float InstinctValue = *InstinctsComp->BasicInstincts.Find((uint8)Goal);
+		NewGoal = CheckGoal(InstinctValue, Goal);
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
 			NewAction = CheckAction(InventoryComp->GetKnownRessourcesCount((EAIGoal)NewGoal));

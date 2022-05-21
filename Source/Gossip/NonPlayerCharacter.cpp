@@ -4,10 +4,12 @@
 #include "NonPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
+
 #include "AI/GS_AIController.h"
 #include "AI/AlignmentComponent.h"
+#include "AI/InstinctsComponent.h"
+
 #include "Items/InventoryComponent.h"
-#include "Items/Ressource.h"
 
 // Sets default values
 ANonPlayerCharacter::ANonPlayerCharacter()
@@ -29,6 +31,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 
 	AlignmentComp = CreateDefaultSubobject<UAlignmentComponent>(TEXT("AlignmentComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
+	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
 }
 
 // Called when the game starts or when spawned
@@ -37,8 +40,6 @@ void ANonPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AIController = Cast<AGS_AIController>(Controller);
-	AlignmentComp->AIController = AIController;	
-	AlignmentComp->InventoryComp = InventoryComp;
 
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 }
@@ -66,11 +67,6 @@ void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 	float Speed;
 	bRunning ? Speed = 500 : Speed = 100;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
-}
-
-void ANonPlayerCharacter::FoundRessource(ARessource* RessourceActor)
-{
-	InventoryComp->AddKnownRessource(RessourceActor);
 }
 
 // Broadcast from AlignmentComp

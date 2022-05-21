@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
 #include "Gossip/Items/Ressource.h"
 #include "InventoryComponent.generated.h"
 
@@ -27,9 +28,6 @@ class GOSSIP_API UInventoryComponent : public UActorComponent
 
 public:	
 	UInventoryComponent();
-
-	UPROPERTY(EditAnywhere, Category = "Instincts")
-	TMap<uint8, float> BasicInstincts;
 
 	void AddKnownRessource(ARessource* RessourceActor);
 	int32 GetKnownRessourcesCount(EAIGoal RessourceType);

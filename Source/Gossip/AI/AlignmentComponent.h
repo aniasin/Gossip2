@@ -60,9 +60,6 @@ class GOSSIP_API UAlignmentComponent : public UActorComponent
 public:	
 	UAlignmentComponent();
 
-	class AGS_AIController* AIController;
-	class UInventoryComponent* InventoryComp;
-
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;
 

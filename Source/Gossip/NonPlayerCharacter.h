@@ -22,11 +22,11 @@ public:
 	class UAlignmentComponent* AlignmentComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UInstinctsComponent* InstinctsComp;
 
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);
-
-	void FoundRessource(ARessource* RessourceActor);
 
 protected:
 	// Called when the game starts or when spawned

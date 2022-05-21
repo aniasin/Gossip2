@@ -8,10 +8,6 @@ UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	for (EAIGoal Goal : TEnumRange<EAIGoal>())
-	{
-		BasicInstincts.Add((uint8)Goal, 0);
-	}
 }
 
 void UInventoryComponent::AddKnownRessource(ARessource* RessourceActor)
