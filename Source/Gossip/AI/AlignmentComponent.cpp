@@ -14,45 +14,6 @@ UAlignmentComponent::UAlignmentComponent()
 void UAlignmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorld()->GetTimerManager().SetTimer(SetGoalTimerHandle, this, &UAlignmentComponent::SetCurrentGoal, 1, true);
-}
-
-void UAlignmentComponent::SetCurrentGoal()
-{
-	if (!AIController || !InventoryComp) return;
-	bool bRun = false;
-	uint8 PreviousGoal = AIController->GetAIGoal();
-	uint8 NewGoal = (uint8)EAIGoal::None;
-	if (BasicInstincts.Feed > 0.8)
-	{
-		NewGoal = (uint8)EAIGoal::Food;
-		bRun = true;
-	}
-	if (BasicInstincts.Sleep > 0.8)
-	{
-		NewGoal = (uint8)EAIGoal::Sleep;
-	}
-	if (BasicInstincts.Sex > 0.8)
-	{
-		NewGoal = (uint8)EAIGoal::Sex;
-	}
-	if (BasicInstincts.Feed > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchFood) < 1)
-	{
-		NewGoal = (uint8)EAIGoal::SearchFood;
-	}
-	if (BasicInstincts.Sleep > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchSleep) < 1)
-	{
-		NewGoal = (uint8)EAIGoal::SearchSleep;
-	}
-	if (BasicInstincts.Sex > 0 && InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchSex) < 1)
-	{
-		NewGoal = (uint8)EAIGoal::SearchSex;
-	}
-	if (NewGoal != PreviousGoal)
-	{
-		AIController->SetAIGoal(NewGoal);
-		OnAIGoalChanged.Broadcast(bRun);
-	}
 }
 
 void UAlignmentComponent::NewActorInVincinity(AActor* Other)

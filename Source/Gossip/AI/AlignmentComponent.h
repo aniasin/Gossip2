@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "AlignmentComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
 
 UENUM(BlueprintType)
 enum class EEmotionalState : uint8
@@ -75,9 +74,6 @@ public:
 	// Sets default values for this component's properties
 	UAlignmentComponent();
 
-	UPROPERTY()
-	FOnAIGoalChangedSignature OnAIGoalChanged;
-
 	class AGS_AIController* AIController;
 	class UInventoryComponent* InventoryComp;
 
@@ -104,10 +100,6 @@ protected:
 private:
 	TMap<FString, FAlignment> KnownOther;
 	EEmotionalState EmotionalState;
-
-	FTimerHandle SetGoalTimerHandle;
-
-	void SetCurrentGoal();
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

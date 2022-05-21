@@ -7,6 +7,9 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "GS_AIController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
+
+
 UENUM(BlueprintType)
 enum class EAIGoal : uint8 
 {
@@ -45,6 +48,9 @@ public:
 	float HearingRange = 1000;
 
 	virtual void OnPossess(APawn* InPawn);
+
+	UPROPERTY()
+	FOnAIGoalChangedSignature OnAIGoalChanged;
 
 	UFUNCTION()
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);

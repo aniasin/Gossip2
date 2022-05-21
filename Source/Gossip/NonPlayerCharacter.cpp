@@ -40,7 +40,7 @@ void ANonPlayerCharacter::BeginPlay()
 	AlignmentComp->AIController = AIController;	
 	AlignmentComp->InventoryComp = InventoryComp;
 
-	AlignmentComp->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
+	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 }
 
 // Called every frame
