@@ -32,9 +32,9 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if (!InventoryComp) return;
 
 	UActorComponent* Instincts = AIController->GetPawn()->FindComponentByClass(UInstinctsComponent::StaticClass());
-	if (!Inventory) return;
+	if (!Instincts) return;
 	UInstinctsComponent* InstinctsComp = Cast<UInstinctsComponent>(Instincts);
-	if (!InventoryComp) return;
+	if (!InstinctsComp) return;
 
 	uint8 PreviousGoal = AIController->GetAIGoal();
 	uint8 PreviousAction = AIController->GetAIAction();
