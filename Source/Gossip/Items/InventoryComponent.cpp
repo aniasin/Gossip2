@@ -52,6 +52,11 @@ AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
 	return SortedRessources[0];
 }
 
+void UInventoryComponent::AddOwnedItem(FInventoryItem Item)
+{
+	InventoryItems.Add(Item);
+}
+
 int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
 {
 	// TODO check for Time and remove if spoiled

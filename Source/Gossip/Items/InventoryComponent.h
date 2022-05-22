@@ -40,6 +40,7 @@ public:
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessource(EAIGoal RessourceType);
 
+	void AddOwnedItem(FInventoryItem Item);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 private:

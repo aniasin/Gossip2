@@ -48,9 +48,8 @@ void ANonPlayerCharacter::BeginPlay()
 void ANonPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("Search Food Count: %i"), InventoryComp->GetKnownRessourcesCount(EAIGoal::Food))
 
-	FString Message;
+	FString Message; //TODO make UI
 	if (bSelected)
 	{
 		DrawDebugString(GetWorld(), FVector(0, 0, 100), "Selected", this, FColor::Green, DeltaTime);

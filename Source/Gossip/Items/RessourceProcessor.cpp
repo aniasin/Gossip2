@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Ressource.h"
+#include "RessourceProcessor.h"
 #include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
-
+#include "Gossip/AI/InstinctsComponent.h" //For testing
 
 // Sets default values
-ARessource::ARessource()
+ARessourceProcessor::ARessourceProcessor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -15,30 +15,33 @@ ARessource::ARessource()
 	RootComponent = BoxComponent;
 }
 
-void ARessource::BeginPlay()
+void ARessourceProcessor::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ARessource::OnOverlapBegin);
+	
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ARessourceProcessor::OnOverlapBegin);
 }
 
-void ARessource::CollectRessource(class UInventoryComponent* InventoryComp)
+void ARessourceProcessor::ProcessRessource(UInventoryComponent* InventoryComp)
 {
 	if (InventoryComp)
-	{		
+	{
 		FInventoryItem Item;
 		Item.Ressource = RessourceType;
-		Item.bRaw = true;
+		Item.bRaw = false;
 		Item.Time = 0;
 		InventoryComp->AddOwnedItem(Item);
 	}
 }
 
-void ARessource::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+void ARessourceProcessor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(OtherActor->FindComponentByClass(UInventoryComponent::StaticClass()));
 
-	InventoryComp->AddKnownRessource(this);
-	CollectRessource(InventoryComp); // TODO call from Controller
+	ProcessRessource(InventoryComp); // TODO call from Controller
+
 }
+
+
 

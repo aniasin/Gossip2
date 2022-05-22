@@ -6,38 +6,33 @@
 #include "GameFramework/Actor.h"
 
 #include "Gossip/AI/GS_AIController.h"
-#include "Ressource.generated.h"
-
+#include "RessourceProcessor.generated.h"
 
 UCLASS()
-class GOSSIP_API ARessource : public AActor
+class GOSSIP_API ARessourceProcessor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	ARessource();
+	ARessourceProcessor();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere)
 	EAIGoal RessourceType;
-
 	UPROPERTY(EditAnywhere)
-	FString CollectAction; //TODO Change to be a UAnimMontage
+	FString ProcessAction; //TODO Change to be a UAnimMontage
 
 	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-
-	float CurrentDistanceToQuerier;
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void CollectRessource(class UInventoryComponent* InventoryComp);
 
+	void ProcessRessource(class UInventoryComponent* InventoryComp);
 
 };
