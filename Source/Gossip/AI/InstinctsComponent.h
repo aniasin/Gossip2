@@ -17,12 +17,14 @@ class GOSSIP_API UInstinctsComponent : public UActorComponent
 public:	
 	UInstinctsComponent();
 
-	UPROPERTY(EditAnywhere, Category = "Instincts") //TODO EditAnywhere for test purpose
+	// Base Value for each
+	UPROPERTY(EditAnywhere, Category = "Instincts")
 	TMap<EAIGoal, float> BasicInstincts;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	void SortBasicInstinctsByPriority();
 		
 };

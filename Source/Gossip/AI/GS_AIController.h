@@ -17,8 +17,11 @@ enum class EAIGoal : uint8
 	Food				UMETA(DisplayName = "Food"),
 	Sleep				UMETA(DisplayName = "Sleep"),
 	Sex					UMETA(DisplayName = "Sex"),
+	RawFood				UMETA(DisplayName = "RawFood"),
+	RawSleep			UMETA(DisplayName = "RawSleep"),
+	RawSex				UMETA(DisplayName = "RawSex"),
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Sex);
+ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::RawSex);
 
 UENUM(BlueprintType)
 enum class EAIAction : uint8
@@ -26,7 +29,7 @@ enum class EAIAction : uint8
 	None				UMETA(DisplayName = "None"),
 	Search				UMETA(DisplayName = "Search"),
 	Satisfy				UMETA(DisplayName = "Satisfy"),
-	Transform				UMETA(DisplayName = "Transform"),
+	Process				UMETA(DisplayName = "Process"),
 	Travel				UMETA(DisplayName = "Travel"),
 };
 

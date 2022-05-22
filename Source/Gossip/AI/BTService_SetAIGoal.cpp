@@ -83,6 +83,6 @@ uint8 UBTService_SetAIGoal::CheckAction(int32 KnownRessource)
 	{
 		return (uint8)EAIAction::Travel;
 	}
-	return (uint8)EAIAction::Transform;
+	return (uint8)EAIAction::Process;
 }
 

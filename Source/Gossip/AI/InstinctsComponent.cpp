@@ -15,12 +15,22 @@ UInstinctsComponent::UInstinctsComponent()
 	}
 }
 
-
 // Called when the game starts
 void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SortBasicInstinctsByPriority();
 
 }
+
+void UInstinctsComponent::SortBasicInstinctsByPriority()
+{
+	BasicInstincts.ValueSort([](const float& A, const float& B) {
+		return A >= B;
+		});
+}
+
+	
+
 

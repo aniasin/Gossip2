@@ -24,7 +24,7 @@ public:
 	EAIGoal RessourceType;
 
 	UPROPERTY(EditAnywhere)
-	FString TransformAction; //TODO Change to be a UAnimMontage
+	FString ProcessAction; //TODO Change to be a UAnimMontage
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
