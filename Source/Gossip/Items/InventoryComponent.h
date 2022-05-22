@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Ressource.h"
+
+#include "Gossip/AI/GS_AIController.h"
 #include "InventoryComponent.generated.h"
 
 class ARessource;
@@ -15,7 +17,9 @@ struct FInventoryItem
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AActor* Item;
+	EAIGoal Ressource;
+	UPROPERTY()
+	bool bRaw;
 	UPROPERTY()
 	float Time;
 };
@@ -35,6 +39,8 @@ public:
 	int32 GetKnownRessourcesCount(EAIGoal RessourceType);
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessource(EAIGoal RessourceType);
+
+	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 private:
 	TArray<FInventoryItem> InventoryItems;

@@ -17,9 +17,11 @@ void UInventoryComponent::AddKnownRessource(ARessource* RessourceActor)
 
 int32 UInventoryComponent::GetKnownRessourcesCount(EAIGoal RessourceType)
 {
+	int32 Index = 0;
 	int32 Count = 0;
 	for (ARessource* Ressource : KnownRessources)
 	{
+		if (!Ressource) { KnownRessources.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			Count++;
@@ -30,10 +32,11 @@ int32 UInventoryComponent::GetKnownRessourcesCount(EAIGoal RessourceType)
 
 AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
 {
+	int32 Index = 0;
 	TArray<ARessource*>RessourcesToSort;
-	for (ARessource* RessourceActor : KnownRessources)
+	for (ARessource* Ressource : KnownRessources)
 	{
-		ARessource* Ressource = Cast<ARessource>(RessourceActor);
+		if (!Ressource) { KnownRessources.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			RessourcesToSort.Add(Ressource);
@@ -47,6 +50,17 @@ AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
 	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
 	
 	return SortedRessources[0];
+}
+
+int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
+{
+	// TODO check for Time and remove if spoiled
+	int32 Count = 0;
+	for (FInventoryItem Item : InventoryItems)
+	{
+		if (Item.Ressource == RessourceType && Item.bRaw == bRaw) Count++;
+	}
+	return Count;
 }
 
 TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessource*> RessourceToSort)

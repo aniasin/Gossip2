@@ -41,17 +41,26 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	uint8 NewGoal = (uint8)EAIGoal::None;
 	uint8 NewAction = (uint8)EAIAction::None;
 
-	for (EAIGoal Goal : TEnumRange<EAIGoal>())
+	// Check something needed now & Take action
+	for (auto& Goal : InstinctsComp->BasicInstincts)
 	{
-		float InstinctValue = *InstinctsComp->BasicInstincts.Find(Goal);
-		NewGoal = CheckGoal(InstinctValue, Goal);
+		float InstinctValue = Goal.Value;
+		NewGoal = CheckGoal(InstinctValue, Goal.Key);
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
-			NewAction = CheckAction(InventoryComp->GetKnownRessourcesCount((EAIGoal)NewGoal));
-			break;
+			int32 OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, false);
+			if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy; break; }
+			
+			int32 OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::Process; break; }
+
+			int32 KnownRessourceCount = InventoryComp->GetKnownRessourcesCount((EAIGoal)NewGoal);
+			if (KnownRessourceCount > 0) { NewAction = (uint8)EAIAction::Travel;  break; }
+
+			if (KnownRessourceCount <= 0) { NewAction = (uint8)EAIAction::Search; break; }
 		}
 	}
-
+	// New Goal Found or new action
 	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
 	{
 		if (NewAction == (uint8)EAIAction::Travel)
@@ -62,27 +71,20 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		AIController->SetAIGoal(NewGoal, NewAction);
 		AIController->OnAIGoalChanged.Broadcast(bRun);
 	}
+// 	// No new Goal 
+// 	if (NewGoal == PreviousGoal)
+// 	{
+// 		// TODO Check for Stock needed
+// 	}
+
 }
 
 uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 {
-	if (InstinctValue > 0)
+	if (InstinctValue > 0.8)
 	{
 		return (uint8)Goal;
 	}
 	return (uint8)EAIGoal::None;
-}
-
-uint8 UBTService_SetAIGoal::CheckAction(int32 KnownRessource)
-{
-	if (KnownRessource < 1)
-	{
-		return (uint8)EAIAction::Search;
-	}
-	if (KnownRessource > 0)
-	{
-		return (uint8)EAIAction::Travel;
-	}
-	return (uint8)EAIAction::Process;
 }
 

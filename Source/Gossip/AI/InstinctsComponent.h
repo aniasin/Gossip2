@@ -25,6 +25,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void InstinctsUpdate();
+
 	void SortBasicInstinctsByPriority();
 		
 };

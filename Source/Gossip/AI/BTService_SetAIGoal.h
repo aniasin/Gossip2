@@ -25,5 +25,4 @@ private:
 	bool bRun;
 
 	uint8 CheckGoal(float InstinctValue, EAIGoal Goal);
-	uint8 CheckAction(int32 Inventory);
 };

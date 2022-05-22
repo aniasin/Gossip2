@@ -13,6 +13,9 @@ class AGossipGameMode : public AGameModeBase
 
 public:
 	AGossipGameMode();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GameHourDurationSeconds = 300;
 };
 
 

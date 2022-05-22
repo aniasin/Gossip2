@@ -28,6 +28,7 @@ enum class EAIAction : uint8
 {
 	None				UMETA(DisplayName = "None"),
 	Search				UMETA(DisplayName = "Search"),
+	Stock				UMETA(DisplayName = "Stock"),
 	Satisfy				UMETA(DisplayName = "Satisfy"),
 	Process				UMETA(DisplayName = "Process"),
 	Travel				UMETA(DisplayName = "Travel"),

@@ -2,6 +2,7 @@
 
 
 #include "NonPlayerCharacter.h"
+#include "Kismet/GameplayStatics.h" 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -40,7 +41,6 @@ void ANonPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AIController = Cast<AGS_AIController>(Controller);
-
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 }
 
@@ -48,7 +48,7 @@ void ANonPlayerCharacter::BeginPlay()
 void ANonPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("Search Food Count: %i"), InventoryComp->GetKnownRessourcesCount(EAIGoal::SearchFood))
+	UE_LOG(LogTemp, Warning, TEXT("Search Food Count: %i"), InventoryComp->GetKnownRessourcesCount(EAIGoal::Food))
 
 	FString Message;
 	if (bSelected)
