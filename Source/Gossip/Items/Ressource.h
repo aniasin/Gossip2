@@ -8,7 +8,7 @@
 #include "Gossip/AI/GS_AIController.h"
 #include "Ressource.generated.h"
 
-
+// TODO Refactor, this should be a SubClass of ARessource
 UCLASS()
 class GOSSIP_API ARessource : public AActor
 {

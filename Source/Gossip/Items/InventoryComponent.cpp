@@ -2,6 +2,8 @@
 
 
 #include "InventoryComponent.h"
+#include "Ressource.h"
+#include "RessourceProcessor.h"
 
 
 UInventoryComponent::UInventoryComponent()

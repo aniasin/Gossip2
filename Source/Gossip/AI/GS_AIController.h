@@ -9,6 +9,14 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
 
+UENUM(BlueprintType)
+enum class EAIStatus : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	Collecting			UMETA(DisplayName = "Collecting"),
+	Processing			UMETA(DisplayName = "Processing"),
+	Satisfying			UMETA(DisplayName = "Satisfying"),
+};
 
 UENUM(BlueprintType)
 enum class EAIGoal : uint8 
@@ -17,11 +25,8 @@ enum class EAIGoal : uint8
 	Food				UMETA(DisplayName = "Food"),
 	Sleep				UMETA(DisplayName = "Sleep"),
 	Sex					UMETA(DisplayName = "Sex"),
-	RawFood				UMETA(DisplayName = "RawFood"),
-	RawSleep			UMETA(DisplayName = "RawSleep"),
-	RawSex				UMETA(DisplayName = "RawSex"),
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::RawSex);
+ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Sex);
 
 UENUM(BlueprintType)
 enum class EAIAction : uint8

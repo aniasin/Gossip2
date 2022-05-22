@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Ressource.h"
 
 #include "Gossip/AI/GS_AIController.h"
 #include "InventoryComponent.generated.h"

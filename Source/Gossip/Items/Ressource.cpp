@@ -3,7 +3,7 @@
 
 #include "Ressource.h"
 #include "Components/BoxComponent.h"
-#include "InventoryComponent.h"
+#include "InventoryComponent.h" // TODO remove
 
 
 // Sets default values
