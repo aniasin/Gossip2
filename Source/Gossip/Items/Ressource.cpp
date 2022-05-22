@@ -3,8 +3,9 @@
 
 #include "Ressource.h"
 #include "Components/BoxComponent.h"
-#include "gossip/NonPlayerCharacter.h"
-#include "Gossip/Items/InventoryComponent.h"
+#include "InventoryComponent.h"
+
+#include "gossip/Characters/NonPlayerCharacter.h"
 
 
 // Sets default values

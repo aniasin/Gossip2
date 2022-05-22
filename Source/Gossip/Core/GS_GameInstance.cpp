@@ -5,7 +5,8 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Blueprint/UserWidget.h"
-#include "MenuSystem/MenuBase.h"
+
+#include "Gossip/MenuSystem/MenuBase.h"
 
 const static FName SESSION_NAME = TEXT("My Session");
 

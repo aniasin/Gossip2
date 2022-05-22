@@ -5,11 +5,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
 
-#include "AI/GS_AIController.h"
-#include "AI/AlignmentComponent.h"
-#include "AI/InstinctsComponent.h"
+#include "Gossip/AI/GS_AIController.h"
+#include "Gossip/AI/AlignmentComponent.h"
+#include "Gossip/AI/InstinctsComponent.h"
 
-#include "Items/InventoryComponent.h"
+#include "Gossip/Items/InventoryComponent.h"
 
 // Sets default values
 ANonPlayerCharacter::ANonPlayerCharacter()

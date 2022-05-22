@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GossipGameMode.h"
-#include "GossipCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AGossipGameMode::AGossipGameMode()

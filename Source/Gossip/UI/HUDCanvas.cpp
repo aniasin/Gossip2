@@ -3,8 +3,9 @@
 
 #include "HUDCanvas.h"
 #include "Engine/Canvas.h"
-#include "Gossip/PlayerPawn.h"
-#include "Gossip/NonPlayerCharacter.h"
+
+#include "Gossip/Characters/PlayerPawn.h"
+#include "Gossip/Characters/NonPlayerCharacter.h"
 
 
 

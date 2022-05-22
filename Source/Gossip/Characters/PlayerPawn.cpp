@@ -2,15 +2,16 @@
 
 
 #include "PlayerPawn.h"
-#include "GS_GameInstance.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/SceneComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Gossip/NonPlayerCharacter.h"
+#include "NonPlayerCharacter.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+
+#include "Gossip/Core/GS_GameInstance.h"
 
 
 // Sets default values

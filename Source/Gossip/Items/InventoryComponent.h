@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
-#include "Gossip/Items/Ressource.h"
+#include "Ressource.h"
 #include "InventoryComponent.generated.h"
 
 class ARessource;
