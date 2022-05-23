@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Ressource.h"
-#include "RessourceProcessor.generated.h"
+#include "RessourceCollector.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GOSSIP_API ARessourceProcessor : public ARessource
+class GOSSIP_API ARessourceCollector : public ARessource
 {
 	GENERATED_BODY()
 public:
-
 
 protected:
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp) override;
 
 private:
+	
 };

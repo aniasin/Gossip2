@@ -2,46 +2,15 @@
 
 
 #include "RessourceProcessor.h"
-#include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
-#include "Gossip/AI/InstinctsComponent.h" //For testing
 
-// Sets default values
-ARessourceProcessor::ARessourceProcessor()
+
+void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 {
-	PrimaryActorTick.bCanEverTick = false;
-
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
-	RootComponent = BoxComponent;
-}
-
-void ARessourceProcessor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ARessourceProcessor::OnOverlapBegin);
-}
-
-void ARessourceProcessor::ProcessRessource(UInventoryComponent* InventoryComp)
-{
+	Super::CollectRessource(InventoryComp);
+	//TODO actual Processing Action and Delay
 	if (InventoryComp)
 	{
-		FInventoryItem Item;
-		Item.Ressource = RessourceType;
-		Item.bRaw = false;
-		Item.Time = 0;
-		InventoryComp->AddOwnedItem(Item);
+		InventoryComp->AddOwnedItem(RessourceType, false);
 	}
 }
-
-void ARessourceProcessor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(OtherActor->FindComponentByClass(UInventoryComponent::StaticClass()));
-
-	ProcessRessource(InventoryComp); // TODO call from Controller
-
-}
-
-
-

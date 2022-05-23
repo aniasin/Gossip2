@@ -3,7 +3,6 @@
 
 #include "InventoryComponent.h"
 #include "Ressource.h"
-#include "RessourceProcessor.h"
 
 
 UInventoryComponent::UInventoryComponent()
@@ -12,18 +11,18 @@ UInventoryComponent::UInventoryComponent()
 
 }
 
-void UInventoryComponent::AddKnownRessource(ARessource* RessourceActor)
+void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 {
-	KnownRessources.AddUnique(RessourceActor);
+	KnownRessourcesCollector.AddUnique(RessourceActor);
 }
 
 int32 UInventoryComponent::GetKnownRessourcesCount(EAIGoal RessourceType)
 {
 	int32 Index = 0;
 	int32 Count = 0;
-	for (ARessource* Ressource : KnownRessources)
+	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (!Ressource) { KnownRessources.RemoveAt(Index);	break; }
+		if (!Ressource) { KnownRessourcesCollector.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			Count++;
@@ -36,9 +35,9 @@ AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
 {
 	int32 Index = 0;
 	TArray<ARessource*>RessourcesToSort;
-	for (ARessource* Ressource : KnownRessources)
+	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (!Ressource) { KnownRessources.RemoveAt(Index);	break; }
+		if (!Ressource) { KnownRessourcesCollector.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			RessourcesToSort.Add(Ressource);
@@ -54,8 +53,12 @@ AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
 	return SortedRessources[0];
 }
 
-void UInventoryComponent::AddOwnedItem(FInventoryItem Item)
+void UInventoryComponent::AddOwnedItem(EAIGoal RessourceType, bool bRaw)
 {
+	FInventoryItem Item;
+	Item.Ressource = RessourceType;
+	Item.bRaw = bRaw;
+	Item.Time = 0;
 	InventoryItems.Add(Item);
 }
 

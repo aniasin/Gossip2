@@ -34,16 +34,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
-	void AddKnownRessource(ARessource* RessourceActor);
+	void AddKnownRessourceCollector(ARessource* RessourceActor);
 	int32 GetKnownRessourcesCount(EAIGoal RessourceType);
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessource(EAIGoal RessourceType);
 
-	void AddOwnedItem(FInventoryItem Item);
+	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 private:
 	TArray<FInventoryItem> InventoryItems;
-	TArray<ARessource*> KnownRessources;
+	TArray<ARessource*> KnownRessourcesCollector;
 
 };

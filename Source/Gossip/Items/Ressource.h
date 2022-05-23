@@ -8,7 +8,6 @@
 #include "Gossip/AI/GS_AIController.h"
 #include "Ressource.generated.h"
 
-// TODO Refactor, this should be a SubClass of ARessource
 UCLASS()
 class GOSSIP_API ARessource : public AActor
 {
@@ -24,7 +23,7 @@ public:
 	EAIGoal RessourceType;
 
 	UPROPERTY(EditAnywhere)
-	FString CollectAction; //TODO Change to be a UAnimMontage
+	FString AnimMontage; //TODO Change to be a UAnimMontage
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
@@ -36,8 +35,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
+
 private:
-	void CollectRessource(class UInventoryComponent* InventoryComp);
+	
 
 
 };

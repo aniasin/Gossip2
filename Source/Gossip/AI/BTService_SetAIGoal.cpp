@@ -68,7 +68,8 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 			AActor* TargetActor = InventoryComp->SearchNearestKnownRessource((EAIGoal)NewGoal);
 			AIController->SetTargetActor(TargetActor);
 		}
-		AIController->SetAIGoal(NewGoal, NewAction);
+		AIController->SetAIGoal(NewGoal);
+		AIController->SetAIAction(NewAction);
 		AIController->OnAIGoalChanged.Broadcast(bRun);
 	}
 // 	// No new Goal 
