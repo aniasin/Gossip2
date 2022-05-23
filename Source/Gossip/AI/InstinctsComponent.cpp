@@ -32,6 +32,11 @@ void UInstinctsComponent::BeginPlay()
 	GetOwner()->GetWorldTimerManager().SetTimer(InstinctUpdateTimerHandle, this, &UInstinctsComponent::InstinctsUpdate, OneGameHour, true, RandomDelay);
 }
 
+void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
+{
+	BasicInstincts[Instinct] -= 1; // TODO make it variable. IE: Each Instincts will have a coefficient.
+}
+
 void UInstinctsComponent::InstinctsUpdate()
 {
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())

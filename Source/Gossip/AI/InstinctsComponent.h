@@ -21,6 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Instincts")
 	TMap<EAIGoal, float> BasicInstincts;
 
+	void SatisfyInstinct(EAIGoal Instinct);
+
 protected:
 	virtual void BeginPlay() override;
 
