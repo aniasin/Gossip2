@@ -35,9 +35,9 @@ public:
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
 	void AddKnownRessourceCollector(ARessource* RessourceActor);
-	int32 GetKnownRessourcesCount(EAIGoal RessourceType);
+	int32 GetKnownRessourcesCollectorCount(EAIGoal RessourceType);
 	// Warning can return nullptr
-	AActor* SearchNearestKnownRessource(EAIGoal RessourceType);
+	AActor* SearchNearestKnownRessourceCollector(EAIGoal RessourceType);
 
 	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
@@ -45,5 +45,5 @@ public:
 private:
 	TArray<FInventoryItem> InventoryItems;
 	TArray<ARessource*> KnownRessourcesCollector;
-
+	void ClearNullRessources(TArray<ARessource*> Array);
 };

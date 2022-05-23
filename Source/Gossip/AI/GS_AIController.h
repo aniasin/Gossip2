@@ -87,7 +87,6 @@ public:
 	void SetTargetActor(AActor* TargetActor);
 
 private:
-
 	bool bCanSeeHostile;
 	
 };

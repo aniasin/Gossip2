@@ -16,13 +16,13 @@ void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 	KnownRessourcesCollector.AddUnique(RessourceActor);
 }
 
-int32 UInventoryComponent::GetKnownRessourcesCount(EAIGoal RessourceType)
+int32 UInventoryComponent::GetKnownRessourcesCollectorCount(EAIGoal RessourceType)
 {
 	int32 Index = 0;
 	int32 Count = 0;
+	ClearNullRessources(KnownRessourcesCollector);
 	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (!Ressource) { KnownRessourcesCollector.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			Count++;
@@ -31,13 +31,13 @@ int32 UInventoryComponent::GetKnownRessourcesCount(EAIGoal RessourceType)
 	return Count;
 }
 
-AActor* UInventoryComponent::SearchNearestKnownRessource(EAIGoal RessourceType)
+AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal RessourceType)
 {
 	int32 Index = 0;
+	ClearNullRessources(KnownRessourcesCollector);
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (!Ressource) { KnownRessourcesCollector.RemoveAt(Index);	break; }
 		if (Ressource->RessourceType == RessourceType)
 		{
 			RessourcesToSort.Add(Ressource);
@@ -71,6 +71,16 @@ int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
 		if (Item.Ressource == RessourceType && Item.bRaw == bRaw) Count++;
 	}
 	return Count;
+}
+
+void UInventoryComponent::ClearNullRessources(TArray<ARessource*> Array)
+{
+	TArray<ARessource*>ArrayCleaned;
+	for (ARessource* Ressource : Array)
+	{
+		if (Ressource) { ArrayCleaned.AddUnique(Ressource); }
+	}
+	Array = ArrayCleaned;
 }
 
 TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessource*> RessourceToSort)

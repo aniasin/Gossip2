@@ -54,7 +54,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 			int32 OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
 			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::Process; break; }
 
-			int32 KnownRessourceCount = InventoryComp->GetKnownRessourcesCount((EAIGoal)NewGoal);
+			int32 KnownRessourceCount = InventoryComp->GetKnownRessourcesCollectorCount((EAIGoal)NewGoal);
 			if (KnownRessourceCount > 0) { NewAction = (uint8)EAIAction::Travel;  break; }
 
 			if (KnownRessourceCount <= 0) { NewAction = (uint8)EAIAction::Search; break; }
@@ -65,7 +65,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	{
 		if (NewAction == (uint8)EAIAction::Travel)
 		{
-			AActor* TargetActor = InventoryComp->SearchNearestKnownRessource((EAIGoal)NewGoal);
+			AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
 			AIController->SetTargetActor(TargetActor);
 		}
 		AIController->SetAIGoal(NewGoal);
