@@ -34,8 +34,13 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	{
 		EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 		InstinctsComp->SatisfyInstinct(Goal);
+		InventoryComp->RemoveOwnedItem(Goal, false);
+		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
 	}
+
+	if (ActionOverride != EAIAction::None) { Action = ActionOverride; }
+
 	if (Action == EAIAction::Process || Action == EAIAction::Search)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Perform Action"))

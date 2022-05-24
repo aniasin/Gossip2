@@ -8,9 +8,9 @@
 void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	Super::CollectRessource(InventoryComp);
-	//TODO actual Processing Action and Delay
 	if (InventoryComp)
 	{
+		InventoryComp->RemoveOwnedItem(RessourceType, true);
 		InventoryComp->AddOwnedItem(RessourceType, false);
 	}
 }

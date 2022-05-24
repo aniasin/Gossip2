@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "GS_AIController.h"
 #include "BTTaskNode_PerformAction.generated.h"
 
 /**
@@ -20,4 +21,7 @@ protected:
 		FBlackboardKeySelector GoalKey;
 	UPROPERTY(VisibleAnywhere)
 		FBlackboardKeySelector ActionKey;
+
+	UPROPERTY(EditAnywhere)
+		EAIAction ActionOverride;
 };

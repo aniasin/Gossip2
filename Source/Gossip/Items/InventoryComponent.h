@@ -40,6 +40,7 @@ public:
 	AActor* SearchNearestKnownRessourceCollector(EAIGoal RessourceType);
 
 	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
+	void RemoveOwnedItem(EAIGoal RessourceType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 private:

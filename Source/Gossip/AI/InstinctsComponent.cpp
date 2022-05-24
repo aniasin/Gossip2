@@ -41,7 +41,7 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
 
 void UInstinctsComponent::InstinctsUpdate()
 {
-	for (auto Goal : BasicInstincts)
+	for (auto& Goal : BasicInstincts)
 	{
 		Goal.Value += 0.1; // TODO make it variable. IE: Each Instincts will have a coefficient.
 	}
