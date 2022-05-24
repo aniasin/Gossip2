@@ -34,14 +34,16 @@ void UInstinctsComponent::BeginPlay()
 
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
 {
-	BasicInstincts[Instinct] -= 1; // TODO make it variable. IE: Each Instincts will have a coefficient.
+	BasicInstincts[Instinct] -= 1; 
+	// TODO make it variable. IE: Each Instincts will have a coefficient.
+	// TODO Play AnimMontage and wait for end.
 }
 
 void UInstinctsComponent::InstinctsUpdate()
 {
-	for (EAIGoal Goal : TEnumRange<EAIGoal>())
+	for (auto Goal : BasicInstincts)
 	{
-		BasicInstincts[Goal] += 0.1; // TODO make it variable. IE: Each Instincts will have a coefficient.
+		Goal.Value += 0.1; // TODO make it variable. IE: Each Instincts will have a coefficient.
 	}
 	SortBasicInstinctsByPriority();
 }

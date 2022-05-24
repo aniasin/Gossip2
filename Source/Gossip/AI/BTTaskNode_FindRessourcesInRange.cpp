@@ -26,29 +26,22 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	FVector Direction = AIController->GetPawn()->GetActorForwardVector();
 	FVector End = Start + (Distance * Direction);
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(Distance);
-	DrawDebugSphere(GetWorld(), Start, Sphere.GetSphereRadius(), 50, FColor::Purple, true);
 
-	if (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere))
+	bool bHit = (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
+	if (!bHit) return EBTNodeResult::Failed;
+
+	for (FHitResult Hit : Hits)
 	{
-		for (FHitResult Hit : Hits)
+		if (Action == EAIAction::Search && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
-			if (Action == EAIAction::Search)
-			{
-				if (Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
-				{
-					BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
-					return EBTNodeResult::Succeeded;
-				}
-			}
-			if (Action == EAIAction::Process)
-			{
-				if (Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
-				{
-					BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
-					return EBTNodeResult::Succeeded;
-				}
-			}
+			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
+			return EBTNodeResult::Succeeded;
 		}
-	}
+		if (Action == EAIAction::Process && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
+		{
+			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
+			return EBTNodeResult::Succeeded;
+		}
+	}	
 	return EBTNodeResult::Failed;
 }

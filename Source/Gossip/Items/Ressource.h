@@ -16,26 +16,20 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UBoxComponent* BoxComponent;
-
 	UPROPERTY(EditAnywhere)
 	EAIGoal RessourceType;
 
 	UPROPERTY(EditAnywhere)
 	FString AnimMontage; //TODO Change to be a UAnimMontage
 
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
 
 	float CurrentDistanceToQuerier;
 
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
+	
 
 private:
 	
