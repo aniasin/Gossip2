@@ -8,6 +8,16 @@
 #include "GS_AIController.h"
 #include "InstinctsComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FInstinctValues
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	float CurrentValue;
+	UPROPERTY(EditAnywhere)
+	float GrowCoeffient;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UInstinctsComponent : public UActorComponent
@@ -19,7 +29,7 @@ public:
 
 	// Base Value for each
 	UPROPERTY(EditAnywhere, Category = "Instincts")
-	TMap<EAIGoal, float> BasicInstincts;
+	TMap<EAIGoal, FInstinctValues> BasicInstincts;
 
 	void SatisfyInstinct(EAIGoal Instinct);
 

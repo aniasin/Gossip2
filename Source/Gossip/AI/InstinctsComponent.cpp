@@ -11,18 +11,21 @@
 UInstinctsComponent::UInstinctsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-		BasicInstincts.Add(Goal, 0);
+		FInstinctValues Values;
+		Values.CurrentValue = 0;
+		Values.GrowCoeffient = 1;
+		EAIGoal Instinct = Goal;
+		BasicInstincts.Add(Goal, Values);
 	}
+
 }
 
 // Called when the game starts
 void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;
 	
@@ -34,24 +37,24 @@ void UInstinctsComponent::BeginPlay()
 
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
 {
-	BasicInstincts[Instinct] -= 1; 
-	// TODO make it variable. IE: Each Instincts will have a coefficient.
+	BasicInstincts[Instinct].CurrentValue -= 1;
+
 	// TODO Play AnimMontage and wait for end.
 }
 
 void UInstinctsComponent::InstinctsUpdate()
 {
-	for (auto& Goal : BasicInstincts)
+	for (auto& Instinct : BasicInstincts)
 	{
-		Goal.Value += 0.1; // TODO make it variable. IE: Each Instincts will have a coefficient.
+		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient;
 	}
 	SortBasicInstinctsByPriority();
 }
 
 void UInstinctsComponent::SortBasicInstinctsByPriority()
 {
-	BasicInstincts.ValueSort([](const float& A, const float& B) {
-		return A >= B;
+	BasicInstincts.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
+		return A.CurrentValue >= B.CurrentValue;
 		});
 }
 

@@ -18,6 +18,7 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	if (!AIController) return EBTNodeResult::Failed;
 
 	EAIAction Action = (EAIAction)BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName);
+	EAIGoal Goal = (EAIGoal)BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName);
 
 	// SphereTrace for Resources
 	TArray<FHitResult> Hits;
@@ -30,15 +31,22 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	bool bHit = (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
 	if (!bHit) return EBTNodeResult::Failed;
 
+	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
 		if (Action == EAIAction::Search && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
+			Ressource = Cast<ARessource>(Hit.GetActor());
+			if (!Ressource) break;
+			if (Ressource->RessourceType != Goal) break;
 			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}
 		if (Action == EAIAction::Process && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
+			Ressource = Cast<ARessource>(Hit.GetActor());
+			if (!Ressource) break;
+			if (Ressource->RessourceType != Goal) break;
 			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}

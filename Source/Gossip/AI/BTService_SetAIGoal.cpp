@@ -44,7 +44,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	// Check something needed now & Take action
 	for (auto& Goal : InstinctsComp->BasicInstincts)
 	{
-		float InstinctValue = Goal.Value;
+		float InstinctValue = Goal.Value.CurrentValue;
 		NewGoal = CheckGoal(InstinctValue, Goal.Key);
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
