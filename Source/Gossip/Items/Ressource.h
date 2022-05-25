@@ -18,6 +18,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	EAIGoal RessourceType;
+	UPROPERTY(BlueprintReadOnly)
+	bool bRaw;
 
 	UPROPERTY(EditAnywhere)
 	FString AnimMontage; //TODO Change to be a UAnimMontage

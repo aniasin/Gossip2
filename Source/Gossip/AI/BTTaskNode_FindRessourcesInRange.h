@@ -20,8 +20,8 @@ protected:
 		FBlackboardKeySelector GoalKey;
 	UPROPERTY(VisibleAnywhere)
 		FBlackboardKeySelector ActionKey;
-	UPROPERTY(VisibleAnywhere)
-	float Distance = 2000;
+	UPROPERTY(EditAnywhere)
+	float DistanceToTrace = 2000;
 
 	UPROPERTY(VisibleAnywhere)
 		FBlackboardKeySelector BBValueToSetKey;

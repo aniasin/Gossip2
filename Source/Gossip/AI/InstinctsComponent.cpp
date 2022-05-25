@@ -11,11 +11,33 @@
 UInstinctsComponent::UInstinctsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	float CurrentValue = 0;
+	float GrowCoefficient = 0;
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
+		switch (Goal)
+		{
+		case EAIGoal::None:
+			break;
+		case EAIGoal::Food:
+			CurrentValue = 0.8;
+			GrowCoefficient = 1;
+			break;
+		case EAIGoal::Sleep:
+			CurrentValue = -10;
+			GrowCoefficient = 1;
+			break;
+		case EAIGoal::Sex:
+			CurrentValue = -10;
+			GrowCoefficient = 1;
+			break;
+		default:
+			break;
+		}
 		FInstinctValues Values;
-		Values.CurrentValue = 0;
-		Values.GrowCoeffient = 1;
+		Values.CurrentValue = CurrentValue;
+		Values.GrowCoeffient = GrowCoefficient;
 		EAIGoal Instinct = Goal;
 		BasicInstincts.Add(Goal, Values);
 	}

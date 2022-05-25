@@ -39,6 +39,11 @@ public:
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceCollector(EAIGoal RessourceType);
 
+	void AddKnownRessourceProcessor(ARessource* RessourceActor);
+	int32 GetKnownRessourcesProcessorCount(EAIGoal RessourceType);
+	// Warning can return nullptr
+	AActor* SearchNearestKnownRessourceProcessor(EAIGoal RessourceType);
+
 	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
 	void RemoveOwnedItem(EAIGoal RessourceType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
@@ -46,5 +51,6 @@ public:
 private:
 	TArray<FInventoryItem> InventoryItems;
 	TArray<ARessource*> KnownRessourcesCollector;
+	TArray<ARessource*> KnownRessourcesProcessor;
 	void ClearNullRessources(TArray<ARessource*> Array);
 };

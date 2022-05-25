@@ -32,11 +32,12 @@ UENUM(BlueprintType)
 enum class EAIAction : uint8
 {
 	None				UMETA(DisplayName = "None"),
-	Search				UMETA(DisplayName = "Search"),
+	SearchCollector		UMETA(DisplayName = "SearchCollector"),
 	Stock				UMETA(DisplayName = "Stock"),
 	Satisfy				UMETA(DisplayName = "Satisfy"),
-	Process				UMETA(DisplayName = "Process"),
-	Travel				UMETA(DisplayName = "Travel"),
+	SearchProcessor		UMETA(DisplayName = "SearchProcessor"),
+	TravelCollector		UMETA(DisplayName = "TravelCollector"),
+	TravelProcessor		UMETA(DisplayName = "TravelProcessor"),
 };
 
 UCLASS()

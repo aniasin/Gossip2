@@ -29,10 +29,10 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(InventoryComponent);
 	if (!InventoryComp) return EBTNodeResult::Failed;
 
+	EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 	EAIAction Action = (EAIAction)(BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName));
 	if (Action == EAIAction::Satisfy)
-	{
-		EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
+	{		
 		InstinctsComp->SatisfyInstinct(Goal);
 		InventoryComp->RemoveOwnedItem(Goal, false);
 		BlackboardComp->ClearValue("TargetActor");
@@ -41,10 +41,9 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 
 	if (ActionOverride != EAIAction::None) { Action = ActionOverride; }
 
-	if (Action == EAIAction::Process || Action == EAIAction::Search)
+	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Perform Action"))
-		EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!Ressource) return EBTNodeResult::Failed;
 		Ressource->CollectRessource(InventoryComp);

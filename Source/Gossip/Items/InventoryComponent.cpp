@@ -31,9 +31,54 @@ int32 UInventoryComponent::GetKnownRessourcesCollectorCount(EAIGoal RessourceTyp
 	return Count;
 }
 
+int32 UInventoryComponent::GetKnownRessourcesProcessorCount(EAIGoal RessourceType)
+{
+	int32 Index = 0;
+	int32 Count = 0;
+	ClearNullRessources(KnownRessourcesProcessor);
+	for (ARessource* Ressource : KnownRessourcesProcessor)
+	{
+		if (Ressource->RessourceType == RessourceType)
+		{
+			Count++;
+		}
+	}
+	return Count;
+}
+
+void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
+{
+	KnownRessourcesProcessor.AddUnique(RessourceActor);
+}
+
+AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal RessourceType)
+{
+	int32 Index = 0;
+	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
+	ClearNullRessources(KnownRessourcesProcessor);
+	TArray<ARessource*>RessourcesToSort;
+	for (ARessource* Ressource : KnownRessourcesProcessor)
+	{
+		if (Ressource->RessourceType == RessourceType)
+		{
+			RessourcesToSort.Add(Ressource);
+		}
+	}
+	for (ARessource* Ressource : RessourcesToSort)
+	{
+		float Distance = FVector::Distance(Ressource->GetActorLocation(), GetOwner()->GetActorLocation());
+		Ressource->CurrentDistanceToQuerier = Distance;
+	}
+	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
+
+	if (RessourcesToSort.Num() <= 0) return nullptr;
+	return SortedRessources[0];
+}
+
 AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal RessourceType)
 {
 	int32 Index = 0;
+	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
 	ClearNullRessources(KnownRessourcesCollector);
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesCollector)
@@ -50,6 +95,7 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal Ressou
 	}
 	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
 	
+	if (RessourcesToSort.Num() <= 0) return nullptr;
 	return SortedRessources[0];
 }
 
@@ -92,7 +138,7 @@ void UInventoryComponent::ClearNullRessources(TArray<ARessource*> Array)
 	TArray<ARessource*>ArrayCleaned;
 	for (ARessource* Ressource : Array)
 	{
-		if (Ressource) { ArrayCleaned.AddUnique(Ressource); }
+		if (Ressource && IsValid(Ressource)) { ArrayCleaned.AddUnique(Ressource); }
 	}
 	Array = ArrayCleaned;
 }

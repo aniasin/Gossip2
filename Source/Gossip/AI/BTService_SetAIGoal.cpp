@@ -50,33 +50,37 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		{
 			int32 OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, false);
 			if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy; break; }
-			
+
 			int32 OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
-			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::Process; break; }
+			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::TravelProcessor;  break; }
 
-			int32 KnownRessourceCount = InventoryComp->GetKnownRessourcesCollectorCount((EAIGoal)NewGoal);
-			if (KnownRessourceCount > 0) { NewAction = (uint8)EAIAction::Travel;  break; }
-
-			if (KnownRessourceCount <= 0) { NewAction = (uint8)EAIAction::Search; break; }
+			NewAction = (uint8)EAIAction::TravelCollector;  break;
 		}
 	}
 	// New Goal Found or new action
 	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
 	{
-		if (NewAction == (uint8)EAIAction::Travel)
+		if (NewAction == (uint8)EAIAction::TravelCollector)
 		{
 			AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
-			AIController->SetTargetActor(TargetActor);
+			if (!TargetActor || !IsValid(TargetActor)) NewAction = (uint8)EAIAction::SearchCollector;
+			if(IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+		}
+		if (NewAction == (uint8)EAIAction::TravelProcessor)
+		{
+			AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
+			if (!TargetActor || !IsValid(TargetActor)) NewAction = (uint8)EAIAction::SearchProcessor;
+			if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
 		}
 		AIController->SetAIGoal(NewGoal);
 		AIController->SetAIAction(NewAction);
 		AIController->OnAIGoalChanged.Broadcast(bRun);
 	}
-// 	// No new Goal 
-// 	if (NewGoal == PreviousGoal)
-// 	{
-// 		// TODO Check for Stock needed
-// 	}
+	// 	// No new Goal 
+	// 	if (NewGoal == PreviousGoal)
+	// 	{
+	// 		// TODO Check for Stock needed
+	// 	}
 
 }
 
