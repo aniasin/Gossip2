@@ -72,16 +72,18 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 			if (!TargetActor || !IsValid(TargetActor)) NewAction = (uint8)EAIAction::SearchProcessor;
 			if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
 		}
+		if (NewGoal == ((uint8)EAIGoal::None))
+		{
+			TArray<EAIGoal>InstinctsArray;
+			InstinctsComp->BasicInstincts.GenerateKeyArray(InstinctsArray);
+			NewGoal = (uint8)InstinctsArray[0];
+			NewAction = (uint8)EAIAction::Stock;
+		}
+
 		AIController->SetAIGoal(NewGoal);
 		AIController->SetAIAction(NewAction);
 		AIController->OnAIGoalChanged.Broadcast(bRun);
 	}
-	// 	// No new Goal 
-	// 	if (NewGoal == PreviousGoal)
-	// 	{
-	// 		// TODO Check for Stock needed
-	// 	}
-
 }
 
 uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)

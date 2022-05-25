@@ -35,7 +35,8 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	for (FHitResult Hit : Hits)
 	{
 
-		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
+		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
+			|| Action == EAIAction::Stock && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
 			if (!Ressource) break;

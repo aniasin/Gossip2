@@ -41,7 +41,8 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 
 	if (ActionOverride != EAIAction::None) { Action = ActionOverride; }
 
-	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor)
+	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor
+		|| Action == EAIAction::Stock)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Perform Action"))
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));

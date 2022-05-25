@@ -15,7 +15,7 @@ public:
 	AGossipGameMode();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float GameHourDurationSeconds = 5; // for test purpose, should be 300 (aka 5 RealMinustes/1 GameHour)
+	float GameHourDurationSeconds = 60; // for test purpose, should be 300 (aka 5 RealMinustes/1 GameHour)
 };
 
 

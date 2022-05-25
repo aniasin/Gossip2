@@ -18,19 +18,17 @@ UInstinctsComponent::UInstinctsComponent()
 	{
 		switch (Goal)
 		{
-		case EAIGoal::None:
-			break;
 		case EAIGoal::Food:
-			CurrentValue = 0.8;
+			CurrentValue = 0.5;
 			GrowCoefficient = 1;
 			break;
 		case EAIGoal::Sleep:
 			CurrentValue = -10;
-			GrowCoefficient = 1;
+			GrowCoefficient = 0;
 			break;
 		case EAIGoal::Sex:
 			CurrentValue = -10;
-			GrowCoefficient = 1;
+			GrowCoefficient = 0;
 			break;
 		default:
 			break;
@@ -60,6 +58,7 @@ void UInstinctsComponent::BeginPlay()
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
 {
 	BasicInstincts[Instinct].CurrentValue -= 1;
+	BasicInstincts[Instinct].GrowCoeffient += 0.1;
 
 	// TODO Play AnimMontage and wait for end.
 }
@@ -76,10 +75,7 @@ void UInstinctsComponent::InstinctsUpdate()
 void UInstinctsComponent::SortBasicInstinctsByPriority()
 {
 	BasicInstincts.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
-		return A.CurrentValue >= B.CurrentValue;
+		return A.CurrentValue * A.GrowCoeffient >= B.CurrentValue * B.GrowCoeffient;
 		});
 }
-
-	
-
 
