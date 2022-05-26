@@ -16,51 +16,34 @@ UInstinctsComponent::UInstinctsComponent()
 	float CurrentValue = 0;
 	float GrowCoefficient = 0;
 
-	int32 Index = 1;
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("%i"), Index)
-			if (Index % 3 == 2)
-			{
-				// Conservation
-				Instinct = EAIInstinct::Conservation;
-				CurrentValue = -10;
-				GrowCoefficient = 0;
-
-				FInstinctValues Values;
-				Values.Instinct = Instinct;
-				Values.CurrentValue = CurrentValue;
-				Values.GrowCoeffient = GrowCoefficient;
-				Goals.Add(Goal, Values);
-			}
-		else if (Index % 3 == 0)
-		{
-			// Reproduction
-			Instinct = EAIInstinct::Reproduction;
-			CurrentValue = -5;
-			GrowCoefficient = 0;
-
-			FInstinctValues Values;
-			Values.Instinct = Instinct;
-			Values.CurrentValue = CurrentValue;
-			Values.GrowCoeffient = GrowCoefficient;
-			Goals.Add(Goal, Values);
-		}
-		else if (Index % 3 == 1)
+		if ((uint8)Goal % 3 == 1)
 		{
 			// Assimilation
 			Instinct = EAIInstinct::Assimilation;
 			CurrentValue = 0.8;
 			GrowCoefficient = 1;
-
-			FInstinctValues Values;
-			Values.Instinct = Instinct;
-			Values.CurrentValue = CurrentValue;
-			Values.GrowCoeffient = GrowCoefficient;
-			Goals.Add(Goal, Values);
 		}
-		Index++;
+		else if ((uint8)Goal % 3 == 0)
+		{
+			// Reproduction
+			Instinct = EAIInstinct::Reproduction;
+			CurrentValue = -5;
+			GrowCoefficient = 0;
+		}
+		else if ((uint8)Goal % 3 == 2)
+		{
+			// Conservation
+			Instinct = EAIInstinct::Conservation;
+			CurrentValue = -10;
+			GrowCoefficient = 0;
+		}
+		FInstinctValues Values;
+		Values.Instinct = Instinct;
+		Values.CurrentValue = CurrentValue;
+		Values.GrowCoeffient = GrowCoefficient;
+		Goals.Add(Goal, Values);
 	}
 }
 
