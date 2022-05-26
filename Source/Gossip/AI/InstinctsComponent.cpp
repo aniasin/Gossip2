@@ -19,7 +19,7 @@ UInstinctsComponent::UInstinctsComponent()
 		switch (Goal)
 		{
 		case EAIGoal::Food:
-			CurrentValue = 0.5;
+			CurrentValue = 0.8;
 			GrowCoefficient = 1;
 			break;
 		case EAIGoal::Sleep:
@@ -29,8 +29,6 @@ UInstinctsComponent::UInstinctsComponent()
 		case EAIGoal::Sex:
 			CurrentValue = -10;
 			GrowCoefficient = 0;
-			break;
-		default:
 			break;
 		}
 		FInstinctValues Values;

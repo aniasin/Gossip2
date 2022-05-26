@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Gossip/Gossip.h"
 #include "GameFramework/Actor.h"
 
-#include "Gossip/AI/GS_AIController.h"
 #include "Ressource.generated.h"
 
 UCLASS()

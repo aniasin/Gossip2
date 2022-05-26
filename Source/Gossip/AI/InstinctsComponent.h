@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Gossip/Gossip.h"
 #include "Components/ActorComponent.h"
 
 #include "GS_AIController.h"

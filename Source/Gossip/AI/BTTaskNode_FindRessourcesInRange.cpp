@@ -2,6 +2,7 @@
 
 
 #include "BTTaskNode_FindRessourcesInRange.h"
+#include "Gossip/Gossip.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 
@@ -27,8 +28,9 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	FVector Direction = AIController->GetPawn()->GetActorForwardVector();
 	FVector End = Start + (DistanceToTrace * Direction);
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(DistanceToTrace);
+	DrawDebugSphere(World, Start, DistanceToTrace, 8, FColor::Green, false, 10);
 
-	bool bHit = (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
+	bool bHit = (World->SweepMultiByChannel(Hits, Start, End, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
 	if (!bHit) return EBTNodeResult::Failed;
 
 	ARessource* Ressource;
@@ -39,16 +41,16 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			|| Action == EAIAction::Stock && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (!Ressource) break;
-			if (Ressource->RessourceType != Goal) break;
+			if (!Ressource || Ressource->RessourceType != Goal) break;
+
 			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (!Ressource) break;
-			if (Ressource->RessourceType != Goal) break;
+			if (!Ressource || Ressource->RessourceType != Goal) break;
+
 			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}

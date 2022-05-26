@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
-#include "GS_AIController.h"
+#include "Gossip/Gossip.h"
 #include "BTService_SetAIGoal.generated.h"
 
 /**
@@ -25,4 +25,7 @@ private:
 	bool bRun;
 
 	uint8 CheckGoal(float InstinctValue, EAIGoal Goal);
+	uint8 CheckAction(class UInventoryComponent* Inventory, uint8 NewGoal);
+	uint8 CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController);
+	uint8 Stock(class UInstinctsComponent* InstinctsComp);
 };

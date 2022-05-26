@@ -4,6 +4,7 @@
 #include "BTService_SetAIGoal.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "InstinctsComponent.h"
+#include "GS_AIController.h"
 
 #include "Gossip/Items/InventoryComponent.h"
 
@@ -48,36 +49,19 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		NewGoal = CheckGoal(InstinctValue, Goal.Key);
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
-			int32 OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, false);
-			if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy; break; }
-
-			int32 OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
-			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::TravelProcessor;  break; }
-
-			NewAction = (uint8)EAIAction::TravelCollector;  break;
+			NewAction = CheckAction(InventoryComp, NewGoal);
+			break;
 		}
 	}
 	// New Goal Found or new action
 	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
 	{
-		if (NewAction == (uint8)EAIAction::TravelCollector)
-		{
-			AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
-			if (!TargetActor || !IsValid(TargetActor)) NewAction = (uint8)EAIAction::SearchCollector;
-			if(IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
-		}
-		if (NewAction == (uint8)EAIAction::TravelProcessor)
-		{
-			AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
-			if (!TargetActor || !IsValid(TargetActor)) NewAction = (uint8)EAIAction::SearchProcessor;
-			if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
-		}
+		NewAction = CheckTravelRoute(InventoryComp, NewAction, NewGoal, AIController);		
+
 		if (NewGoal == ((uint8)EAIGoal::None))
 		{
-			TArray<EAIGoal>InstinctsArray;
-			InstinctsComp->BasicInstincts.GenerateKeyArray(InstinctsArray);
-			NewGoal = (uint8)InstinctsArray[0];
 			NewAction = (uint8)EAIAction::Stock;
+			NewGoal = Stock(InstinctsComp);			
 		}
 
 		AIController->SetAIGoal(NewGoal);
@@ -93,5 +77,40 @@ uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 		return (uint8)Goal;
 	}
 	return (uint8)EAIGoal::None;
+}
+
+uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, uint8 NewGoal)
+{
+	int32 OwnedRessourceProcessed = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, false);
+	if (OwnedRessourceProcessed > 0) { return (uint8)EAIAction::Satisfy; }
+
+	int32 OwnedRessourceRaw = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+	if (OwnedRessourceRaw > 0) { return (uint8)EAIAction::TravelProcessor; }
+
+	return (uint8)EAIAction::TravelCollector;
+}
+
+uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
+{
+	if (NewAction == (uint8)EAIAction::TravelCollector)
+	{
+		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
+		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchCollector;
+		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+	}
+	if (NewAction == (uint8)EAIAction::TravelProcessor)
+	{
+		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
+		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchProcessor;
+		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+	}
+	return NewAction;
+}
+
+uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp)
+{
+	TArray<EAIGoal>InstinctsArray;
+	InstinctsComp->BasicInstincts.GenerateKeyArray(InstinctsArray);
+	return (uint8)InstinctsArray[0];
 }
 

@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Gossip/Gossip.h"
 #include "Components/ActorComponent.h"
 
-#include "Gossip/AI/GS_AIController.h"
 #include "InventoryComponent.generated.h"
 
 class ARessource;
