@@ -6,7 +6,6 @@
 #include "Gossip/Gossip.h"
 #include "Components/ActorComponent.h"
 
-#include "GS_AIController.h"
 #include "InstinctsComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -30,7 +29,7 @@ public:
 
 	// Base Value for each
 	UPROPERTY(EditAnywhere, Category = "Instincts")
-	TMap<EAIGoal, FInstinctValues> BasicInstincts;
+	TMap<EAIGoal, FInstinctValues> Goals;
 
 	void SatisfyInstinct(EAIGoal Instinct);
 

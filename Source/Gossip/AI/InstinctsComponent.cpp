@@ -35,7 +35,7 @@ UInstinctsComponent::UInstinctsComponent()
 		Values.CurrentValue = CurrentValue;
 		Values.GrowCoeffient = GrowCoefficient;
 		EAIGoal Instinct = Goal;
-		BasicInstincts.Add(Goal, Values);
+		Goals.Add(Goal, Values);
 	}
 
 }
@@ -55,15 +55,15 @@ void UInstinctsComponent::BeginPlay()
 
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
 {
-	BasicInstincts[Instinct].CurrentValue -= 1;
-	BasicInstincts[Instinct].GrowCoeffient += 0.1;
+	Goals[Instinct].CurrentValue -= 1;
+	Goals[Instinct].GrowCoeffient += 0.1;
 
 	// TODO Play AnimMontage and wait for end.
 }
 
 void UInstinctsComponent::InstinctsUpdate()
 {
-	for (auto& Instinct : BasicInstincts)
+	for (auto& Instinct : Goals)
 	{
 		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient;
 	}
@@ -72,7 +72,7 @@ void UInstinctsComponent::InstinctsUpdate()
 
 void UInstinctsComponent::SortBasicInstinctsByPriority()
 {
-	BasicInstincts.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
+	Goals.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
 		return A.CurrentValue * A.GrowCoeffient >= B.CurrentValue * B.GrowCoeffient;
 		});
 }

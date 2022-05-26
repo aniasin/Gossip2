@@ -43,10 +43,11 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	uint8 NewAction = (uint8)EAIAction::None;
 
 	// Check something needed now & Take action
-	for (auto& Goal : InstinctsComp->BasicInstincts)
+	for (auto& Goal : InstinctsComp->Goals)
 	{
 		float InstinctValue = Goal.Value.CurrentValue;
 		NewGoal = CheckGoal(InstinctValue, Goal.Key);
+
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
 			NewAction = CheckAction(InventoryComp, NewGoal);
@@ -110,7 +111,7 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* Inventor
 uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp)
 {
 	TArray<EAIGoal>InstinctsArray;
-	InstinctsComp->BasicInstincts.GenerateKeyArray(InstinctsArray);
+	InstinctsComp->Goals.GenerateKeyArray(InstinctsArray);
 	return (uint8)InstinctsArray[0];
 }
 
