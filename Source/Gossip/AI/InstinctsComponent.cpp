@@ -67,8 +67,14 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 {
 	for (auto& GoalItr : Goals)
 	{
-		if (GoalItr.Value.Instinct != Goals[Goal].Instinct) break;
-		GoalItr.Value.GrowCoeffient += 0.1;
+		if (GoalItr.Value.Instinct == Goals[Goal].Instinct)
+		{
+			GoalItr.Value.GrowCoeffient += 0.1;
+		}
+		else
+		{
+			GoalItr.Value.GrowCoeffient -= 0.1;
+		}
 	}	
 	Goals[Goal].CurrentValue -= 1;
 
@@ -81,10 +87,10 @@ void UInstinctsComponent::InstinctsUpdate()
 	{
 		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient;
 	}
-	SortBasicInstinctsByPriority();
+	SortGoalsByPriority();
 }
 
-void UInstinctsComponent::SortBasicInstinctsByPriority()
+void UInstinctsComponent::SortGoalsByPriority()
 {
 	Goals.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
 		return A.CurrentValue * A.GrowCoeffient >= B.CurrentValue * B.GrowCoeffient;

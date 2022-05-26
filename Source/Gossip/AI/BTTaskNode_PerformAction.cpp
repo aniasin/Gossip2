@@ -32,7 +32,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 	EAIAction Action = (EAIAction)(BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName));
 	if (Action == EAIAction::Satisfy)
-	{		
+	{	
 		InstinctsComp->SatisfyInstinct(Goal);
 		InventoryComp->RemoveOwnedItem(Goal, false);
 		BlackboardComp->ClearValue("TargetActor");
@@ -47,9 +47,10 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		UE_LOG(LogTemp, Warning, TEXT("Perform Action"))
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!Ressource) return EBTNodeResult::Failed;
+		BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime);
 		Ressource->CollectRessource(InventoryComp);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
 	}
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::Failed;
 }

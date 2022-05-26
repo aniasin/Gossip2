@@ -35,12 +35,12 @@ public:
 
 	void SatisfyInstinct(EAIGoal Goal);
 
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	void InstinctsUpdate();
-
-	void SortBasicInstinctsByPriority();
+	void SortGoalsByPriority();
 		
 };

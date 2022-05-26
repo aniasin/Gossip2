@@ -20,6 +20,8 @@ public:
 	EAIGoal RessourceType;
 	UPROPERTY(BlueprintReadOnly)
 	bool bRaw;
+	UPROPERTY(EditAnywhere)
+	float WaitTime = 5;
 
 	UPROPERTY(EditAnywhere)
 	FString AnimMontage; //TODO Change to be a UAnimMontage

@@ -25,7 +25,7 @@ private:
 	bool bRun;
 
 	uint8 CheckGoal(float InstinctValue, EAIGoal Goal);
-	uint8 CheckAction(class UInventoryComponent* Inventory, uint8 NewGoal);
+	uint8 CheckAction(class UInventoryComponent* Inventory, class UInstinctsComponent* InstinctComp, uint8 NewGoal);
 	uint8 CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController);
 	uint8 Stock(class UInstinctsComponent* InstinctsComp);
 };
