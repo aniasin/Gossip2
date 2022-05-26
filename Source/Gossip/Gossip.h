@@ -11,14 +11,17 @@ enum class EAIGoal : uint8
 	Food				UMETA(DisplayName = "Food"),
 	Sleep				UMETA(DisplayName = "Sleep"),
 	Sex					UMETA(DisplayName = "Sex"),
+	Knowledge			UMETA(DisplayName = "Knowledge"),
+	Shelter				UMETA(DisplayName = "Shelter"),
+	Children			UMETA(DisplayName = "Children"),
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Sex);
+ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Children);
 
 UENUM(BlueprintType)
 enum class EAIInstinct : uint8
 {
-	Assimilation				UMETA(DisplayName = "None"),
-	Conservation				UMETA(DisplayName = "Food"),
-	Reproduction				UMETA(DisplayName = "Sleep"),
+	None				UMETA(DisplayName = "None"),
+	Assimilation		UMETA(DisplayName = "Assimilation"),
+	Conservation		UMETA(DisplayName = "Conservation"),
+	Reproduction		UMETA(DisplayName = "Reproduction"),
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EAIInstinct, EAIInstinct::Assimilation, EAIInstinct::Reproduction);

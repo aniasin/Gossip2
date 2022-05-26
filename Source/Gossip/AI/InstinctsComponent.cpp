@@ -12,38 +12,65 @@ UInstinctsComponent::UInstinctsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+	EAIInstinct Instinct = EAIInstinct::None;
 	float CurrentValue = 0;
 	float GrowCoefficient = 0;
+
+	int32 Index = 1;
 	for (EAIGoal Goal : TEnumRange<EAIGoal>())
 	{
-		switch (Goal)
+
+		UE_LOG(LogTemp, Warning, TEXT("%i"), Index)
+			if (Index % 3 == 2)
+			{
+				// Conservation
+				Instinct = EAIInstinct::Conservation;
+				CurrentValue = -10;
+				GrowCoefficient = 0;
+
+				FInstinctValues Values;
+				Values.Instinct = Instinct;
+				Values.CurrentValue = CurrentValue;
+				Values.GrowCoeffient = GrowCoefficient;
+				Goals.Add(Goal, Values);
+			}
+		else if (Index % 3 == 0)
 		{
-		case EAIGoal::Food:
+			// Reproduction
+			Instinct = EAIInstinct::Reproduction;
+			CurrentValue = -5;
+			GrowCoefficient = 0;
+
+			FInstinctValues Values;
+			Values.Instinct = Instinct;
+			Values.CurrentValue = CurrentValue;
+			Values.GrowCoeffient = GrowCoefficient;
+			Goals.Add(Goal, Values);
+		}
+		else if (Index % 3 == 1)
+		{
+			// Assimilation
+			Instinct = EAIInstinct::Assimilation;
 			CurrentValue = 0.8;
 			GrowCoefficient = 1;
-			break;
-		case EAIGoal::Sleep:
-			CurrentValue = -10;
-			GrowCoefficient = 0;
-			break;
-		case EAIGoal::Sex:
-			CurrentValue = -10;
-			GrowCoefficient = 0;
-			break;
-		}
-		FInstinctValues Values;
-		Values.CurrentValue = CurrentValue;
-		Values.GrowCoeffient = GrowCoefficient;
-		EAIGoal Instinct = Goal;
-		Goals.Add(Goal, Values);
-	}
 
+			FInstinctValues Values;
+			Values.Instinct = Instinct;
+			Values.CurrentValue = CurrentValue;
+			Values.GrowCoeffient = GrowCoefficient;
+			Goals.Add(Goal, Values);
+		}
+		Index++;
+	}
 }
 
 // Called when the game starts
 void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;
 	
@@ -53,10 +80,14 @@ void UInstinctsComponent::BeginPlay()
 	GetOwner()->GetWorldTimerManager().SetTimer(InstinctUpdateTimerHandle, this, &UInstinctsComponent::InstinctsUpdate, OneGameHour, true, RandomDelay);
 }
 
-void UInstinctsComponent::SatisfyInstinct(EAIGoal Instinct)
+void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 {
-	Goals[Instinct].CurrentValue -= 1;
-	Goals[Instinct].GrowCoeffient += 0.1;
+	for (auto& GoalItr : Goals)
+	{
+		if (GoalItr.Value.Instinct != Goals[Goal].Instinct) break;
+		GoalItr.Value.GrowCoeffient += 0.1;
+	}	
+	Goals[Goal].CurrentValue -= 1;
 
 	// TODO Play AnimMontage and wait for end.
 }

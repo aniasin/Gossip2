@@ -14,6 +14,8 @@ struct FInstinctValues
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
+	EAIInstinct Instinct;
+	UPROPERTY(EditAnywhere)
 	float CurrentValue;
 	UPROPERTY(EditAnywhere)
 	float GrowCoeffient;
@@ -31,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Instincts")
 	TMap<EAIGoal, FInstinctValues> Goals;
 
-	void SatisfyInstinct(EAIGoal Instinct);
+	void SatisfyInstinct(EAIGoal Goal);
 
 protected:
 	virtual void BeginPlay() override;
