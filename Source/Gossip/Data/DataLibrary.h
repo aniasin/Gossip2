@@ -48,6 +48,8 @@ struct FInstinctValues
 	UPROPERTY(EditAnywhere)
 	EAIInstinct Instinct;
 	UPROPERTY(EditAnywhere)
+	EAIGoal Goal;
+	UPROPERTY(EditAnywhere)
 	float UpdateMultiplier;
 	UPROPERTY(EditAnywhere)
 	float CurrentValue;

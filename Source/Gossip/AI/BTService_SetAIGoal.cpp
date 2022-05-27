@@ -43,10 +43,10 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	uint8 NewAction = (uint8)EAIAction::None;
 
 	// Check something needed now & Take action
-	for (auto& Goal : InstinctsComp->Goals)
+	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
-		float InstinctValue = FMath::Abs(Goal.Value.CurrentValue);
-		NewGoal = CheckGoal(InstinctValue, Goal.Key);
+		float InstinctValue = FMath::Abs(Instinct.CurrentValue);
+		NewGoal = CheckGoal(InstinctValue, Instinct.Goal);
 
 		if (NewGoal != (uint8)EAIGoal::None)
 		{
@@ -82,7 +82,13 @@ uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 
 uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UInstinctsComponent* InstinctsComp, uint8 NewGoal)
 {
-	EAIInstinct Instinct = InstinctsComp->Goals[(EAIGoal)NewGoal].Instinct;
+	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
+	{
+		if (Instinct.Goal == (EAIGoal)NewGoal)
+		{
+			EAIInstinct NewInstinct = Instinct.Instinct;
+		}
+	}	
 	int32 OwnedRessourceProcessed = 0;
 	int32 OwnedRessourceRaw = 0;
 
@@ -114,8 +120,6 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* Inventor
 
 uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp)
 {
-	TArray<EAIGoal>InstinctsArray;
-	InstinctsComp->Goals.GenerateKeyArray(InstinctsArray);
-	return (uint8)InstinctsArray[0];
+	return (uint8)InstinctsComp->InstinctsInfo[0].Goal;
 }
 

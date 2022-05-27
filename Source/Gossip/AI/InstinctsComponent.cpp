@@ -4,6 +4,7 @@
 #include "InstinctsComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Gossip/Data/InstinctsDataAsset.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 
@@ -12,43 +13,6 @@ UInstinctsComponent::UInstinctsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	EAIInstinct Instinct = EAIInstinct::None;
-	float UpdateMultiplier = 0;
-	float CurrentValue = 0;
-	float GrowCoefficient = 0;
-
-	for (EAIGoal Goal : TEnumRange<EAIGoal>())
-	{
-		if ((uint8)Goal % 3 == 1)
-		{
-			// Assimilation
-			Instinct = EAIInstinct::Assimilation;
-			UpdateMultiplier = 1;
-			CurrentValue = 0.8;
-			GrowCoefficient = 1;
-		}
-		else if ((uint8)Goal % 3 == 0)
-		{
-			// Reproduction
-			Instinct = EAIInstinct::Reproduction;
-			UpdateMultiplier = -1;
-			CurrentValue = -5;
-			GrowCoefficient = 0;
-		}
-		else if ((uint8)Goal % 3 == 2)
-		{
-			// Conservation
-			Instinct = EAIInstinct::Conservation;
-			CurrentValue = -10;
-			GrowCoefficient = 0;
-		}
-		FInstinctValues Values;
-		Values.Instinct = Instinct;
-		Values.UpdateMultiplier = UpdateMultiplier;
-		Values.CurrentValue = CurrentValue;
-		Values.GrowCoeffient = GrowCoefficient;
-		Goals.Add(Goal, Values);
-	}
 }
 
 // Called when the game starts
@@ -56,7 +20,11 @@ void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	if (InstinctDataAsset)
+	{
+		UInstinctsDataAsset* InstinctsData = Cast<UInstinctsDataAsset>(InstinctDataAsset);
+		InstinctsInfo = InstinctsData->InstinctsInfo;
+	}
 
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;
@@ -69,34 +37,35 @@ void UInstinctsComponent::BeginPlay()
 
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 {
-	for (auto& GoalItr : Goals)
+	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		if (GoalItr.Value.Instinct == Goals[Goal].Instinct)
+		if (Instinct.Goal == Goal)
 		{
-			GoalItr.Value.GrowCoeffient += 0.1 * GoalItr.Value.UpdateMultiplier;
+			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
+			Instinct.CurrentValue -= 1 * Instinct.UpdateMultiplier;
+			FString GoalString = GetEnumValueAsString<EAIGoal>("EAIGoal", Goal);
+			UE_LOG(LogTemp, Warning, TEXT("Updating %s"), *GoalString)
 		}
 		else
 		{
-			GoalItr.Value.GrowCoeffient -= 0.1 * GoalItr.Value.UpdateMultiplier;
-		}
+			Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier;
+		}		
 	}	
-	Goals[Goal].CurrentValue -= 1 * Goals[Goal].UpdateMultiplier;
-
 	// TODO Play AnimMontage and wait for end.
 }
 
 void UInstinctsComponent::InstinctsUpdate()
 {
-	for (auto& Instinct : Goals)
+	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient * Instinct.Value.UpdateMultiplier;
+		Instinct.CurrentValue += 0.1 * Instinct.GrowCoeffient * Instinct.UpdateMultiplier;
 	}
-	SortGoalsByPriority();
+	SortInstinctsByPriority();
 }
 
-void UInstinctsComponent::SortGoalsByPriority()
+void UInstinctsComponent::SortInstinctsByPriority()
 {
-	Goals.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
+	InstinctsInfo.Sort([](const FInstinctValues& A, const FInstinctValues& B) {
 		return FMath::Abs(A.CurrentValue) * FMath::Abs(A.GrowCoeffient) >= FMath::Abs(B.CurrentValue) * FMath::Abs(B.GrowCoeffient);
 		});
 }

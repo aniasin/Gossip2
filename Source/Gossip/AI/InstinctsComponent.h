@@ -16,9 +16,8 @@ class GOSSIP_API UInstinctsComponent : public UActorComponent
 public:	
 	UInstinctsComponent();
 
-	// Base Value for each
-	UPROPERTY(EditAnywhere, Category = "Instincts")
-	TMap<EAIGoal, FInstinctValues> Goals;
+	UPROPERTY(EditAnywhere)
+	TArray<FInstinctValues> InstinctsInfo;
 
 	void SatisfyInstinct(EAIGoal Goal);
 
@@ -26,8 +25,19 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	// Base Value for each
+	UPROPERTY(EditAnywhere)
+	class UInstinctsDataAsset* InstinctDataAsset;
+
 private:
 	void InstinctsUpdate();
-	void SortGoalsByPriority();
-		
+	void SortInstinctsByPriority();
+
+	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
+	template<typename TEnum>
+	static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value) {
+		const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+		if (!enumPtr) return FString("Invalid");
+		return enumPtr->GetNameByValue((int64)Value).ToString();
+	}
 };
