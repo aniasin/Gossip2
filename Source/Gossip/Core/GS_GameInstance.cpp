@@ -127,7 +127,7 @@ void UGS_GameInstance::SessionCreated(FName SessionName, bool bSuccess)
 	if (Menu) Menu->TearDown();
 	UWorld* World = GetWorld();
 	if (!World) return;
-	World->ServerTravel("Map01?listen");
+	World->ServerTravel("Map_01?listen");
 }
 
 void UGS_GameInstance::SessionDestroyed(FName SessionName, bool bSuccess)

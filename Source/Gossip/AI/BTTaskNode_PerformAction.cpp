@@ -35,6 +35,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	{	
 		InstinctsComp->SatisfyInstinct(Goal);
 		InventoryComp->RemoveOwnedItem(Goal, false);
+		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
 	}
