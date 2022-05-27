@@ -82,23 +82,42 @@ uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 
 uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UInstinctsComponent* InstinctsComp, uint8 NewGoal)
 {
+	EAIInstinct NewInstinct = EAIInstinct::None;
+
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (Instinct.Goal == (EAIGoal)NewGoal)
 		{
-			EAIInstinct NewInstinct = Instinct.Instinct;
+			NewInstinct = Instinct.Instinct;
 		}
 	}	
+
 	int32 OwnedRessourceProcessed = 0;
 	int32 OwnedRessourceRaw = 0;
 
-	OwnedRessourceProcessed = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, false);
-	if (OwnedRessourceProcessed > 0) { return (uint8)EAIAction::Satisfy; }
+	switch (NewInstinct)
+	{
+	case EAIInstinct::None:
+		break;
+	case EAIInstinct::Assimilation:
+		OwnedRessourceProcessed = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, false);
+		if (OwnedRessourceProcessed > 0) { return (uint8)EAIAction::Satisfy; }
 
-	OwnedRessourceRaw = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, true);
-	if (OwnedRessourceRaw > 0) { return (uint8)EAIAction::TravelProcessor; }
+		OwnedRessourceRaw = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+		if (OwnedRessourceRaw > 0) { return (uint8)EAIAction::TravelProcessor; }
 
-	return (uint8)EAIAction::SearchCollector;
+		return (uint8)EAIAction::SearchCollector;
+
+	case EAIInstinct::Conservation:
+		return (uint8)EAIAction::TravelProcessor;
+
+	case EAIInstinct::Reproduction:
+		break;
+	default:
+		break;
+	}
+
+	return (uint8)EAIInstinct::None;
 }
 
 uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
