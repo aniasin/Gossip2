@@ -45,12 +45,14 @@ struct FInstinctValues
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere)
-		EAIInstinct Instinct;
 	UPROPERTY(EditAnywhere)
-		float CurrentValue;
+	EAIInstinct Instinct;
 	UPROPERTY(EditAnywhere)
-		float GrowCoeffient;
+	float UpdateMultiplier;
+	UPROPERTY(EditAnywhere)
+	float CurrentValue;
+	UPROPERTY(EditAnywhere)
+	float GrowCoeffient;
 };
 
 

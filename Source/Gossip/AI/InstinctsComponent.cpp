@@ -13,6 +13,7 @@ UInstinctsComponent::UInstinctsComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	EAIInstinct Instinct = EAIInstinct::None;
+	float UpdateMultiplier = 0;
 	float CurrentValue = 0;
 	float GrowCoefficient = 0;
 
@@ -22,6 +23,7 @@ UInstinctsComponent::UInstinctsComponent()
 		{
 			// Assimilation
 			Instinct = EAIInstinct::Assimilation;
+			UpdateMultiplier = 1;
 			CurrentValue = 0.8;
 			GrowCoefficient = 1;
 		}
@@ -29,6 +31,7 @@ UInstinctsComponent::UInstinctsComponent()
 		{
 			// Reproduction
 			Instinct = EAIInstinct::Reproduction;
+			UpdateMultiplier = -1;
 			CurrentValue = -5;
 			GrowCoefficient = 0;
 		}
@@ -41,6 +44,7 @@ UInstinctsComponent::UInstinctsComponent()
 		}
 		FInstinctValues Values;
 		Values.Instinct = Instinct;
+		Values.UpdateMultiplier = UpdateMultiplier;
 		Values.CurrentValue = CurrentValue;
 		Values.GrowCoeffient = GrowCoefficient;
 		Goals.Add(Goal, Values);
@@ -69,14 +73,14 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 	{
 		if (GoalItr.Value.Instinct == Goals[Goal].Instinct)
 		{
-			GoalItr.Value.GrowCoeffient += 0.1;
+			GoalItr.Value.GrowCoeffient += 0.1 * GoalItr.Value.UpdateMultiplier;
 		}
 		else
 		{
-			GoalItr.Value.GrowCoeffient -= 0.1;
+			GoalItr.Value.GrowCoeffient -= 0.1 * GoalItr.Value.UpdateMultiplier;
 		}
 	}	
-	Goals[Goal].CurrentValue -= 1;
+	Goals[Goal].CurrentValue -= 1 * Goals[Goal].UpdateMultiplier;
 
 	// TODO Play AnimMontage and wait for end.
 }
@@ -85,7 +89,7 @@ void UInstinctsComponent::InstinctsUpdate()
 {
 	for (auto& Instinct : Goals)
 	{
-		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient;
+		Instinct.Value.CurrentValue += 0.1 * Instinct.Value.GrowCoeffient * Instinct.Value.UpdateMultiplier;
 	}
 	SortGoalsByPriority();
 }
@@ -93,7 +97,7 @@ void UInstinctsComponent::InstinctsUpdate()
 void UInstinctsComponent::SortGoalsByPriority()
 {
 	Goals.ValueSort([](const FInstinctValues& A, const FInstinctValues& B) {
-		return A.CurrentValue * A.GrowCoeffient >= B.CurrentValue * B.GrowCoeffient;
+		return FMath::Abs(A.CurrentValue) * FMath::Abs(A.GrowCoeffient) >= FMath::Abs(B.CurrentValue) * FMath::Abs(B.GrowCoeffient);
 		});
 }
 
