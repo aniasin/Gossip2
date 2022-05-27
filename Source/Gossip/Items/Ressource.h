@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gossip/Gossip.h"
+#include "Gossip/Data/DataLibrary.h"
 #include "GameFramework/Actor.h"
 
 #include "Ressource.generated.h"

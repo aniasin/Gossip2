@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gossip/Gossip.h"
+#include "Gossip/Data/DataLibrary.h"
 #include "AIController.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "GS_AIController.generated.h"
@@ -17,18 +17,6 @@ enum class EAIStatus : uint8
 	Collecting			UMETA(DisplayName = "Collecting"),
 	Processing			UMETA(DisplayName = "Processing"),
 	Satisfying			UMETA(DisplayName = "Satisfying"),
-};
-
-UENUM(BlueprintType)
-enum class EAIAction : uint8
-{
-	None				UMETA(DisplayName = "None"),
-	SearchCollector		UMETA(DisplayName = "SearchCollector"),
-	Stock				UMETA(DisplayName = "Stock"),
-	Satisfy				UMETA(DisplayName = "Satisfy"),
-	SearchProcessor		UMETA(DisplayName = "SearchProcessor"),
-	TravelCollector		UMETA(DisplayName = "TravelCollector"),
-	TravelProcessor		UMETA(DisplayName = "TravelProcessor"),
 };
 
 UCLASS()

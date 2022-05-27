@@ -3,23 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gossip/Gossip.h"
+#include "Gossip/Data/DataLibrary.h"
 #include "Components/ActorComponent.h"
 
 #include "InstinctsComponent.generated.h"
-
-USTRUCT(BlueprintType)
-struct FInstinctValues
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	EAIInstinct Instinct;
-	UPROPERTY(EditAnywhere)
-	float CurrentValue;
-	UPROPERTY(EditAnywhere)
-	float GrowCoeffient;
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UInstinctsComponent : public UActorComponent

@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
-#include "Gossip/Gossip.h"
+
+#include "Gossip/Data/DataLibrary.h"
 #include "BTService_SetAIGoal.generated.h"
 
 /**

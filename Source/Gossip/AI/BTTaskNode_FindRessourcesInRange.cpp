@@ -2,7 +2,7 @@
 
 
 #include "BTTaskNode_FindRessourcesInRange.h"
-#include "Gossip/Gossip.h"
+#include "Gossip/Data/DataLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 
