@@ -20,12 +20,6 @@ void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (InstinctDataAsset)
-	{
-		UInstinctsDataAsset* InstinctsData = Cast<UInstinctsDataAsset>(InstinctDataAsset);
-		InstinctsInfo = InstinctsData->InstinctsInfo;
-	}
-
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;
 	

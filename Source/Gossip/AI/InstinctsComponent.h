@@ -16,7 +16,7 @@ class GOSSIP_API UInstinctsComponent : public UActorComponent
 public:	
 	UInstinctsComponent();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FInstinctValues> InstinctsInfo;
 
 	void SatisfyInstinct(EAIGoal Goal);
@@ -26,8 +26,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Base Value for each
-	UPROPERTY(EditAnywhere)
-	class UInstinctsDataAsset* InstinctDataAsset;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UInstinctsDataAsset* InstinctDataAsset;
 
 private:
 	void InstinctsUpdate();

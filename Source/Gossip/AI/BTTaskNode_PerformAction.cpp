@@ -75,7 +75,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		case EAIInstinct::Reproduction:
 			break;
 		}
-		BlackboardComp->ClearValue("TargetActor");
+		//BlackboardComp->ClearValue("TargetActor");
 		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
 		return EBTNodeResult::Succeeded;
 

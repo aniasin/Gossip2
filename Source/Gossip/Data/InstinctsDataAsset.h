@@ -16,7 +16,7 @@ class GOSSIP_API UInstinctsDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Instincs")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Instincs")
 	TArray<FInstinctValues> InstinctsInfo;
 	
 };

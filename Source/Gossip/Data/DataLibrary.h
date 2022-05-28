@@ -50,9 +50,9 @@ struct FInstinctValues
 	UPROPERTY(EditAnywhere)
 	EAIGoal Goal;
 	UPROPERTY(EditAnywhere)
-	float UpdateMultiplier;
-	UPROPERTY(EditAnywhere)
 	float CurrentValue;
+	UPROPERTY(EditAnywhere)
+	float UpdateMultiplier;
 	UPROPERTY(EditAnywhere)
 	float GrowCoeffient;
 };
