@@ -57,12 +57,12 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	// New Goal Found or new action
 	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
 	{
-		NewAction = CheckTravelRoute(InventoryComp, NewAction, NewGoal, AIController);		
+		NewAction = CheckTravelRoute(InventoryComp, NewAction, NewGoal, AIController);	
 
 		if (NewGoal == ((uint8)EAIGoal::None))
 		{
-			NewAction = (uint8)EAIAction::Stock;
-			NewGoal = Stock(InstinctsComp, InventoryComp, AIController);			
+			NewGoal = CheckStock(InstinctsComp, InventoryComp, AIController);	
+			if (NewGoal != ((uint8)EAIGoal::None)) NewAction = (uint8)EAIAction::StockRaw;
 		}
 
 		AIController->SetAIGoal(NewGoal);
@@ -106,7 +106,7 @@ uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UI
 		OwnedRessourceRaw = Inventory->GetOwnedItemsCount((EAIGoal)NewGoal, true);
 		if (OwnedRessourceRaw > 0) { return (uint8)EAIAction::TravelProcessor; }
 
-		return (uint8)EAIAction::SearchCollector;
+		return (uint8)EAIAction::TravelCollector;
 
 	case EAIInstinct::Conservation:
 		return (uint8)EAIAction::TravelCollector;
@@ -126,20 +126,31 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(UInventoryComponent* InventoryComp,
 	{
 		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
 		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchCollector;
+		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+		return (uint8)EAIAction::TravelCollector;
 	}
 	if (NewAction == (uint8)EAIAction::TravelProcessor)
 	{
 		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
 		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchProcessor;
 		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+		return (uint8)EAIAction::TravelProcessor;
 	}
 	return NewAction;
 }
 
-uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController)
+uint8 UBTService_SetAIGoal::CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController)
 {
-	AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)InstinctsComp->InstinctsInfo[0].Goal);
-	if(IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
-	return (uint8)InstinctsComp->InstinctsInfo[0].Goal;
+	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
+	{
+		if (Instinct.bStockable == false) break;
+		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector(Instinct.Goal);
+		if (IsValid(TargetActor) && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 10)
+		{
+			AIController->SetTargetActor(TargetActor);
+			return (uint8)Instinct.Goal;
+		}
+	}
+	return (uint8)EAIGoal::None;	
 }
 

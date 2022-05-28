@@ -65,6 +65,7 @@ public:
 	uint8 GetAIAction();
 
 	void SetTargetActor(AActor* TargetActor);
+	void ClearTargetLocation();
 
 private:
 	bool bCanSeeHostile;

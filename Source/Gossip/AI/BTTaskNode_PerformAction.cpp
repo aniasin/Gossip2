@@ -44,7 +44,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (ActionOverride != EAIAction::None) { Action = ActionOverride; }
 
 	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor
-		|| Action == EAIAction::Stock)
+		|| Action == EAIAction::StockRaw)
 	{
 		EAIInstinct CurrentInctinct = EAIInstinct::None;
 		for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
@@ -68,10 +68,11 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 
 		case EAIInstinct::Assimilation:
 			Ressource->CollectRessource(InventoryComp);
-
+			BlackboardComp->ClearValue("TargetActor");
+			break;
 		case EAIInstinct::Conservation:
 			InstinctsComp->SatisfyInstinct(Goal);
-
+			break;
 		case EAIInstinct::Reproduction:
 			break;
 		}

@@ -31,6 +31,9 @@ class GOSSIP_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 
+	UPROPERTY(VisibleAnywhere) // For testing, should be private
+	TArray<FInventoryItem> InventoryItems;
+
 	UFUNCTION(BlueprintCallable)
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
@@ -49,7 +52,7 @@ public:
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 private:
-	TArray<FInventoryItem> InventoryItems;
+
 	TArray<ARessource*> KnownRessourcesCollector;
 	TArray<ARessource*> KnownRessourcesProcessor;
 	void ClearNullRessources(TArray<ARessource*> Array);

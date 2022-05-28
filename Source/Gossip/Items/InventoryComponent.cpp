@@ -14,6 +14,7 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 {
 	KnownRessourcesCollector.AddUnique(RessourceActor);
+	UE_LOG(LogTemp, Warning, TEXT("%s has been added to KnownRessources!"), *RessourceActor->GetName())
 }
 
 int32 UInventoryComponent::GetKnownRessourcesCollectorCount(EAIGoal RessourceType)

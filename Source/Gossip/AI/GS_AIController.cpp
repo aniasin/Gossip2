@@ -99,6 +99,12 @@ uint8 AGS_AIController::GetAIAction()
 
 void AGS_AIController::SetTargetActor(AActor* TargetActor)
 {
+	ClearTargetLocation();
 	BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
+}
+
+void AGS_AIController::ClearTargetLocation()
+{
+	BlackboardComponent->ClearValue("TargetLocation");
 }
 

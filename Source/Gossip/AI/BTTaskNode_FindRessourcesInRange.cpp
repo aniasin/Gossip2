@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 
+#include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Items/RessourceCollector.h"
 #include "Gossip/Items/RessourceProcessor.h"
 #include "Gossip/Items/Ressource.h"
@@ -18,6 +19,11 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 
 	AGS_AIController* AIController = Cast<AGS_AIController>(OwnerComp.GetAIOwner());
 	if (!AIController) return EBTNodeResult::Failed;
+
+	UActorComponent* Inventory = AIController->GetPawn()->FindComponentByClass(UInventoryComponent::StaticClass());
+	if (!Inventory) return EBTNodeResult::Failed;
+	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(Inventory);
+	if (!InventoryComp) return EBTNodeResult::Failed;
 
 	EAIAction Action = (EAIAction)BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName);
 	EAIGoal Goal = (EAIGoal)BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName);
@@ -36,21 +42,24 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Overlap: %s"), *Hit.GetActor()->GetName())
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
-			|| Action == EAIAction::Stock && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
+			|| Action == EAIAction::StockRaw && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (!Ressource || Ressource->RessourceType != Goal) break;
+			InventoryComp->AddKnownRessourceCollector(Ressource);
+			if (Ressource->RessourceType != Goal) break;
 
-			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
+			AIController->SetTargetActor(Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (!Ressource || Ressource->RessourceType != Goal) break;
+			InventoryComp->AddKnownRessourceProcessor(Ressource);
+			if (Ressource->RessourceType != Goal) break;
 
-			BlackboardComp->SetValueAsObject(BBValueToSetKey.SelectedKeyName, Hit.GetActor());
+			AIController->SetTargetActor(Hit.GetActor());
 			return EBTNodeResult::Succeeded;
 		}
 	}	

@@ -24,7 +24,8 @@ enum class EAIAction : uint8
 {
 	None				UMETA(DisplayName = "None"),
 	SearchCollector		UMETA(DisplayName = "SearchCollector"),
-	Stock				UMETA(DisplayName = "Stock"),
+	StockRaw			UMETA(DisplayName = "StockRaw"),
+	StockProcessed		UMETA(DisplayName = "StockProcessed"),
 	Satisfy				UMETA(DisplayName = "Satisfy"),
 	SearchProcessor		UMETA(DisplayName = "SearchProcessor"),
 	TravelCollector		UMETA(DisplayName = "TravelCollector"),
@@ -55,6 +56,8 @@ struct FInstinctValues
 	float UpdateMultiplier;
 	UPROPERTY(EditAnywhere)
 	float GrowCoeffient;
+	UPROPERTY(EditAnywhere)
+	bool bStockable;
 };
 
 
