@@ -46,14 +46,39 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor
 		|| Action == EAIAction::Stock)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Perform Action"))
+		EAIInstinct CurrentInctinct = EAIInstinct::None;
+		for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
+		{
+			if (Goal == Instinct.Goal)
+			{
+				CurrentInctinct = Instinct.Instinct;
+			}
+		}
+
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!Ressource) return EBTNodeResult::Failed;
+
 		BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime);
-		Ressource->CollectRessource(InventoryComp);
+		Ressource->AddRessourceAsKnown(InventoryComp);
+
+		switch (CurrentInctinct)
+		{
+		case EAIInstinct::None:
+			break;
+
+		case EAIInstinct::Assimilation:
+			Ressource->CollectRessource(InventoryComp);
+
+		case EAIInstinct::Conservation:
+			InstinctsComp->SatisfyInstinct(Goal);
+
+		case EAIInstinct::Reproduction:
+			break;
+		}
 		BlackboardComp->ClearValue("TargetActor");
 		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
 		return EBTNodeResult::Succeeded;
+
 	}
 	return EBTNodeResult::Failed;
 }

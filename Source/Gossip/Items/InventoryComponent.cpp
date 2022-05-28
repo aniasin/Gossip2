@@ -49,6 +49,7 @@ int32 UInventoryComponent::GetKnownRessourcesProcessorCount(EAIGoal RessourceTyp
 void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
 {
 	KnownRessourcesProcessor.AddUnique(RessourceActor);
+	UE_LOG(LogTemp, Warning, TEXT("%s has been added to KnownRessources!"), *RessourceActor->GetName())
 }
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal RessourceType)

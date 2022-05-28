@@ -10,6 +10,7 @@
 #include "Gossip/Items/RessourceProcessor.h"
 #include "Gossip/Items/Ressource.h"
 
+
 EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
@@ -28,15 +29,13 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	FVector Direction = AIController->GetPawn()->GetActorForwardVector();
 	FVector End = Start + (DistanceToTrace * Direction);
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(DistanceToTrace);
-	DrawDebugSphere(World, Start, DistanceToTrace, 8, FColor::Green, false, 10);
-
-	bool bHit = (World->SweepMultiByChannel(Hits, Start, End, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
-	if (!bHit) return EBTNodeResult::Failed;
+	//DrawDebugSphere(World, Start, Sphere.GetSphereRadius(), 50, FColor::Green, false, 10);
+	
+	bool bHit = (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
 
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
-
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
 			|| Action == EAIAction::Stock && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{

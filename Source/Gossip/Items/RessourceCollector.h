@@ -18,6 +18,7 @@ public:
 
 protected:
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp) override;
+	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp) override;
 	virtual void BeginPlay() override;
 private:
 	

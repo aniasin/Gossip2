@@ -25,3 +25,7 @@ void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
 	// Override in SubClasses
 }
 
+void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
+{
+
+}

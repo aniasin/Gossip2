@@ -13,8 +13,12 @@ void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	Super::CollectRessource(InventoryComp);
 
-	InventoryComp->AddKnownRessourceCollector(this);
 	InventoryComp->AddOwnedItem(RessourceType, true);
+}
+
+void ARessourceCollector::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
+{
+	InventoryComp->AddKnownRessourceCollector(this);
 }
 
 void ARessourceCollector::BeginPlay()

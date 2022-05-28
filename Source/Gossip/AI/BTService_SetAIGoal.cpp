@@ -62,7 +62,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		if (NewGoal == ((uint8)EAIGoal::None))
 		{
 			NewAction = (uint8)EAIAction::Stock;
-			NewGoal = Stock(InstinctsComp);			
+			NewGoal = Stock(InstinctsComp, InventoryComp, AIController);			
 		}
 
 		AIController->SetAIGoal(NewGoal);
@@ -109,7 +109,7 @@ uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UI
 		return (uint8)EAIAction::SearchCollector;
 
 	case EAIInstinct::Conservation:
-		return (uint8)EAIAction::TravelProcessor;
+		return (uint8)EAIAction::TravelCollector;
 
 	case EAIInstinct::Reproduction:
 		break;
@@ -120,13 +120,12 @@ uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UI
 	return (uint8)EAIInstinct::None;
 }
 
-uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
+uint8 UBTService_SetAIGoal::CheckTravelRoute(UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
 {
 	if (NewAction == (uint8)EAIAction::TravelCollector)
 	{
 		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
 		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchCollector;
-		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
 	}
 	if (NewAction == (uint8)EAIAction::TravelProcessor)
 	{
@@ -137,8 +136,10 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(class UInventoryComponent* Inventor
 	return NewAction;
 }
 
-uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp)
+uint8 UBTService_SetAIGoal::Stock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController)
 {
+	AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)InstinctsComp->InstinctsInfo[0].Goal);
+	if(IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
 	return (uint8)InstinctsComp->InstinctsInfo[0].Goal;
 }
 

@@ -27,6 +27,7 @@ public:
 	FString AnimMontage; //TODO Change to be a UAnimMontage
 
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
+	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp);
 
 	float CurrentDistanceToQuerier;
 

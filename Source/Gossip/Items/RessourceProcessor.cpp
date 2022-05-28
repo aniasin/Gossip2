@@ -15,10 +15,14 @@ void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 	Super::CollectRessource(InventoryComp);
 	if (InventoryComp)
 	{
-		InventoryComp->AddKnownRessourceProcessor(this);
 		InventoryComp->RemoveOwnedItem(RessourceType, true);
 		InventoryComp->AddOwnedItem(RessourceType, false);
 	}
+}
+
+void ARessourceProcessor::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
+{
+	InventoryComp->AddKnownRessourceProcessor(this);
 }
 
 void ARessourceProcessor::BeginPlay()
