@@ -11,13 +11,17 @@ enum class EAIGoal : uint8
 {
 	None				UMETA(DisplayName = "None"),
 	Food				UMETA(DisplayName = "Food"),
-	Sleep				UMETA(DisplayName = "Sleep"),
-	Sex					UMETA(DisplayName = "Sex"),
+	Leadership			UMETA(DisplayName = "Leadership"),
 	Knowledge			UMETA(DisplayName = "Knowledge"),
+
+	Sleep				UMETA(DisplayName = "Sleep"),
 	Shelter				UMETA(DisplayName = "Shelter"),
+	Wealth				UMETA(DisplayName = "Wealth"),
+
+	Sex					UMETA(DisplayName = "Sex"),
 	Children			UMETA(DisplayName = "Children"),
+	Work				UMETA(DisplayName = "Work"),
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EAIGoal, EAIGoal::Food, EAIGoal::Children);
 
 UENUM(BlueprintType)
 enum class EAIAction : uint8

@@ -61,8 +61,10 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 		if (NewGoal == ((uint8)EAIGoal::None))
 		{
-			NewGoal = CheckStock(InstinctsComp, InventoryComp, AIController);	
-			if (NewGoal != ((uint8)EAIGoal::None)) NewAction = (uint8)EAIAction::StockRaw;
+			uint8 ActionToSet;
+			NewGoal = CheckStock(InstinctsComp, InventoryComp, AIController, ActionToSet);
+			NewAction = ActionToSet;
+			// TODO Goal is still none: entertainment.
 		}
 
 		AIController->SetAIGoal(NewGoal);
@@ -73,7 +75,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 {
-	if (InstinctValue > 0.8)
+	if (InstinctValue > .8)
 	{
 		return (uint8)Goal;
 	}
@@ -125,32 +127,44 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(UInventoryComponent* InventoryComp,
 	if (NewAction == (uint8)EAIAction::TravelCollector)
 	{
 		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
-		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchCollector;
-		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+		if (!IsValid(TargetActor)) return (uint8)EAIAction::SearchCollector;
+
+		AIController->SetTargetActor(TargetActor);
 		return (uint8)EAIAction::TravelCollector;
 	}
 	if (NewAction == (uint8)EAIAction::TravelProcessor)
 	{
 		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
-		if (!TargetActor || !IsValid(TargetActor)) return (uint8)EAIAction::SearchProcessor;
-		if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+		if (!IsValid(TargetActor)) return (uint8)EAIAction::SearchProcessor;
+
+		AIController->SetTargetActor(TargetActor);
 		return (uint8)EAIAction::TravelProcessor;
 	}
 	return NewAction;
 }
 
-uint8 UBTService_SetAIGoal::CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController)
+uint8 UBTService_SetAIGoal::CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController, uint8& ActionToSet)
 {
+	AActor* TargetActor = nullptr;
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (Instinct.bStockable == false) break;
-		AActor* TargetActor = InventoryComp->SearchNearestKnownRessourceCollector(Instinct.Goal);
-		if (IsValid(TargetActor) && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 10)
+		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) > 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 10) // TODO Make variable
 		{
-			AIController->SetTargetActor(TargetActor);
+			ActionToSet = (uint8)EAIAction::StockProcessed;
+			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);
+			if (!IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+			return (uint8)Instinct.Goal;
+		}
+		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 10) // TODO Make variable
+		{
+			ActionToSet = (uint8)EAIAction::StockRaw;
+			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);
+			if (!IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);			
 			return (uint8)Instinct.Goal;
 		}
 	}
+	ActionToSet = (uint8)EAIAction::None;
 	return (uint8)EAIGoal::None;	
 }
 

@@ -14,7 +14,6 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 {
 	KnownRessourcesCollector.AddUnique(RessourceActor);
-	UE_LOG(LogTemp, Warning, TEXT("%s has been added to KnownRessources!"), *RessourceActor->GetName())
 }
 
 int32 UInventoryComponent::GetKnownRessourcesCollectorCount(EAIGoal RessourceType)
@@ -50,7 +49,6 @@ int32 UInventoryComponent::GetKnownRessourcesProcessorCount(EAIGoal RessourceTyp
 void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
 {
 	KnownRessourcesProcessor.AddUnique(RessourceActor);
-	UE_LOG(LogTemp, Warning, TEXT("%s has been added to KnownRessources!"), *RessourceActor->GetName())
 }
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal RessourceType)
@@ -108,6 +106,10 @@ void UInventoryComponent::AddOwnedItem(EAIGoal RessourceType, bool bRaw)
 	Item.bRaw = bRaw;
 	Item.Time = 0;
 	InventoryItems.Add(Item);
+	FString ItemString = GetEnumValueAsString<EAIGoal>("EAIGoal", RessourceType);
+	FString RawString;
+	bRaw ? RawString = "Raw" : RawString = "Processed";
+	UE_LOG(LogTemp, Warning, TEXT("%s %s has been added to inventory! New count: %i"), *RawString, *ItemString, GetOwnedItemsCount(RessourceType, bRaw))
 }
 
 void UInventoryComponent::RemoveOwnedItem(EAIGoal RessourceType, bool bRaw)

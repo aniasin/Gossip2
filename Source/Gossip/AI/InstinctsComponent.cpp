@@ -52,7 +52,7 @@ void UInstinctsComponent::InstinctsUpdate()
 {
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		Instinct.CurrentValue += 0.1 * Instinct.GrowCoeffient * Instinct.UpdateMultiplier;
+		Instinct.CurrentValue += FMath::Abs(Instinct.GrowCoeffient) * Instinct.UpdateMultiplier;
 	}
 	SortInstinctsByPriority();
 }
