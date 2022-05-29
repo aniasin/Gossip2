@@ -6,17 +6,17 @@
 #include "BehaviorTree/BTService.h"
 
 #include "Gossip/Data/DataLibrary.h"
-#include "BTService_SetAIGoal.generated.h"
+#include "BTService_SetAIGoalAndAction.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GOSSIP_API UBTService_SetAIGoal : public UBTService
+class GOSSIP_API UBTService_SetAIGoalAndAction : public UBTService
 {
 	GENERATED_BODY()
 
-	UBTService_SetAIGoal(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UBTService_SetAIGoalAndAction(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

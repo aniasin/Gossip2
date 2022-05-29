@@ -1,26 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTService_SetAIGoal.h"
+#include "BTService_SetAIGoalAndAction.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "InstinctsComponent.h"
 #include "GS_AIController.h"
 
 #include "Gossip/Items/InventoryComponent.h"
 
-UBTService_SetAIGoal::UBTService_SetAIGoal(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
+UBTService_SetAIGoalAndAction::UBTService_SetAIGoalAndAction(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
 {
 	bNotifyBecomeRelevant = true;
 	bNotifyCeaseRelevant = false;
 }
 
-void UBTService_SetAIGoal::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) { return; }
 }
 
-void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	AAIController* Controller = OwnerComp.GetAIOwner();
 	if (!Controller) return;
@@ -73,7 +73,7 @@ void UBTService_SetAIGoal::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	}
 }
 
-uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
+uint8 UBTService_SetAIGoalAndAction::CheckGoal(float InstinctValue, EAIGoal Goal)
 {
 	if (InstinctValue > .8)
 	{
@@ -82,7 +82,7 @@ uint8 UBTService_SetAIGoal::CheckGoal(float InstinctValue, EAIGoal Goal)
 	return (uint8)EAIGoal::None;
 }
 
-uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UInstinctsComponent* InstinctsComp, uint8 NewGoal)
+uint8 UBTService_SetAIGoalAndAction::CheckAction(class UInventoryComponent* Inventory, UInstinctsComponent* InstinctsComp, uint8 NewGoal)
 {
 	EAIInstinct NewInstinct = EAIInstinct::None;
 
@@ -122,7 +122,7 @@ uint8 UBTService_SetAIGoal::CheckAction(class UInventoryComponent* Inventory, UI
 	return (uint8)EAIInstinct::None;
 }
 
-uint8 UBTService_SetAIGoal::CheckTravelRoute(UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
+uint8 UBTService_SetAIGoalAndAction::CheckTravelRoute(UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController)
 {
 	if (NewAction == (uint8)EAIAction::TravelCollector)
 	{
@@ -143,7 +143,7 @@ uint8 UBTService_SetAIGoal::CheckTravelRoute(UInventoryComponent* InventoryComp,
 	return NewAction;
 }
 
-uint8 UBTService_SetAIGoal::CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController, uint8& ActionToSet)
+uint8 UBTService_SetAIGoalAndAction::CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController, uint8& ActionToSet)
 {
 	AActor* TargetActor = nullptr;
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
