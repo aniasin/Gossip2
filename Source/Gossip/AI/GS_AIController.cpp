@@ -50,6 +50,7 @@ void AGS_AIController::OnPossess(APawn* InPawn)
 		UseBlackboard(BlackboardToSet, BlackboardComponent);
 	}
 	BlackboardComponent->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
+	BlackboardComponent->SetValueAsVector("TargetLocation", InPawn->GetActorLocation());
 	
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AGS_AIController::OnTargetPerceptionUpdate);
 

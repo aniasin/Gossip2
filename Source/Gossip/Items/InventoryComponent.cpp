@@ -120,7 +120,7 @@ TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessou
 {
 	auto SortPred = [](ARessource& A, ARessource& B)->bool
 	{
-		return(A.CurrentDistanceToQuerier) <= (B.CurrentDistanceToQuerier);
+		return(A.CurrentDistanceToQuerier) < (B.CurrentDistanceToQuerier);
 	};
 	RessourceToSort.Sort(SortPred);
 

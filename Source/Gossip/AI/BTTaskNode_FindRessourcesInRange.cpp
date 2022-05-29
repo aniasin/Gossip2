@@ -34,10 +34,10 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	FVector Start = AIController->GetPawn()->GetActorLocation();
 	FVector Direction = AIController->GetPawn()->GetActorForwardVector();
 	FVector End = Start + (DistanceToTrace * Direction);
-	FCollisionShape Sphere = FCollisionShape::MakeSphere(DistanceToTrace);
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(2000);
 	//DrawDebugSphere(World, Start, Sphere.GetSphereRadius(), 50, FColor::Green, false, 10);
 	
-	bool bHit = (World->SweepMultiByChannel(Hits, Start, Start, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
+	bool bHit = (World->SweepMultiByChannel(Hits, Start, End, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
 
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
@@ -50,17 +50,16 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			InventoryComp->AddKnownRessourceCollector(Ressource);
 			if (Ressource->RessourceType != Goal) break;
 
-			AIController->SetTargetActor(Hit.GetActor());
+			AIController->SetTargetActor(Ressource);
 			return EBTNodeResult::Succeeded;
 		}
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass())
 			|| Action == EAIAction::StockProcessed && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			InventoryComp->AddKnownRessourceProcessor(Ressource);
 			if (Ressource->RessourceType != Goal) break;
 
-			AIController->SetTargetActor(Hit.GetActor());
+			AIController->SetTargetActor(Ressource);
 			return EBTNodeResult::Succeeded;
 		}
 	}	

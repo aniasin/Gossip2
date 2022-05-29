@@ -28,6 +28,7 @@ protected:
 private:
 	bool bRun;
 
+	AActor* TargetActor;
 	class AGS_AIController* AIController;
 	class UInventoryComponent* InventoryComp;
 	class UInstinctsComponent* InstinctsComp;

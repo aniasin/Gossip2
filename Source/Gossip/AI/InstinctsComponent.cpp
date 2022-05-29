@@ -54,7 +54,7 @@ void UInstinctsComponent::InstinctsUpdate()
 	{
 		Instinct.CurrentValue += FMath::Abs(Instinct.GrowCoeffient) * Instinct.UpdateMultiplier;
 	}
-	SortInstinctsByPriority();
+	//SortInstinctsByPriority();
 }
 
 void UInstinctsComponent::SortInstinctsByPriority()
