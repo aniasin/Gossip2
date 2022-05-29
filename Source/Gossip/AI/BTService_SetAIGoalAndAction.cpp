@@ -14,15 +14,22 @@ UBTService_SetAIGoalAndAction::UBTService_SetAIGoalAndAction(const FObjectInitia
 	bNotifyCeaseRelevant = false;
 }
 
+void UBTService_SetAIGoalAndAction::OnSearchStart(FBehaviorTreeSearchData& SearchData)
+{
+	UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
+}
+
 void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) { return; }
+	
 }
 
 void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	if (!InitializeService(OwnerComp)) return;
+	
 
 	// Check something needed now & Take action
 	SetGoalAndAction();

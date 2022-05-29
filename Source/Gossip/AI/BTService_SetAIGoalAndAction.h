@@ -19,6 +19,7 @@ class GOSSIP_API UBTService_SetAIGoalAndAction : public UBTService
 	UBTService_SetAIGoalAndAction(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
+	virtual void OnSearchStart(FBehaviorTreeSearchData& SearchData) override;
 	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 

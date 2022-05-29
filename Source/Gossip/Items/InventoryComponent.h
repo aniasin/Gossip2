@@ -38,12 +38,10 @@ public:
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
 	void AddKnownRessourceCollector(ARessource* RessourceActor);
-	int32 GetKnownRessourcesCollectorCount(EAIGoal RessourceType);
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceCollector(EAIGoal RessourceType);
 
 	void AddKnownRessourceProcessor(ARessource* RessourceActor);
-	int32 GetKnownRessourcesProcessorCount(EAIGoal RessourceType);
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceProcessor(EAIGoal RessourceType);
 
@@ -55,7 +53,7 @@ private:
 
 	TArray<ARessource*> KnownRessourcesCollector;
 	TArray<ARessource*> KnownRessourcesProcessor;
-	void ClearNullRessources(TArray<ARessource*> Array);
+	TArray<ARessource*> ClearNullRessources(TArray<ARessource*> Array);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

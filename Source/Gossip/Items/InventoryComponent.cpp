@@ -16,36 +16,6 @@ void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 	KnownRessourcesCollector.AddUnique(RessourceActor);
 }
 
-int32 UInventoryComponent::GetKnownRessourcesCollectorCount(EAIGoal RessourceType)
-{
-	int32 Index = 0;
-	int32 Count = 0;
-	ClearNullRessources(KnownRessourcesCollector);
-	for (ARessource* Ressource : KnownRessourcesCollector)
-	{
-		if (Ressource->RessourceType == RessourceType)
-		{
-			Count++;
-		}
-	}
-	return Count;
-}
-
-int32 UInventoryComponent::GetKnownRessourcesProcessorCount(EAIGoal RessourceType)
-{
-	int32 Index = 0;
-	int32 Count = 0;
-	ClearNullRessources(KnownRessourcesProcessor);
-	for (ARessource* Ressource : KnownRessourcesProcessor)
-	{
-		if (Ressource->RessourceType == RessourceType)
-		{
-			Count++;
-		}
-	}
-	return Count;
-}
-
 void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
 {
 	KnownRessourcesProcessor.AddUnique(RessourceActor);
@@ -53,9 +23,8 @@ void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal RessourceType)
 {
-	int32 Index = 0;
+	KnownRessourcesProcessor = ClearNullRessources(KnownRessourcesProcessor);
 	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
-	ClearNullRessources(KnownRessourcesProcessor);
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesProcessor)
 	{
@@ -71,15 +40,14 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal Ressou
 	}
 	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
 
-	if (RessourcesToSort.Num() <= 0) return nullptr;
+	if (SortedRessources.Num() <= 0) return nullptr;
 	return SortedRessources[0];
 }
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal RessourceType)
 {
-	int32 Index = 0;
+	KnownRessourcesCollector = ClearNullRessources(KnownRessourcesCollector);
 	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
-	ClearNullRessources(KnownRessourcesCollector);
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
@@ -95,7 +63,8 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal Ressou
 	}
 	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
 	
-	if (RessourcesToSort.Num() <= 0) return nullptr;
+	if (SortedRessources.Num() <= 0) return nullptr;
+
 	return SortedRessources[0];
 }
 
@@ -137,14 +106,14 @@ int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
 	return Count;
 }
 
-void UInventoryComponent::ClearNullRessources(TArray<ARessource*> Array)
+TArray<ARessource*> UInventoryComponent::ClearNullRessources(TArray<ARessource*> Array)
 {
 	TArray<ARessource*>ArrayCleaned;
 	for (ARessource* Ressource : Array)
 	{
-		if (Ressource && IsValid(Ressource)) { ArrayCleaned.AddUnique(Ressource); }
+		if (IsValid(Ressource)) { ArrayCleaned.AddUnique(Ressource); }
 	}
-	Array = ArrayCleaned;
+	return ArrayCleaned;
 }
 
 TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessource*> RessourceToSort)
