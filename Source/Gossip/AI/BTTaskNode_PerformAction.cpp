@@ -37,7 +37,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		InventoryComp->RemoveOwnedItem(Goal, false);
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		BlackboardComp->ClearValue("TargetActor");
-		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -77,7 +76,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			break;
 		}
 		BlackboardComp->ClearValue("TargetActor");
-		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
 		return EBTNodeResult::Succeeded;
 
 	}

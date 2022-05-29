@@ -22,11 +22,21 @@ protected:
 	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
+	bool InitializeService(UBehaviorTreeComponent& OwnerComp);
+
 private:
 	bool bRun;
 
-	uint8 CheckGoal(float InstinctValue, EAIGoal Goal);
-	uint8 CheckAction(class UInventoryComponent* Inventory, class UInstinctsComponent* InstinctComp, uint8 NewGoal);
-	uint8 CheckTravelRoute(class UInventoryComponent* InventoryComp, uint8 NewAction, uint8 NewGoal, class AGS_AIController* AIController);
-	uint8 CheckStock(class UInstinctsComponent* InstinctsComp, UInventoryComponent* InventoryComp, AGS_AIController* AIController, uint8& ActionToSet);
+	class AGS_AIController* AIController;
+	class UInventoryComponent* InventoryComp;
+	class UInstinctsComponent* InstinctsComp;
+	uint8 PreviousGoal;
+	uint8 PreviousAction;
+	uint8 NewGoal;
+	uint8 NewAction;
+
+	void SetGoalAndAction();
+	void SetAction();
+	void SetTravelRoute();
+	void CheckStock();
 };
