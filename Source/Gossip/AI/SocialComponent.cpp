@@ -42,7 +42,7 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	if (!IsValid(OtherSocialComp)) return false;
 
 	UE_LOG(LogTemp, Warning, TEXT("%s is initiating interaction with %s"), *GetOwner()->GetName(), *Other->GetName())
-	OtherSocialComp->NewActorInVincinity(this->GetOwner());
+	OtherSocialComp->RespondToInteraction(this->GetOwner());
 
 	return true;
 }
