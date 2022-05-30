@@ -36,23 +36,16 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
 
 	// Check something needed now & Take action
-	SetGoalAndAction();
+	SetGoalAndAction();	
 
-	// New Goal Found or new action
-	if (NewGoal != PreviousGoal || NewAction != PreviousAction)
-	{
-		SetTravelRoute();	
+	CheckStock();
+	// TODO Goal is still none: entertainment.
+	SetTravelRoute();
 
-		if (NewGoal == ((uint8)EAIGoal::None))
-		{
-			CheckStock();
-			// TODO Goal is still none: entertainment.
-		}
+	AIController->SetAIGoal(NewGoal);
+	AIController->SetAIAction(NewAction);
+	AIController->OnAIGoalChanged.Broadcast(bRun);
 
-		AIController->SetAIGoal(NewGoal);
-		AIController->SetAIAction(NewAction);
-		AIController->OnAIGoalChanged.Broadcast(bRun);
-	}
 }
 
 //////////////////////////////////////////////////////////////
@@ -162,6 +155,8 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 
 void UBTService_SetAIGoalAndAction::CheckStock()
 {
+	if (NewGoal != ((uint8)EAIGoal::None)) return;
+
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (Instinct.bStockable == false) break;
