@@ -64,7 +64,11 @@ public:
 	FAlignment Alignment_TEST;
 
 	void NewActorInVincinity(AActor* Other);
+	bool InitiateInteraction(AActor* Other);
+	bool RespondToInteraction(AActor* Other);
 	EAlignmentState GetAlignment(float Respect, float Love);
+
+	AActor* FindSocialPartner();
 
 protected:
 	// Called when the game starts

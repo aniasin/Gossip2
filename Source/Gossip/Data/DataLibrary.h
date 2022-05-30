@@ -7,6 +7,15 @@
 #include "DataLibrary.generated.h"
 
 UENUM(BlueprintType)
+enum class EAIStatus : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	PlayerOrder			UMETA(DisplayName = "PlayerOrder"),
+	SearchSocialize		UMETA(DisplayName = "SearchSocialize"),
+	Socialize			UMETA(DisplayName = "Socialize"),
+};
+
+UENUM(BlueprintType)
 enum class EAIGoal : uint8
 {
 	None				UMETA(DisplayName = "None"),

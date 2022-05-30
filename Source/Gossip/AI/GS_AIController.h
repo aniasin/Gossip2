@@ -10,7 +10,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
 
-
 UCLASS()
 class GOSSIP_API AGS_AIController : public AAIController
 {
@@ -36,12 +35,6 @@ public:
 	UPROPERTY()
 	float HearingRange = 1000;
 
-	//For Debug
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EAIGoal CurrentGoal;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EAIAction CurrentAction;
-
 	virtual void OnPossess(APawn* InPawn);
 
 	UPROPERTY()
@@ -51,6 +44,9 @@ public:
 	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
 	void AIMoveToLocation(FVector Location);
+
+	TArray<AActor*> GetCurrentlyPerceivedActors();
+
 	void SetAIGoal(uint8 Instinct);
 	void SetAIAction(uint8 Action);
 	uint8 GetAIGoal();

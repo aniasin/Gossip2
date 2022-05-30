@@ -66,26 +66,32 @@ void AGS_AIController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimu
 		bCanSeeHostile = Stimulus.WasSuccessfullySensed();
 		if (bCanSeeHostile)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Can see %s"), *Actor->GetName());
+			// Just seen Actor
 		}
 	}
 }
 
 void AGS_AIController::AIMoveToLocation(FVector Location)
 {
+	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::PlayerOrder);
 	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
+}
+
+TArray<AActor*> AGS_AIController::GetCurrentlyPerceivedActors()
+{
+	TArray<AActor*> SeenActors;
+	PerceptionComponent->GetCurrentlyPerceivedActors(TSubclassOf<UAISense_Sight>(), SeenActors);
+	return SeenActors;
 }
 
 void AGS_AIController::SetAIGoal(uint8 Instinct)
 {
 	BlackboardComponent->SetValueAsEnum("Goal", Instinct);
-	CurrentGoal = (EAIGoal)Instinct;
 }
 
 void AGS_AIController::SetAIAction(uint8 Action)
 {
 	BlackboardComponent->SetValueAsEnum("Action", Action);
-	CurrentAction = (EAIAction)Action;
 }
 
 uint8 AGS_AIController::GetAIGoal()

@@ -37,8 +37,6 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 		{
 			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
 			Instinct.CurrentValue -= 1 * Instinct.UpdateMultiplier;
-			FString GoalString = GetEnumValueAsString<EAIGoal>("EAIGoal", Goal);
-			UE_LOG(LogTemp, Warning, TEXT("Updating %s"), *GoalString)
 		}
 		else
 		{

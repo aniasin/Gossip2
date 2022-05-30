@@ -42,7 +42,7 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Overlap: %s"), *Hit.GetActor()->GetName())
+		//UE_LOG(LogTemp, Warning, TEXT("Overlap: %s"), *Hit.GetActor()->GetName())
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
 			|| Action == EAIAction::StockRaw && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{

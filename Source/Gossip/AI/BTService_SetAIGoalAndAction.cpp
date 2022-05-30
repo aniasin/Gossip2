@@ -33,7 +33,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	if (!InitializeService(OwnerComp)) return;
-	UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
+	//UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
 
 	// Check something needed now & Take action
 	SetGoalAndAction();	
@@ -160,8 +160,8 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (Instinct.bStockable == false) break;
-		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 10 && PreviousAction != (uint8)EAIAction::StockProcessed
-			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 10 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= 10) 
+		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 3 && PreviousAction != (uint8)EAIAction::StockProcessed
+			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 3 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= 3) 
 			// TODO Make variable Desired Stock Raw and Desired Stock Processed
 		{
 			NewAction = (uint8)EAIAction::StockRaw;
@@ -170,7 +170,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}
-		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) >= 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 10)
+		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) >= 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 3)
 		{
 			NewAction = (uint8)EAIAction::StockProcessed;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);

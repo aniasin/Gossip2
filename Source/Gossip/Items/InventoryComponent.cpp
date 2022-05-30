@@ -78,7 +78,7 @@ void UInventoryComponent::AddOwnedItem(EAIGoal RessourceType, bool bRaw)
 	FString ItemString = GetEnumValueAsString<EAIGoal>("EAIGoal", RessourceType);
 	FString RawString;
 	bRaw ? RawString = "Raw" : RawString = "Processed";
-	UE_LOG(LogTemp, Warning, TEXT("%s %s has been added to inventory! New count: %i"), *RawString, *ItemString, GetOwnedItemsCount(RessourceType, bRaw))
+	//UE_LOG(LogTemp, Warning, TEXT("%s %s has been added to inventory! New count: %i"), *RawString, *ItemString, GetOwnedItemsCount(RessourceType, bRaw))
 }
 
 void UInventoryComponent::RemoveOwnedItem(EAIGoal RessourceType, bool bRaw)
