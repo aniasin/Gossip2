@@ -7,7 +7,7 @@
 #include "Components/SphereComponent.h"
 
 #include "Gossip/AI/GS_AIController.h"
-#include "Gossip/AI/AlignmentComponent.h"
+#include "Gossip/AI/SocialComponent.h"
 #include "Gossip/AI/InstinctsComponent.h"
 
 #include "Gossip/Items/InventoryComponent.h"
@@ -30,7 +30,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	AlignmentComp = CreateDefaultSubobject<UAlignmentComponent>(TEXT("AlignmentComp"));
+	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
 }

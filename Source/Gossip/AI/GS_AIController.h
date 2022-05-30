@@ -10,14 +10,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
 
-UENUM(BlueprintType)
-enum class EAIStatus : uint8
-{
-	None				UMETA(DisplayName = "None"),
-	Collecting			UMETA(DisplayName = "Collecting"),
-	Processing			UMETA(DisplayName = "Processing"),
-	Satisfying			UMETA(DisplayName = "Satisfying"),
-};
 
 UCLASS()
 class GOSSIP_API AGS_AIController : public AAIController

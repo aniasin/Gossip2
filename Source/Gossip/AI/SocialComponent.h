@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "AlignmentComponent.generated.h"
+#include "SocialComponent.generated.h"
 
 
 UENUM(BlueprintType)
@@ -53,12 +53,12 @@ struct FAlignment
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GOSSIP_API UAlignmentComponent : public UActorComponent
+class GOSSIP_API USocialComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UAlignmentComponent();
+	USocialComponent();
 
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;

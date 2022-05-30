@@ -1,24 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AlignmentComponent.h"
+#include "SocialComponent.h"
 
 
 // Sets default values for this component's properties
-UAlignmentComponent::UAlignmentComponent()
+USocialComponent::USocialComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UAlignmentComponent::BeginPlay()
+void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
-void UAlignmentComponent::NewActorInVincinity(AActor* Other)
+void USocialComponent::NewActorInVincinity(AActor* Other)
 {
-	UAlignmentComponent* OtherAlignmentComp = Cast<UAlignmentComponent>(Other->GetComponentByClass(UAlignmentComponent::StaticClass()));
+	USocialComponent* OtherAlignmentComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
 
 	FString Name = Other->GetName();
 	if (!KnownOther.Contains(Name))
@@ -34,7 +34,7 @@ void UAlignmentComponent::NewActorInVincinity(AActor* Other)
 	UE_LOG(LogTemp, Warning, TEXT("Alignment: %s"), *AlignmentString)
 }
 
-EAlignmentState UAlignmentComponent::GetAlignment(float Respect, float Love)
+EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 {
 	if (Love > 0 && Respect > 0) return EAlignmentState::Cooperative;
 	if (Love > 0 && Respect < 0) return EAlignmentState::Masterful;
