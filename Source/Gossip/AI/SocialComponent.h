@@ -62,10 +62,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FAlignment Alignment_TEST;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESocialPosition SocialPosition;
 
-	void NewActorInVincinity(AActor* Other);
+	EAlignmentState CalculateAlignmentWithOther(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
-	bool RespondToInteraction(AActor* Other);
+	bool RespondToInteraction(USocialComponent* OtherSocialComp);
+	void EndInteraction(AActor* Other);
 	EAlignmentState GetAlignment(float Respect, float Love);
 
 	AActor* FindSocialPartner();
@@ -74,8 +77,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESocialPosition SocialPosition;
+;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionLike;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")

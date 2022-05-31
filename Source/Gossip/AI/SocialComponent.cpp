@@ -17,7 +17,7 @@ void USocialComponent::BeginPlay()
 
 }
 
-void USocialComponent::NewActorInVincinity(AActor* Other)
+EAlignmentState USocialComponent::CalculateAlignmentWithOther(AActor* Other)
 {
 	USocialComponent* OtherAlignmentComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
 
@@ -33,6 +33,8 @@ void USocialComponent::NewActorInVincinity(AActor* Other)
 
 	FString AlignmentString = GetEnumValueAsString<EAlignmentState>("EAlignmentState", AlignmentState);
 	UE_LOG(LogTemp, Warning, TEXT("Alignment: %s"), *AlignmentString)
+
+	return AlignmentState;
 }
 
 bool USocialComponent::InitiateInteraction(AActor* Other)
@@ -41,22 +43,42 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
 
+	EAlignmentState Alignment = CalculateAlignmentWithOther(Other);
+
 	UE_LOG(LogTemp, Warning, TEXT("%s is initiating interaction with %s"), *GetOwner()->GetName(), *Other->GetName())
-	OtherSocialComp->RespondToInteraction(this->GetOwner());
+	OtherSocialComp->RespondToInteraction(this);
 
 	return true;
 }
 
-bool USocialComponent::RespondToInteraction(AActor* Other)
+bool USocialComponent::RespondToInteraction(USocialComponent* OtherSocialComp)
 {
-	if (!IsValid(Other)) return false;
-	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (!IsValid(OtherSocialComp)) return false;
-
-	UE_LOG(LogTemp, Warning, TEXT("%s is responding to %s"), *GetOwner()->GetName(), *Other->GetName())
-	OtherSocialComp->NewActorInVincinity(this->GetOwner());
+	UE_LOG(LogTemp, Warning, TEXT("%s is responding to %s"), *GetOwner()->GetName(), *OtherSocialComp->GetOwner()->GetName())
+	EAlignmentState OtherAlignment = OtherSocialComp->CalculateAlignmentWithOther(this->GetOwner());
 
 	return true;
+}
+
+void USocialComponent::EndInteraction(AActor* Other)
+{
+	FAlignment NewAlignment;
+	NewAlignment.Love = 0;
+	NewAlignment.Respect = 0;
+	FString OtherName = Other->GetName();
+
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
+	if (SocialPositionLike == OtherSocialComp->SocialPosition)
+	{
+		NewAlignment.Love += 0.1;
+		NewAlignment.Respect += 0.1;
+		KnownOther[OtherName] = NewAlignment;
+	}
+	else if (SocialPositionHate == OtherSocialComp->SocialPosition)
+	{
+		NewAlignment.Love -= 0.1;
+		NewAlignment.Respect -= 0.1;
+		KnownOther[OtherName] = NewAlignment;
+	}
 }
 
 EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)

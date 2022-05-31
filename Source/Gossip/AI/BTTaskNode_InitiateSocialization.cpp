@@ -6,14 +6,13 @@
 #include "GS_AIController.h"
 #include "SocialComponent.h"
 
-#include "Gossip/Characters/NonPlayerCharacter.h"
 
 EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
-	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+	APawn* NPC = OwnerComp.GetAIOwner()->GetPawn();
 	if (!NPC) return EBTNodeResult::Failed;
 
 	UActorComponent* SocialComponent = NPC->FindComponentByClass(USocialComponent::StaticClass());
@@ -23,9 +22,6 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 
 	AActor* OtherActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
 	if (!IsValid(OtherActor)) return EBTNodeResult::Failed;
-
-
-	SocialComp->NewActorInVincinity(OtherActor);
 
 	if (!SocialComp->InitiateInteraction(OtherActor)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed;}
 
