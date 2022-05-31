@@ -73,6 +73,9 @@ void AGS_AIController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimu
 
 void AGS_AIController::AIMoveToLocation(FVector Location)
 {
+	// We don't want Player to hijack Socialize status.
+	if (BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) return;
+
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::PlayerOrder);
 	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
 }

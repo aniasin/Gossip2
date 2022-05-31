@@ -29,10 +29,10 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	if (!IsValid(OtherController)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed; }
 
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
+	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
-	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 
 	return EBTNodeResult::Succeeded;
 }

@@ -61,10 +61,12 @@ bool USocialComponent::RespondToInteraction(USocialComponent* OtherSocialComp)
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
+	FString OtherName = Other->GetName();
+	if (!IsValid(Other) || !KnownOther.Contains(OtherName)) return;
+
 	FAlignment NewAlignment;
 	NewAlignment.Love = 0;
 	NewAlignment.Respect = 0;
-	FString OtherName = Other->GetName();
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (SocialPositionLike == OtherSocialComp->SocialPosition)
