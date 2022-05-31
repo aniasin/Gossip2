@@ -160,9 +160,8 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (Instinct.bStockable == false) break;
-		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 3 && PreviousAction != (uint8)EAIAction::StockProcessed
-			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < 3 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= 3) 
-			// TODO Make variable Desired Stock Raw and Desired Stock Processed
+		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && PreviousAction != (uint8)EAIAction::StockProcessed
+			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= InventoryComp->StockingLimit)
 		{
 			NewAction = (uint8)EAIAction::StockRaw;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);

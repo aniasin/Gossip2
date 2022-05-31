@@ -15,24 +15,22 @@ void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 }
 
-EAlignmentState USocialComponent::CalculateAlignmentWithOther(AActor* Other)
+EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 {
 	USocialComponent* OtherAlignmentComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
 
 	FString Name = Other->GetName();
-	if (!KnownOther.Contains(Name))
+	if (!KnownOthers.Contains(Name))
 	{
 		FAlignment NewAlignment;
-		NewAlignment.Love = Alignment_TEST.Love;
-		NewAlignment.Respect = Alignment_TEST.Respect;
-		KnownOther.Add(Name, NewAlignment);
+		NewAlignment.Love = 0;
+		NewAlignment.Respect = 0;
+		KnownOthers.Add(Name, NewAlignment);
 	}
-	EAlignmentState AlignmentState = GetAlignment(KnownOther[Name].Respect, KnownOther[Name].Love);
-
-	FString AlignmentString = GetEnumValueAsString<EAlignmentState>("EAlignmentState", AlignmentState);
-	UE_LOG(LogTemp, Warning, TEXT("Alignment: %s"), *AlignmentString)
+	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Name].Respect, KnownOthers[Name].Love);
 
 	return AlignmentState;
 }
@@ -42,10 +40,14 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	if (!IsValid(Other)) return false;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
-
-	EAlignmentState Alignment = CalculateAlignmentWithOther(Other);
-
 	UE_LOG(LogTemp, Warning, TEXT("%s is initiating interaction with %s"), *GetOwner()->GetName(), *Other->GetName())
+
+	EAlignmentState OwnAlignment = RefreshKnownOthers(Other);
+	EAlignmentState OtherAlignment = OtherSocialComp->RefreshKnownOthers(GetOwner());
+
+	UpdateAlignment(Other, OwnAlignment, OtherAlignment);
+	OtherSocialComp->UpdateAlignment(GetOwner(), OtherAlignment, OwnAlignment);
+	
 	OtherSocialComp->RespondToInteraction(this);
 
 	return true;
@@ -54,33 +56,41 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 bool USocialComponent::RespondToInteraction(USocialComponent* OtherSocialComp)
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s is responding to %s"), *GetOwner()->GetName(), *OtherSocialComp->GetOwner()->GetName())
-	EAlignmentState OtherAlignment = OtherSocialComp->CalculateAlignmentWithOther(this->GetOwner());
 
 	return true;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
+
+	return;
+}
+
+void USocialComponent::UpdateAlignment(AActor* Other, EAlignmentState OwnAlignment, EAlignmentState OtherAlignment)
+{
+	if (!IsValid(Other)) return;
+
+	FString OwnName = GetOwner()->GetName();
 	FString OtherName = Other->GetName();
-	if (!IsValid(Other) || !KnownOther.Contains(OtherName)) return;
 
 	FAlignment NewAlignment;
 	NewAlignment.Love = 0;
 	NewAlignment.Respect = 0;
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (SocialPositionLike == OtherSocialComp->SocialPosition)
-	{
-		NewAlignment.Love += 0.1;
-		NewAlignment.Respect += 0.1;
-		KnownOther[OtherName] = NewAlignment;
-	}
-	else if (SocialPositionHate == OtherSocialComp->SocialPosition)
-	{
-		NewAlignment.Love -= 0.1;
-		NewAlignment.Respect -= 0.1;
-		KnownOther[OtherName] = NewAlignment;
-	}
+
+	ESocialPosition OtherSocialPosition = OtherSocialComp->SocialPosition;
+
+	NewAlignment.Respect = CalculateRespectChange(OwnAlignment, OtherAlignment, OtherSocialPosition) + KnownOthers[OtherName].Respect;
+	NewAlignment.Love = CalculateLoveChange(OwnEmotionalState, OtherSocialComp->GetEmotionalState()) + KnownOthers[OtherName].Love;
+
+	KnownOthers.Add(OtherName, NewAlignment);
+
+	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
+	CurrentAlignmentState = AlignmentState;
+
+	FString AlignmentString = GetEnumValueAsString<EAlignmentState>("EAlignmentState", AlignmentState);
+	UE_LOG(LogTemp, Warning, TEXT("%s - Alignment: %s"), *GetOwner()->GetName(), *AlignmentString)
 }
 
 EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
@@ -106,3 +116,217 @@ AActor* USocialComponent::FindSocialPartner()
 	return nullptr;
 }
 
+float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition)
+{
+	float RespectChange = GetRespectChange(OwnAlignment, OtherAlignment);
+	RespectChange += CompareSocialPostionTaste(OtherSocialPosition);
+
+	return RespectChange;
+}
+
+
+
+float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState)
+{
+	float LoveChange = GetLoveChange(OtherEmotionalState);
+	LoveChange += CompareEmotionalStateTaste(OtherEmotionalState);;
+
+	return LoveChange;
+}
+
+float USocialComponent::CompareEmotionalStateTaste(EEmotionalState OtherEmotionalState)
+{
+	if (OtherEmotionalState == EmotionalStateLike)
+	{
+		return 1;
+	}
+	else if (OtherEmotionalState == EmotionalStateHate)
+	{
+		return -1;
+	}
+	return 0;
+}
+
+float USocialComponent::CompareSocialPostionTaste(ESocialPosition OtherSocialPosition)
+{
+	if (OtherSocialPosition == SocialPositionLike)
+	{
+		return 1;
+	}
+	else if (OtherSocialPosition == SocialPositionHate)
+	{
+		return -1;
+	}
+	return 0;
+}
+
+float USocialComponent::GetRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment)
+{
+	switch (OwnAlignment)
+	{
+	case EAlignmentState::Submissive:
+		switch (OtherAlignment)
+		{
+		case EAlignmentState::Submissive:
+			return -1;
+		case EAlignmentState::Cooperative:
+			return -1;
+		case EAlignmentState::Imperious:
+			return 1;
+		case EAlignmentState::Masterful:
+			return 1;
+		}
+		break;
+
+	case EAlignmentState::Cooperative:
+		switch (OtherAlignment)
+		{
+		case EAlignmentState::Submissive:
+			return -1;
+		case EAlignmentState::Cooperative:
+			return 1;
+		case EAlignmentState::Imperious:
+			return -1;
+		case EAlignmentState::Masterful:
+			return 1;
+		}
+		break;
+
+	case EAlignmentState::Imperious:
+		switch (OtherAlignment)
+		{
+		case EAlignmentState::Submissive:
+			return -1;
+		case EAlignmentState::Cooperative:
+			return -1;
+		case EAlignmentState::Imperious:
+			return 1;
+		case EAlignmentState::Masterful:
+			return -1;
+		}
+		break;
+
+	case EAlignmentState::Masterful:
+		switch (OtherAlignment)
+		{
+		case EAlignmentState::Submissive:
+			return -1;
+		case EAlignmentState::Cooperative:
+			return 1;
+		case EAlignmentState::Imperious:
+			return -1;
+		case EAlignmentState::Masterful:
+			return 1;
+		}
+		break;
+	}
+
+	return 0;
+}
+
+float USocialComponent::GetLoveChange(EEmotionalState OtherEmotionalState)
+{
+	switch (OwnEmotionalState)
+	{
+	case EEmotionalState::Happy:
+		switch (OtherEmotionalState)
+		{
+		case EEmotionalState::Happy:
+			return 1;
+		case EEmotionalState::Sad:
+			return -1;
+		case EEmotionalState::Tragic:
+			return -1;
+		case EEmotionalState::Energic:
+			return 1;
+		case EEmotionalState::Tired:
+			return -1;
+		case EEmotionalState::Confident:
+			return 1;
+		case EEmotionalState::Affraid:
+			return -1;
+		case EEmotionalState::Panicked:
+			return -1;
+		}
+		break;
+
+	case EEmotionalState::Sad:
+		switch (OtherEmotionalState)
+		{
+		case EEmotionalState::Happy:
+			return 1;
+		case EEmotionalState::Sad:
+			return -1;
+		case EEmotionalState::Tragic:
+			return -1;
+		case EEmotionalState::Energic:
+			return 1;
+		case EEmotionalState::Tired:
+			return -1;
+		case EEmotionalState::Confident:
+			return 1;
+		case EEmotionalState::Affraid:
+			return -1;
+		case EEmotionalState::Panicked:
+			return -1;
+		}
+		break;
+
+	case EEmotionalState::Tragic:
+		return -1;
+
+	case EEmotionalState::Energic:
+		return 1;
+
+	case EEmotionalState::Tired:
+		switch (OtherEmotionalState)
+		{
+		case EEmotionalState::Happy:
+			return 1;
+		case EEmotionalState::Sad:
+			return -1;
+		case EEmotionalState::Tragic:
+			return -1;
+		case EEmotionalState::Energic:
+			return 1;
+		case EEmotionalState::Tired:
+			return -1;
+		case EEmotionalState::Confident:
+			return 1;
+		case EEmotionalState::Affraid:
+			return -1;
+		case EEmotionalState::Panicked:
+			return -1;
+		}
+		break;
+
+	case EEmotionalState::Confident:
+		return 1;
+
+	case EEmotionalState::Affraid:
+		return -1;
+
+	case EEmotionalState::Panicked:
+		switch (OtherEmotionalState)
+		{
+		case EEmotionalState::Happy:
+			return -1;
+		case EEmotionalState::Sad:
+			return -1;
+		case EEmotionalState::Tragic:
+			return 1;
+		case EEmotionalState::Energic:
+			return 1;
+		case EEmotionalState::Tired:
+			return -1;
+		case EEmotionalState::Confident:
+			return 1;
+		case EEmotionalState::Affraid:
+			return -1;
+		case EEmotionalState::Panicked:
+			return -1;
+		}
+		break;
+	}
+	return 0;
+}

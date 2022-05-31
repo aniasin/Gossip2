@@ -60,18 +60,28 @@ class GOSSIP_API USocialComponent : public UActorComponent
 public:	
 	USocialComponent();
 
-	UPROPERTY(EditAnywhere)
-	FAlignment Alignment_TEST;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESocialPosition SocialPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEmotionalState OwnEmotionalState;
 
-	EAlignmentState CalculateAlignmentWithOther(AActor* Other);
+	EAlignmentState RefreshKnownOthers(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
 	bool RespondToInteraction(USocialComponent* OtherSocialComp);
 	void EndInteraction(AActor* Other);
+
+	void UpdateAlignment(AActor* Other, EAlignmentState EOwnAlignment, EAlignmentState OtherAlignment);
+
 	EAlignmentState GetAlignment(float Respect, float Love);
 
 	AActor* FindSocialPartner();
+
+	TMap<FString, FAlignment> GetKnownOthers() { return KnownOthers; }
+	UFUNCTION(BlueprintCallable)
+	EAlignmentState GetAlignmentState() {return CurrentAlignmentState;}
+	UFUNCTION(BlueprintCallable)
+	EEmotionalState GetEmotionalState() { return OwnEmotionalState; }
+
 
 protected:
 	// Called when the game starts
@@ -82,10 +92,21 @@ protected:
 	ESocialPosition SocialPositionLike;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionHate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
+	EEmotionalState EmotionalStateLike;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
+	EEmotionalState EmotionalStateHate;
 
 private:
-	TMap<FString, FAlignment> KnownOther;
-	EEmotionalState EmotionalState;
+	TMap<FString, FAlignment> KnownOthers;
+	EAlignmentState CurrentAlignmentState;
+
+	float CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition);
+	float CompareSocialPostionTaste(ESocialPosition OtherSocialPosition);
+	float GetRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment);
+	float CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState);
+	float CompareEmotionalStateTaste(EEmotionalState OtherEmotionalState);
+	float GetLoveChange(EEmotionalState OtherEmotionalState);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

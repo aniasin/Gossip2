@@ -33,6 +33,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere) // For testing, should be private
 	TArray<FInventoryItem> InventoryItems;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) // For testing, should be private
+	int32 StockingLimit = 10;
 
 	UFUNCTION(BlueprintCallable)
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
