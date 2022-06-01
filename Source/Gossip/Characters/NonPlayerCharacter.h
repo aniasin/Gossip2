@@ -50,5 +50,7 @@ private:
 
 	UFUNCTION()
 	void OnAiGoalChanded(bool bRun);
+	UFUNCTION()
+	void OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts);
 
 };

@@ -81,11 +81,13 @@ enum class EEmotionalState : uint8
 	None		UMETA(DisplayName = "None"),
 	Happy		UMETA(DisplayName = "Happy"),
 	Sad			UMETA(DisplayName = "Sad"),
+	Idealist	UMETA(DisplayName = "Idealist"),
 	Tragic		UMETA(DisplayName = "Tragic"),
 	Energic		UMETA(DisplayName = "Energic"),
 	Tired		UMETA(DisplayName = "Tired"),
 	Confident	UMETA(DisplayName = "Confident"),
 	Affraid		UMETA(DisplayName = "Affraid"),
+	Cold		UMETA(DisplayName = "Cold"),
 	Panicked    UMETA(DisplayName = "Panicked"),
 };
 
@@ -125,10 +127,21 @@ struct FEmotionalChangeTable
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere)
-		EEmotionalState EmotionalState;
+	UPROPERTY(EditAnywhere)
+	EEmotionalState EmotionalState;
 	UPROPERTY(EditAnywhere)
 		TMap<EEmotionalState, float>OtherEmotionalStateEffect;
+};
+
+USTRUCT(BlueprintType)
+struct FEmotionalUpdateTable
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	EAIGoal Instinct;
+	UPROPERTY(EditAnywhere)
+	TMap<EEmotionalState, float>EmotionalEffect;
 };
 
 UCLASS()

@@ -15,10 +15,7 @@ void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (SocialChangeChartDataAsset)
-	{
-		
-	}
+
 }
 
 EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
@@ -96,6 +93,37 @@ void USocialComponent::UpdateAlignment(AActor* Other, EAlignmentState OwnAlignme
 	UE_LOG(LogTemp, Warning, TEXT("%s - Alignment: %s"), *GetOwner()->GetName(), *AlignmentString)
 }
 
+void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Emotional State Update!"))
+
+	TMap<EEmotionalState, float>EmotionalScores;
+
+	float Multiplier = 0;
+	for (FEmotionalUpdateTable TableIndex : EmotionalUpdateTable)
+	{
+		HungryInstincts.Contains(TableIndex.Instinct) ? Multiplier = 1 : Multiplier = -1;
+
+		for (auto& EmotionalState : TableIndex.EmotionalEffect)
+		{
+			if (!EmotionalScores.Contains(EmotionalState.Key)) EmotionalScores.Add(EmotionalState.Key, 0);
+			float NewValue = EmotionalState.Value * Multiplier + EmotionalScores[EmotionalState.Key];
+			EmotionalScores.Add(EmotionalState.Key, NewValue);
+		}
+	}
+
+	EmotionalScores.ValueSort([](const float& A, const float& B) {
+		return A > B ;
+		});
+
+	TArray<EEmotionalState>SortedEmotionalStates;
+	EmotionalScores.GenerateKeyArray(SortedEmotionalStates);
+
+	FString EmotionStateString = GetEnumValueAsString("EEmotionalState", OwnEmotionalState);
+	UE_LOG(LogTemp, Warning, TEXT("NEW EMOTIONSTATE: %s"), *EmotionStateString)
+	OwnEmotionalState = SortedEmotionalStates[0];
+}
+
 EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 {
 	if (Love >= 0 && Respect >= 0) return EAlignmentState::Cooperative;
@@ -123,7 +151,7 @@ float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAl
 {
 	float RespectChange = 0;
 	if (OtherSocialPosition == SocialPositionLike) RespectChange += 1;
-	else if (OtherSocialPosition == SocialPositionHate)	RespectChange += -1;
+	if (OtherSocialPosition == SocialPositionHate)	RespectChange += -1;
 
 	for (FSocialChangeTable TableIndex : SocialChangeTable)
 	{
@@ -139,9 +167,9 @@ float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalStat
 {
 	float LoveChange = 0;
 	if (OtherEmotionalState == EmotionalStateLike) LoveChange += 1;
-	else if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -1;
+	if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -1;
 
-	for (FEmotionalChangeTable TableIndex : EmotionalChangeChart)
+	for (FEmotionalChangeTable TableIndex : EmotionalChangeTable)
 	{
 		if (TableIndex.EmotionalState != OwnEmotionalState) break;
 		LoveChange += TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];

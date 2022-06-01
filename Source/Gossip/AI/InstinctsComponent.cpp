@@ -47,11 +47,14 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 
 void UInstinctsComponent::InstinctsUpdate()
 {
+	TArray<EAIGoal> HungryInstincts;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
 		Instinct.CurrentValue += FMath::Abs(Instinct.GrowCoeffient) * Instinct.UpdateMultiplier;
+		if (Instinct.CurrentValue >= 1) HungryInstincts.AddUnique(Instinct.Goal);
 	}
-	//SortInstinctsByPriority();
+	OnInstinctsUpdated.Broadcast(HungryInstincts);
+	SortInstinctsByPriority();
 }
 
 void UInstinctsComponent::SortInstinctsByPriority()

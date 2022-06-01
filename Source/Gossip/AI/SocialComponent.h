@@ -33,10 +33,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEmotionalState OwnEmotionalState;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data") 
 	TArray<FSocialChangeTable> SocialChangeTable;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<FEmotionalChangeTable> EmotionalChangeTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TArray<FEmotionalUpdateTable> EmotionalUpdateTable;
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
@@ -44,6 +46,7 @@ public:
 	void EndInteraction(AActor* Other);
 
 	void UpdateAlignment(AActor* Other, EAlignmentState EOwnAlignment, EAlignmentState OtherAlignment);
+	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);
 
 	EAlignmentState GetAlignment(float Respect, float Love);
 
@@ -64,8 +67,9 @@ protected:
 	class USocialDataAsset* SocialChangeChartDataAsset;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	class UEmotionalDataAsset* EmotionalChangeChartDataAsset;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	class UEmotionalUpdateDataAsset* EmotionalUpdtateChartDataAsset;
 
-;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionLike;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
@@ -76,11 +80,9 @@ protected:
 	EEmotionalState EmotionalStateHate;
 
 private:
-	TArray<FSocialChangeTable> SocialChangeChart;
-	TArray<FEmotionalChangeTable> EmotionalChangeChart;
-
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
+
 
 	float CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition);
 	float CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState);

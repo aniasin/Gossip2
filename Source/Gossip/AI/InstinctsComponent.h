@@ -8,6 +8,8 @@
 
 #include "InstinctsComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInstinctsUpdateSignature, TArray<EAIGoal>, HungryInstincts);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UInstinctsComponent : public UActorComponent
 {
@@ -18,6 +20,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FInstinctValues> InstinctsInfo;
+
+	UPROPERTY()
+	FOnInstinctsUpdateSignature OnInstinctsUpdated;
 
 	void SatisfyInstinct(EAIGoal Goal);
 

@@ -46,6 +46,7 @@ void ANonPlayerCharacter::BeginPlay()
 
 	AIController = Cast<AGS_AIController>(Controller);
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
+	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
 }
 
 // Called every frame
@@ -76,5 +77,10 @@ void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 void ANonPlayerCharacter::OnAiGoalChanded(bool bRun)
 {
 	SetMoveSpeed(bRun);
+}
+
+void ANonPlayerCharacter::OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts)
+{
+	SocialComp->UpdateEmotionalState(HungryInstincts);
 }
 
