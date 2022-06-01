@@ -121,9 +121,15 @@ AActor* USocialComponent::FindSocialPartner()
 
 float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition)
 {
-	float RespectChange = GetRespectChange(OwnAlignment, OtherAlignment);
-	RespectChange += CompareSocialPositionTaste(OtherSocialPosition);
+	float RespectChange = 0;
+	if (OtherSocialPosition == SocialPositionLike) RespectChange += 1;
+	else if (OtherSocialPosition == SocialPositionHate)	RespectChange += -1;
 
+	for (FSocialChangeTable TableIndex : SocialChangeTable)
+	{
+		if (TableIndex.Alignment != OwnAlignment) break;
+		RespectChange += TableIndex.OtherAlignmentEffect[OtherAlignment];
+	}
 	return RespectChange;
 }
 
@@ -131,56 +137,14 @@ float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAl
 
 float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState)
 {
-	float LoveChange = GetLoveChange(OtherEmotionalState);
-	LoveChange += CompareEmotionalStateTaste(OtherEmotionalState);
+	float LoveChange = 0;
+	if (OtherEmotionalState == EmotionalStateLike) LoveChange += 1;
+	else if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -1;
 
-	return LoveChange;
-}
-
-float USocialComponent::CompareEmotionalStateTaste(EEmotionalState OtherEmotionalState)
-{
-	if (OtherEmotionalState == EmotionalStateLike)
-	{
-		return 1;
-	}
-	else if (OtherEmotionalState == EmotionalStateHate)
-	{
-		return -1;
-	}
-	return 0;
-}
-
-float USocialComponent::CompareSocialPositionTaste(ESocialPosition OtherSocialPosition)
-{
-	if (OtherSocialPosition == SocialPositionLike)
-	{
-		return 1;
-	}
-	else if (OtherSocialPosition == SocialPositionHate)
-	{
-		return -1;
-	}
-	return 0;
-}
-
-float USocialComponent::GetRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment)
-{
-	float Change = 0;
-	for (FSocialChangeTable TableIndex : SocialChangeTable)
-	{
-		if (TableIndex.Alignment != OwnAlignment) break;
-		Change = TableIndex.OtherAlignmentEffect[OtherAlignment];
-	}
-	return Change;
-}
-
-float USocialComponent::GetLoveChange(EEmotionalState OtherEmotionalState)
-{
-	float Change = 0;
 	for (FEmotionalChangeTable TableIndex : EmotionalChangeChart)
 	{
 		if (TableIndex.EmotionalState != OwnEmotionalState) break;
-		Change = TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
+		LoveChange += TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
 	}
-	return Change;
+	return LoveChange;
 }
