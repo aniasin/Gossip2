@@ -27,7 +27,7 @@ protected:
 
 	// Base Value for each
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		class UInstinctsDataAsset* InstinctDataAsset;
+	class UInstinctsDataAsset* InstinctDataAsset;
 
 private:
 	void InstinctsUpdate();

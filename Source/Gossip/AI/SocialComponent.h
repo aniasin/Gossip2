@@ -4,42 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
+#include "Gossip/Data/DataLibrary.h"
 #include "SocialComponent.generated.h"
 
-
-UENUM(BlueprintType)
-enum class EEmotionalState : uint8
-{
-	None		UMETA(DisplayName = "None"),
-	Happy		UMETA(DisplayName = "Happy"),
-	Sad			UMETA(DisplayName = "Sad"),
-	Tragic		UMETA(DisplayName = "Tragic"),
-	Energic		UMETA(DisplayName = "Energic"),
-	Tired		UMETA(DisplayName = "Tired"),
-	Confident	UMETA(DisplayName = "Confident"),
-	Affraid		UMETA(DisplayName = "Affraid"),
-	Panicked    UMETA(DisplayName = "Panicked"),
-};
-
-UENUM(BlueprintType)
-enum class EAlignmentState : uint8
-{
-	None			UMETA(DisplayName = "None"),
-	Submissive		UMETA(DisplayName = "Submissive"),
-	Cooperative     UMETA(DisplayName = "Cooperative"),
-	Imperious		UMETA(DisplayName = "Imperious"),
-	Masterful		UMETA(DisplayName = "Masterful"),
-};
-
-UENUM(BlueprintType)
-enum class ESocialPosition : uint8
-{
-	None			UMETA(DisplayName = "None"),
-	Noble			UMETA(DisplayName = "Noble"),
-	Bourgeois		UMETA(DisplayName = "Bourgeois"),
-	Worker			UMETA(DisplayName = "Worker"),
-	Tchandala		UMETA(DisplayName = "Tchandala"),
-};
 
 USTRUCT(BlueprintType)
 struct FAlignment
@@ -65,6 +33,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEmotionalState OwnEmotionalState;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Data")
+	TArray<FSocialChangeTable> SocialChangeTable;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Data")
+	TArray<FEmotionalChangeTable> EmotionalChangeTable;
+
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
 	bool RespondToInteraction(USocialComponent* OtherSocialComp);
@@ -87,6 +60,11 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	class USocialDataAsset* SocialChangeChartDataAsset;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	class UEmotionalDataAsset* EmotionalChangeChartDataAsset;
+
 ;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Taste")
 	ESocialPosition SocialPositionLike;
@@ -98,6 +76,9 @@ protected:
 	EEmotionalState EmotionalStateHate;
 
 private:
+	TArray<FSocialChangeTable> SocialChangeChart;
+	TArray<FEmotionalChangeTable> EmotionalChangeChart;
+
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
 

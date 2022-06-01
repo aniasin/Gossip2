@@ -4,7 +4,6 @@
 #include "InstinctsComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "Gossip/Data/InstinctsDataAsset.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 

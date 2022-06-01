@@ -15,6 +15,7 @@ enum class EAIStatus : uint8
 	Socialize			UMETA(DisplayName = "Socialize"),
 };
 
+// Instincts
 UENUM(BlueprintType)
 enum class EAIGoal : uint8
 {
@@ -73,6 +74,62 @@ struct FInstinctValues
 	bool bStockable;
 };
 
+// Social
+UENUM(BlueprintType)
+enum class EEmotionalState : uint8
+{
+	None		UMETA(DisplayName = "None"),
+	Happy		UMETA(DisplayName = "Happy"),
+	Sad			UMETA(DisplayName = "Sad"),
+	Tragic		UMETA(DisplayName = "Tragic"),
+	Energic		UMETA(DisplayName = "Energic"),
+	Tired		UMETA(DisplayName = "Tired"),
+	Confident	UMETA(DisplayName = "Confident"),
+	Affraid		UMETA(DisplayName = "Affraid"),
+	Panicked    UMETA(DisplayName = "Panicked"),
+};
+
+UENUM(BlueprintType)
+enum class EAlignmentState : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Submissive		UMETA(DisplayName = "Submissive"),
+	Cooperative     UMETA(DisplayName = "Cooperative"),
+	Imperious		UMETA(DisplayName = "Imperious"),
+	Masterful		UMETA(DisplayName = "Masterful"),
+};
+
+UENUM(BlueprintType)
+enum class ESocialPosition : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Noble			UMETA(DisplayName = "Noble"),
+	Bourgeois		UMETA(DisplayName = "Bourgeois"),
+	Worker			UMETA(DisplayName = "Worker"),
+	Tchandala		UMETA(DisplayName = "Tchandala"),
+};
+
+USTRUCT(BlueprintType)
+struct FSocialChangeTable
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	EAlignmentState Alignment;
+	UPROPERTY(EditAnywhere)
+	TMap<EAlignmentState, float>OtherAlignmentEffect;
+};
+
+USTRUCT(BlueprintType)
+struct FEmotionalChangeTable
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere)
+		EEmotionalState EmotionalState;
+	UPROPERTY(EditAnywhere)
+		TMap<EEmotionalState, float>OtherEmotionalStateEffect;
+};
 
 UCLASS()
 class GOSSIP_API UDataLibrary : public UBlueprintFunctionLibrary

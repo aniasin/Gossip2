@@ -15,7 +15,10 @@ void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	if (SocialChangeChartDataAsset)
+	{
+		
+	}
 }
 
 EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
@@ -162,171 +165,22 @@ float USocialComponent::CompareSocialPositionTaste(ESocialPosition OtherSocialPo
 
 float USocialComponent::GetRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment)
 {
-	switch (OwnAlignment)
+	float Change = 0;
+	for (FSocialChangeTable TableIndex : SocialChangeTable)
 	{
-	case EAlignmentState::Submissive:
-		switch (OtherAlignment)
-		{
-		case EAlignmentState::Submissive:
-			return -1;
-		case EAlignmentState::Cooperative:
-			return -1;
-		case EAlignmentState::Imperious:
-			return 1;
-		case EAlignmentState::Masterful:
-			return 1;
-		}
-		break;
-
-	case EAlignmentState::Cooperative:
-		switch (OtherAlignment)
-		{
-		case EAlignmentState::Submissive:
-			return -1;
-		case EAlignmentState::Cooperative:
-			return 1;
-		case EAlignmentState::Imperious:
-			return -1;
-		case EAlignmentState::Masterful:
-			return 1;
-		}
-		break;
-
-	case EAlignmentState::Imperious:
-		switch (OtherAlignment)
-		{
-		case EAlignmentState::Submissive:
-			return -1;
-		case EAlignmentState::Cooperative:
-			return -1;
-		case EAlignmentState::Imperious:
-			return 1;
-		case EAlignmentState::Masterful:
-			return -1;
-		}
-		break;
-
-	case EAlignmentState::Masterful:
-		switch (OtherAlignment)
-		{
-		case EAlignmentState::Submissive:
-			return -1;
-		case EAlignmentState::Cooperative:
-			return 1;
-		case EAlignmentState::Imperious:
-			return -1;
-		case EAlignmentState::Masterful:
-			return 1;
-		}
-		break;
+		if (TableIndex.Alignment != OwnAlignment) break;
+		Change = TableIndex.OtherAlignmentEffect[OtherAlignment];
 	}
-
-	return 1;
+	return Change;
 }
 
 float USocialComponent::GetLoveChange(EEmotionalState OtherEmotionalState)
 {
-	switch (OwnEmotionalState)
+	float Change = 0;
+	for (FEmotionalChangeTable TableIndex : EmotionalChangeChart)
 	{
-	case EEmotionalState::Happy:
-		switch (OtherEmotionalState)
-		{
-		case EEmotionalState::Happy:
-			return 1;
-		case EEmotionalState::Sad:
-			return -1;
-		case EEmotionalState::Tragic:
-			return -1;
-		case EEmotionalState::Energic:
-			return 1;
-		case EEmotionalState::Tired:
-			return -1;
-		case EEmotionalState::Confident:
-			return 1;
-		case EEmotionalState::Affraid:
-			return -1;
-		case EEmotionalState::Panicked:
-			return -1;
-		}
-		break;
-
-	case EEmotionalState::Sad:
-		switch (OtherEmotionalState)
-		{
-		case EEmotionalState::Happy:
-			return 1;
-		case EEmotionalState::Sad:
-			return -1;
-		case EEmotionalState::Tragic:
-			return -1;
-		case EEmotionalState::Energic:
-			return 1;
-		case EEmotionalState::Tired:
-			return -1;
-		case EEmotionalState::Confident:
-			return 1;
-		case EEmotionalState::Affraid:
-			return -1;
-		case EEmotionalState::Panicked:
-			return -1;
-		}
-		break;
-
-	case EEmotionalState::Tragic:
-		return -1;
-
-	case EEmotionalState::Energic:
-		return 1;
-
-	case EEmotionalState::Tired:
-		switch (OtherEmotionalState)
-		{
-		case EEmotionalState::Happy:
-			return 1;
-		case EEmotionalState::Sad:
-			return -1;
-		case EEmotionalState::Tragic:
-			return -1;
-		case EEmotionalState::Energic:
-			return 1;
-		case EEmotionalState::Tired:
-			return -1;
-		case EEmotionalState::Confident:
-			return 1;
-		case EEmotionalState::Affraid:
-			return -1;
-		case EEmotionalState::Panicked:
-			return -1;
-		}
-		break;
-
-	case EEmotionalState::Confident:
-		return 1;
-
-	case EEmotionalState::Affraid:
-		return -1;
-
-	case EEmotionalState::Panicked:
-		switch (OtherEmotionalState)
-		{
-		case EEmotionalState::Happy:
-			return -1;
-		case EEmotionalState::Sad:
-			return -1;
-		case EEmotionalState::Tragic:
-			return 1;
-		case EEmotionalState::Energic:
-			return 1;
-		case EEmotionalState::Tired:
-			return -1;
-		case EEmotionalState::Confident:
-			return 1;
-		case EEmotionalState::Affraid:
-			return -1;
-		case EEmotionalState::Panicked:
-			return -1;
-		}
-		break;
+		if (TableIndex.EmotionalState != OwnEmotionalState) break;
+		Change = TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
 	}
-	return 1;
+	return Change;
 }
