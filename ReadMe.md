@@ -11,8 +11,9 @@
 
 ## Features:
 - Player can move & rotate camera as observer.
-- Player can selcet individual or BoxSelect group of npcs and send Move orders.
+- Player can select individual or BoxSelect group of npcs and send Move orders.
 - AI will search, consume and stock resources when neeeded.
 - AI will start social interaction with each others when nothing else to do.
+- AI Alignment towards each other will evolve and eventually stabilize after a couple of accointance.
 
-All feedback welcom!
+All feedback welcome!

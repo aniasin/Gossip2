@@ -23,18 +23,10 @@ EBTNodeResult::Type UBTTaskNode_EndSocialization::ExecuteTask(UBehaviorTreeCompo
 	USocialComponent* SocialComp = Cast<USocialComponent>(SocialComponent);
 	if (!SocialComp) return EBTNodeResult::Failed;
 
-	AGS_AIController* OtherController = Cast<AGS_AIController>(OtherActor->GetInstigatorController());
-	if (!IsValid(OtherController)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed; }
-
 	SocialComp->EndInteraction(OtherActor);
 
 	BlackboardComp->ClearValue("TargetActor");
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-
-	OtherController->GetBlackboardComponent()->ClearValue("TargetActor");
-	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-
-	
 
 	return EBTNodeResult::Succeeded;
 }
