@@ -95,17 +95,17 @@ void USocialComponent::UpdateAlignment(AActor* Other, EAlignmentState OwnAlignme
 
 EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 {
-	if (Love > 0 && Respect > 0) return EAlignmentState::Cooperative;
-	if (Love > 0 && Respect < 0) return EAlignmentState::Masterful;
+	if (Love >= 0 && Respect >= 0) return EAlignmentState::Cooperative;
+	if (Love >= 0 && Respect < 0) return EAlignmentState::Masterful;
 	if (Love < 0 && Respect < 0) return EAlignmentState::Imperious;
-	if (Love < 0 && Respect > 0) return EAlignmentState::Submissive;
+	if (Love < 0 && Respect >= 0) return EAlignmentState::Submissive;
 	return EAlignmentState::None;
 }
 
 AActor* USocialComponent::FindSocialPartner()
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
-	if (!AIController) return false;
+	if (!AIController) return nullptr;
 
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
 	for (AActor* Actor : CurrentlyPerceivedActors)
@@ -119,7 +119,7 @@ AActor* USocialComponent::FindSocialPartner()
 float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition)
 {
 	float RespectChange = GetRespectChange(OwnAlignment, OtherAlignment);
-	RespectChange += CompareSocialPostionTaste(OtherSocialPosition);
+	RespectChange += CompareSocialPositionTaste(OtherSocialPosition);
 
 	return RespectChange;
 }
@@ -129,7 +129,7 @@ float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAl
 float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState)
 {
 	float LoveChange = GetLoveChange(OtherEmotionalState);
-	LoveChange += CompareEmotionalStateTaste(OtherEmotionalState);;
+	LoveChange += CompareEmotionalStateTaste(OtherEmotionalState);
 
 	return LoveChange;
 }
@@ -147,7 +147,7 @@ float USocialComponent::CompareEmotionalStateTaste(EEmotionalState OtherEmotiona
 	return 0;
 }
 
-float USocialComponent::CompareSocialPostionTaste(ESocialPosition OtherSocialPosition)
+float USocialComponent::CompareSocialPositionTaste(ESocialPosition OtherSocialPosition)
 {
 	if (OtherSocialPosition == SocialPositionLike)
 	{
@@ -221,7 +221,7 @@ float USocialComponent::GetRespectChange(EAlignmentState OwnAlignment, EAlignmen
 		break;
 	}
 
-	return 0;
+	return 1;
 }
 
 float USocialComponent::GetLoveChange(EEmotionalState OtherEmotionalState)
@@ -328,5 +328,5 @@ float USocialComponent::GetLoveChange(EEmotionalState OtherEmotionalState)
 		}
 		break;
 	}
-	return 0;
+	return 1;
 }

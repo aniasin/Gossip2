@@ -102,7 +102,7 @@ private:
 	EAlignmentState CurrentAlignmentState;
 
 	float CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition);
-	float CompareSocialPostionTaste(ESocialPosition OtherSocialPosition);
+	float CompareSocialPositionTaste(ESocialPosition OtherSocialPosition);
 	float GetRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment);
 	float CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState);
 	float CompareEmotionalStateTaste(EEmotionalState OtherEmotionalState);
