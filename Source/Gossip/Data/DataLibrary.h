@@ -144,6 +144,24 @@ struct FEmotionalUpdateTable
 	TMap<EEmotionalState, float>EmotionalEffect;
 };
 
+// Ressource
+USTRUCT(BlueprintType)
+struct FRessourceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAIGoal RessourceType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* Mesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRaw;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float WaitTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Montage;
+};
+
 UCLASS()
 class GOSSIP_API UDataLibrary : public UBlueprintFunctionLibrary
 {

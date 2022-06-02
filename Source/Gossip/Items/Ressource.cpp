@@ -14,6 +14,15 @@ ARessource::ARessource()
 
 }
 
+#if WITH_EDITOR
+void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+
+}
+#endif #WITH_EDITOR
+
 void ARessource::BeginPlay()
 {
 	Super::BeginPlay();

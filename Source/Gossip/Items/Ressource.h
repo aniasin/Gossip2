@@ -8,6 +8,8 @@
 
 #include "Ressource.generated.h"
 
+
+
 UCLASS()
 class GOSSIP_API ARessource : public AActor
 {
@@ -16,13 +18,15 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
-	UPROPERTY(EditAnywhere)
-	EAIGoal RessourceType;
-	UPROPERTY(BlueprintReadOnly)
-	bool bRaw;
-	UPROPERTY(EditAnywhere)
-	float WaitTime = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class URessourceDataAsset* RessourceData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EAIGoal RessourceType;
+	UPROPERTY(BlueprintReadWrite)
+	bool bRaw;
+	UPROPERTY(BlueprintReadWrite)
+	float WaitTime = 5;
 	UPROPERTY(EditAnywhere)
 	FString AnimMontage; //TODO Change to be a UAnimMontage
 
@@ -32,6 +36,8 @@ public:
 	float CurrentDistanceToQuerier;
 
 protected:
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+
 	virtual void BeginPlay() override;
 
 	
