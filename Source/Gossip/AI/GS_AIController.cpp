@@ -84,6 +84,7 @@ TArray<AActor*> AGS_AIController::GetCurrentlyPerceivedActors()
 {
 	TArray<AActor*> SeenActors;
 	PerceptionComponent->GetCurrentlyPerceivedActors(TSubclassOf<UAISense_Sight>(), SeenActors);
+
 	return SeenActors;
 }
 

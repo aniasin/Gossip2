@@ -47,55 +47,46 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 bool USocialComponent::InitiateInteraction(AActor* Other)
 {
 	if (!IsValid(Other)) return false;
+
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
 
-	EAlignmentState OwnAlignment = RefreshKnownOthers(Other);
-	EAlignmentState OtherAlignment = OtherSocialComp->RefreshKnownOthers(GetOwner());
-
-	UpdateAlignment(Other, OwnAlignment, OtherAlignment);
-	
-	OtherSocialComp->RespondToInteraction(this);
+	UpdateAlignment(Other);	
+	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	return true;
 }
 
-bool USocialComponent::RespondToInteraction(USocialComponent* OtherSocialComp)
+bool USocialComponent::RespondToInteraction(AActor* Other)
 {
-	if (!IsValid(OtherSocialComp)) return false;
+	if (!IsValid(Other)) return false;
 
-	EAlignmentState OwnAlignment = RefreshKnownOthers(OtherSocialComp->GetOwner());
-	EAlignmentState OtherAlignment = OtherSocialComp->RefreshKnownOthers(GetOwner());
-
-	UpdateAlignment(OtherSocialComp->GetOwner(), OwnAlignment, OtherAlignment);
+	UpdateAlignment(Other);
 
 	return true;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
+	bSocializing = false;
 	CurrentAlignmentState = EAlignmentState::None;
 	return;
 }
 
-void USocialComponent::UpdateAlignment(AActor* Other, EAlignmentState OwnAlignment, EAlignmentState OtherAlignment)
+void USocialComponent::UpdateAlignment(AActor* Other)
 {
 	if (!IsValid(Other)) return;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return;
 
-	FString OwnName = GetOwner()->GetName();
+	bSocializing = true;
+
 	FString OtherName = Other->GetName();
 
 	FAlignment NewAlignment;
-	NewAlignment.Love = 0;
-	NewAlignment.Respect = 0;
-
-	ESocialPosition OtherSocialPosition = OtherSocialComp->SocialPosition;
-	EEmotionalState OtherEmotionalState = OtherSocialComp->OwnEmotionalState;
-
-	NewAlignment.Respect = CalculateRespectChange(OwnAlignment, OtherAlignment, OtherSocialPosition) + KnownOthers[OtherName].Respect;
-	NewAlignment.Love = CalculateLoveChange(OwnEmotionalState, OtherEmotionalState) + KnownOthers[OtherName].Love;
+	NewAlignment = CalculateAlignmentChange(Other);
+	NewAlignment.Respect += KnownOthers[OtherName].Respect;
+	NewAlignment.Love += KnownOthers[OtherName].Love;
 
 	KnownOthers.Add(OtherName, NewAlignment);
 
@@ -105,6 +96,7 @@ void USocialComponent::UpdateAlignment(AActor* Other, EAlignmentState OwnAlignme
 
 void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
 {
+	if (bSocializing) return;
 	TMap<EEmotionalState, float>EmotionalScores;
 
 	float Multiplier = 0;
@@ -153,8 +145,21 @@ AActor* USocialComponent::FindSocialPartner()
 	return nullptr;
 }
 
-float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition)
+FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 {
+	FAlignment AlignmentChange;
+	AlignmentChange.Respect = 0;
+	AlignmentChange.Love = 0;
+
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
+	if (!IsValid(OtherSocialComp)) return AlignmentChange;
+
+	EAlignmentState OwnAlignment = RefreshKnownOthers(OtherSocialComp->GetOwner());
+	EAlignmentState OtherAlignment = OtherSocialComp->RefreshKnownOthers(GetOwner());
+
+	ESocialPosition OtherSocialPosition = OtherSocialComp->SocialPosition;
+	EEmotionalState OtherEmotionalState = OtherSocialComp->OwnEmotionalState;
+
 	float RespectChange = 0;
 	if (OtherSocialPosition == SocialPositionLike) RespectChange += 1;
 	if (OtherSocialPosition == SocialPositionHate)	RespectChange += -1;
@@ -164,11 +169,7 @@ float USocialComponent::CalculateRespectChange(EAlignmentState OwnAlignment, EAl
 		if (TableIndex.Alignment != OwnAlignment) break;
 		RespectChange += TableIndex.OtherAlignmentEffect[OtherAlignment];
 	}
-	return RespectChange;
-}
 
-float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState)
-{
 	float LoveChange = 0;
 	if (OtherEmotionalState == EmotionalStateLike) LoveChange += 1;
 	if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -1;
@@ -178,5 +179,10 @@ float USocialComponent::CalculateLoveChange(EEmotionalState CurrentEmotionalStat
 		if (TableIndex.EmotionalState != OwnEmotionalState) break;
 		LoveChange += TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
 	}
-	return LoveChange;
+
+	AlignmentChange.Respect = RespectChange;
+	AlignmentChange.Love = LoveChange;
+
+	return AlignmentChange;
 }
+

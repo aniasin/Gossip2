@@ -42,10 +42,10 @@ public:
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
-	bool RespondToInteraction(USocialComponent* OtherSocialComp);
+	bool RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 
-	void UpdateAlignment(AActor* Other, EAlignmentState EOwnAlignment, EAlignmentState OtherAlignment);
+	void UpdateAlignment(AActor* Other);
 	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);
 
 	EAlignmentState GetAlignment(float Respect, float Love);
@@ -83,9 +83,9 @@ private:
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
 
+	bool bSocializing;
 
-	float CalculateRespectChange(EAlignmentState OwnAlignment, EAlignmentState OtherAlignment, ESocialPosition OtherSocialPosition);
-	float CalculateLoveChange(EEmotionalState CurrentEmotionalState, EEmotionalState OtherEmotionalState);
+	FAlignment CalculateAlignmentChange(AActor* Other);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>
