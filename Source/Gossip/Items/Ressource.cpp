@@ -4,7 +4,6 @@
 #include "Ressource.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
-#include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
 
 #include "Gossip/Data/RessourceDataAsset.h"
@@ -21,9 +20,7 @@ ARessource::ARessource()
 	CollisionBox->SetBoxExtent(FVector(100, 100, 100));
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetRelativeLocation(FVector(0, 0, -CollisionBox->GetScaledBoxExtent().Z / 2));
 	Mesh->SetupAttachment(RootComponent);
-
 }
 
 #if WITH_EDITOR
@@ -38,9 +35,12 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	{
 		if (Ressource.RessourceType == RessourceType)
 		{
-			Mesh->SetStaticMesh(Ressource.Mesh);
 			bRaw = Ressource.bRaw;
 			WaitTime = Ressource.WaitTime;
+			ContentCount = Ressource.ContentCount;
+			LivingColor = Ressource.LivingColor;
+			DeadColor = Ressource.DeadColor;
+			RespawnTime = Ressource.RespawnTime;
 			AnimMontage = Ressource.Montage;
 			break;
 		}
@@ -61,4 +61,29 @@ void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
 void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
 {
 
+}
+
+void ARessource::RessourceEmpty()
+{
+	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	K2_RessourceStateChanged(DeadColor);
+	FTimerHandle Timer;
+	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, RespawnTime);
+}
+
+void ARessource::RessourceRespawn()
+{
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
+	if (!RessourceInfos) return;
+
+	for (FRessourceData Ressource : RessourceInfos->RessourceDataArray)
+	{
+		if (Ressource.RessourceType == RessourceType)
+		{
+			ContentCount = Ressource.ContentCount;
+			break;
+		}
+	}
+	CollisionBox->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
+	K2_RessourceStateChanged(LivingColor);
 }

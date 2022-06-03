@@ -12,6 +12,10 @@ ARessourceCollector::ARessourceCollector()
 void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	Super::CollectRessource(InventoryComp);
+	if (ContentCount <= 0) return;
+
+	ContentCount += -1;
+	if (ContentCount <= 0) RessourceEmpty();
 
 	InventoryComp->AddOwnedItem(RessourceType, true);
 }

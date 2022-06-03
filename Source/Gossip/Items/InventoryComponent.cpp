@@ -51,7 +51,7 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal Ressou
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (Ressource->RessourceType == RessourceType)
+		if (Ressource->RessourceType == RessourceType && Ressource->ContentCount > 0)
 		{
 			RessourcesToSort.Add(Ressource);
 		}

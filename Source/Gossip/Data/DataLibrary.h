@@ -153,11 +153,19 @@ struct FRessourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* Mesh;
+	TSoftObjectPtr<UStaticMesh>MeshSoftObject;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bRaw;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float WaitTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ContentCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor LivingColor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor DeadColor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RespawnTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* Montage;
 };

@@ -18,7 +18,7 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UBoxComponent* CollisionBox;
@@ -32,11 +32,24 @@ public:
 	bool bRaw;
 	UPROPERTY(BlueprintReadWrite)
 	float WaitTime = 5;
+	UPROPERTY(BlueprintReadWrite)
+	int32 ContentCount = 5;
+	UPROPERTY(BlueprintReadWrite)
+	FLinearColor LivingColor;
+	UPROPERTY(BlueprintReadWrite)
+	FLinearColor DeadColor;
+	UPROPERTY(EditAnywhere)
+	float RespawnTime;
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* AnimMontage; 
 
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_RessourceStateChanged(FLinearColor Color);
+	void RessourceEmpty();
+	void RessourceRespawn();
 
 	float CurrentDistanceToQuerier;
 
@@ -50,7 +63,5 @@ protected:
 	
 
 private:
-	
-
 
 };

@@ -12,6 +12,8 @@ UInstinctsComponent::UInstinctsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+
+
 }
 
 // Called when the game starts
