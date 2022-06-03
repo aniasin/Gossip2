@@ -2,8 +2,12 @@
 
 
 #include "Ressource.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
+
+#include "Gossip/Data/RessourceDataAsset.h"
 
 
 // Sets default values
@@ -11,6 +15,14 @@ ARessource::ARessource()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	RootComponent = CollisionBox;
+	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
+	CollisionBox->SetBoxExtent(FVector(100, 100, 100));
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetRelativeLocation(FVector(0, 0, -CollisionBox->GetScaledBoxExtent().Z / 2));
+	Mesh->SetupAttachment(RootComponent);
 
 }
 
@@ -19,10 +31,22 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
+	if (!RessourceInfos) return;
 
+	for (FRessourceData Ressource : RessourceInfos->RessourceDataArray)
+	{
+		if (Ressource.RessourceType == RessourceType)
+		{
+			Mesh->SetStaticMesh(Ressource.Mesh);
+			bRaw = Ressource.bRaw;
+			WaitTime = Ressource.WaitTime;
+			AnimMontage = Ressource.Montage;
+			break;
+		}
+	}
 }
-#endif #WITH_EDITOR
-
+#endif WITH_EDITOR
 void ARessource::BeginPlay()
 {
 	Super::BeginPlay();

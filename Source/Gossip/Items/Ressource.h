@@ -18,6 +18,11 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UBoxComponent* CollisionBox;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class URessourceDataAsset* RessourceData;
 
@@ -28,7 +33,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	float WaitTime = 5;
 	UPROPERTY(EditAnywhere)
-	FString AnimMontage; //TODO Change to be a UAnimMontage
+	class UAnimMontage* AnimMontage; 
 
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp);
@@ -36,7 +41,9 @@ public:
 	float CurrentDistanceToQuerier;
 
 protected:
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+#endif WITH_EDITOR
 
 	virtual void BeginPlay() override;
 

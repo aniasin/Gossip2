@@ -17,5 +17,5 @@ class GOSSIP_API URessourceDataAsset : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FRessourceData> RessourceData;
+	TArray<FRessourceData> RessourceDataArray;
 };
