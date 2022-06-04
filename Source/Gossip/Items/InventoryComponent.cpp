@@ -14,14 +14,11 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 {
 	KnownRessourcesCollector.AddUnique(RessourceActor);
-	UE_LOG(LogTemp, Log, TEXT("//////////////////////"))
-	UE_LOG(LogTemp, Log, TEXT("%s -- Known Collector:"), *GetOwner()->GetName());
-	UE_LOG(LogTemp, Log, TEXT("//////////////////////"))
-	for (ARessource* Ressource : KnownRessourcesCollector)
-	{
-		UE_LOG(LogTemp, Log, TEXT("%s"), *Ressource->GetName())
-	}
+}
 
+void UInventoryComponent::RemoveKnownRessourceCollector(ARessource* RessourceActor)
+{
+	KnownRessourcesCollector.Remove(RessourceActor);
 }
 
 void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)

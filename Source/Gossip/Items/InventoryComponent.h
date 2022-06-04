@@ -40,6 +40,7 @@ public:
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
 	void AddKnownRessourceCollector(ARessource* RessourceActor);
+	void RemoveKnownRessourceCollector(ARessource* RessourceActor);
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceCollector(EAIGoal RessourceType);
 

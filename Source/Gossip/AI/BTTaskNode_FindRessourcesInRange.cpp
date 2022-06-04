@@ -47,7 +47,11 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			|| Action == EAIAction::StockRaw && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
 			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (Ressource->ContentCount <= 0) break;
+			if (Ressource->ContentCount <= 0)
+			{
+				InventoryComp->RemoveKnownRessourceCollector(Ressource);
+				break;
+			}
 			InventoryComp->AddKnownRessourceCollector(Ressource);
 			if (Ressource->RessourceType != Goal) break;
 
