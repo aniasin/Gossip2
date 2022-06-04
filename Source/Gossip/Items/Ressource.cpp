@@ -35,6 +35,9 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	{
 		if (Ressource.RessourceType == RessourceType)
 		{
+			UStaticMesh* MeshPtr;
+			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.MeshSoftPath.ToString());
+			Mesh->SetStaticMesh(MeshPtr);
 			bRaw = Ressource.bRaw;
 			WaitTime = Ressource.WaitTime;
 			ContentCount = Ressource.ContentCount;

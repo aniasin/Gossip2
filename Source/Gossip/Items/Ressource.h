@@ -18,7 +18,7 @@ class GOSSIP_API ARessource : public AActor
 public:	
 	ARessource();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UBoxComponent* CollisionBox;
@@ -58,10 +58,9 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
 #endif WITH_EDITOR
 
-	virtual void BeginPlay() override;
-
-	
+	virtual void BeginPlay() override;	
 
 private:
+
 
 };

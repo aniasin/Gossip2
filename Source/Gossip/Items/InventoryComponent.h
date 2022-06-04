@@ -55,7 +55,6 @@ private:
 
 	TArray<ARessource*> KnownRessourcesCollector;
 	TArray<ARessource*> KnownRessourcesProcessor;
-	TArray<ARessource*> ClearNullRessources(TArray<ARessource*> Array);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

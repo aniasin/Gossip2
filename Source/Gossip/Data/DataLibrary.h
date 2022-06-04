@@ -153,7 +153,7 @@ struct FRessourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UStaticMesh>MeshSoftObject;
+	FSoftObjectPath MeshSoftPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bRaw;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

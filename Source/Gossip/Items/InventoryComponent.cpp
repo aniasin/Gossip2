@@ -14,6 +14,14 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
 {
 	KnownRessourcesCollector.AddUnique(RessourceActor);
+	UE_LOG(LogTemp, Log, TEXT("//////////////////////"))
+	UE_LOG(LogTemp, Log, TEXT("%s -- Known Collector:"), *GetOwner()->GetName());
+	UE_LOG(LogTemp, Log, TEXT("//////////////////////"))
+	for (ARessource* Ressource : KnownRessourcesCollector)
+	{
+		UE_LOG(LogTemp, Log, TEXT("%s"), *Ressource->GetName())
+	}
+
 }
 
 void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
@@ -23,8 +31,7 @@ void UInventoryComponent::AddKnownRessourceProcessor(ARessource* RessourceActor)
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal RessourceType)
 {
-	KnownRessourcesProcessor = ClearNullRessources(KnownRessourcesProcessor);
-	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
+	if (KnownRessourcesProcessor.Num() <= 0) return nullptr;
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesProcessor)
 	{
@@ -46,12 +53,11 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceProcessor(EAIGoal Ressou
 
 AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal RessourceType)
 {
-	KnownRessourcesCollector = ClearNullRessources(KnownRessourcesCollector);
 	if (KnownRessourcesCollector.Num() <= 0) return nullptr;
 	TArray<ARessource*>RessourcesToSort;
 	for (ARessource* Ressource : KnownRessourcesCollector)
 	{
-		if (Ressource->RessourceType == RessourceType && Ressource->ContentCount > 0)
+		if (Ressource->RessourceType == RessourceType)
 		{
 			RessourcesToSort.Add(Ressource);
 		}
@@ -62,9 +68,8 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal Ressou
 		Ressource->CurrentDistanceToQuerier = Distance;
 	}
 	TArray<ARessource*>SortedRessources = SortRessourcesByDistance(RessourcesToSort);
-	
-	if (SortedRessources.Num() <= 0) return nullptr;
 
+	if (SortedRessources.Num() <= 0) return nullptr;
 	return SortedRessources[0];
 }
 
@@ -104,16 +109,6 @@ int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
 		if (Item.Ressource == RessourceType && Item.bRaw == bRaw) Count++;
 	}
 	return Count;
-}
-
-TArray<ARessource*> UInventoryComponent::ClearNullRessources(TArray<ARessource*> Array)
-{
-	TArray<ARessource*>ArrayCleaned;
-	for (ARessource* Ressource : Array)
-	{
-		if (IsValid(Ressource)) { ArrayCleaned.AddUnique(Ressource); }
-	}
-	return ArrayCleaned;
 }
 
 TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessource*> RessourceToSort)
