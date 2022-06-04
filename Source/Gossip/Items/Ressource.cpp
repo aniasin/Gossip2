@@ -46,6 +46,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 			DeadColor = Ressource.DeadColor;
 			RespawnTime = Ressource.RespawnTime;
 			AnimMontage = Ressource.Montage;
+			break;
 		}
 	}
 }
@@ -57,6 +58,7 @@ void ARessource::BeginPlay()
 	UMaterialInterface* Material = Mesh->GetMaterial(0);
 	MaterialInstance = Mesh->CreateDynamicMaterialInstance(0, Material);
 	MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
+
 }
 
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp)

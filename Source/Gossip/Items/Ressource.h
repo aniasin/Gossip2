@@ -46,8 +46,6 @@ public:
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void K2_RessourceStateChanged(FLinearColor Color);
 	void RessourceEmpty();
 	void RessourceRespawn();
 

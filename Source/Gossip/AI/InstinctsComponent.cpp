@@ -4,22 +4,32 @@
 #include "InstinctsComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Gossip/Data/InstinctsDataAsset.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 
 // Sets default values for this component's properties
 UInstinctsComponent::UInstinctsComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
-
-
+	PrimaryComponentTick.bCanEverTick = false;	
 
 }
+
+#if WITH_EDITOR
+void UInstinctsComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	InstinctsInfo = InstinctDataAsset->InstinctsInfo;
+}
+#endif WITH_EDITOR
 
 // Called when the game starts
 void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;

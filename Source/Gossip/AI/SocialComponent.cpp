@@ -4,12 +4,29 @@
 #include "SocialComponent.h"
 #include "GS_AIController.h"
 
+#include "Gossip/Data/EmotionalDataAsset.h"
+#include "Gossip/Data/EmotionalUpdateDataAsset.h"
+#include "Gossip/Data/SocialDataAsset.h"
+
 
 // Sets default values for this component's properties
 USocialComponent::USocialComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+
 }
+
+#if WITH_EDITOR
+void USocialComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	SocialChangeTable = SocialChangeChartDataAsset->SocialChangeTable;
+	EmotionalChangeTable = EmotionalChangeChartDataAsset->EmotionalChangeTable;
+	EmotionalUpdateTable = EmotionalUpdtateChartDataAsset->EmotionalUpdateTable;
+}
+#endif WITH_EDITOR
 
 void USocialComponent::BeginPlay()
 {

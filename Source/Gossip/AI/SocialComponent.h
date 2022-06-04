@@ -60,7 +60,10 @@ public:
 
 
 protected:
-	// Called when the game starts
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+#endif WITH_EDITOR
+
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")

@@ -40,6 +40,7 @@ public:
 	void SetSelected(bool Value) { bSelected = Value; }
 
 protected:
+
 	virtual void BeginPlay() override;
 
 private:
