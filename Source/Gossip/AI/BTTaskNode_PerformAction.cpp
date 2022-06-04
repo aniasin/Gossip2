@@ -79,6 +79,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			InstinctsComp->SatisfyInstinct(Goal);
 			break;
 		case EAIInstinct::Reproduction:
+			InstinctsComp->SatisfyInstinct(Goal);
 			break;
 		}
 		BlackboardComp->ClearValue("TargetActor");

@@ -5,7 +5,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
 
+#include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Data/RessourceDataAsset.h"
 
 
@@ -44,7 +46,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 			ContentCount = Ressource.ContentCount;
 			LivingColor = Ressource.LivingColor;
 			DeadColor = Ressource.DeadColor;
-			RespawnTime = Ressource.RespawnTime;
+			RespawnTime = Ressource.RespawnTimeInGameHour;
 			AnimMontage = Ressource.Montage;
 			break;
 		}
@@ -68,14 +70,18 @@ void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
 
 void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
 {
-
+	// Override in SubClasses
 }
 
 void ARessource::RessourceEmpty()
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
+	if (!GM) return;
+
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	FTimerHandle Timer;
-	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, RespawnTime);
+	float TimerTime = RespawnTime * GM->GameHourDurationSeconds;
+	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, TimerTime);
 	if (MaterialInstance)
 	{
 		MaterialInstance->SetVectorParameterValue("Base Color", DeadColor);

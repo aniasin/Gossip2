@@ -86,8 +86,6 @@ private:
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
 
-	bool bSocializing;
-
 	FAlignment CalculateAlignmentChange(AActor* Other);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));

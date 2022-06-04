@@ -42,19 +42,26 @@ void UInstinctsComponent::BeginPlay()
 
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 {
+	EAIInstinct CurrentInstinct = EAIInstinct::None;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
 		if (Instinct.Goal == Goal)
 		{
+			CurrentInstinct = (EAIInstinct)Instinct.Instinct;
+
 			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
 			Instinct.CurrentValue -= 1 * Instinct.UpdateMultiplier;
 		}
-		else
+		switch (CurrentInstinct)
 		{
-			Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier;
-		}		
+		case EAIInstinct::Assimilation:
+			if (Instinct.Instinct == EAIInstinct::Conservation)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+		case EAIInstinct::Conservation:
+			if (Instinct.Instinct == EAIInstinct::Reproduction)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+		case EAIInstinct::Reproduction:
+			if (Instinct.Instinct == EAIInstinct::Assimilation)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+		}
 	}	
-	// TODO Play AnimMontage and wait for end.
 }
 
 void UInstinctsComponent::InstinctsUpdate()

@@ -128,6 +128,7 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		return;
 
 	case EAIInstinct::Reproduction:
+		NewAction = (uint8)EAIAction::TravelCollector;
 		return;
 	}
 

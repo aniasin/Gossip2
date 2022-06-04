@@ -48,16 +48,6 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 	}
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Name].Respect, KnownOthers[Name].Love);
 
-// 	for (auto& KnownOther : KnownOthers)
-// 	{
-// 		FString OtherName = KnownOther.Key;
-// 		FAlignment OtherAlignment = KnownOther.Value;
-// 		EAlignmentState Alignment = GetAlignment(OtherAlignment.Respect, OtherAlignment.Love);
-// 		FString AlignmentString = GetEnumValueAsString("EAlignmentState", Alignment);
-// 		UE_LOG(LogTemp, Log, TEXT("%s KnownOthers: %s -- %s"), *GetOwner()->GetName(), *OtherName, *AlignmentString)
-// 	}
-// 	UE_LOG(LogTemp, Log, TEXT("//////////////////////"))
-
 	return AlignmentState;
 }
 
@@ -85,7 +75,6 @@ bool USocialComponent::RespondToInteraction(AActor* Other)
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
-	bSocializing = false;
 	CurrentAlignmentState = EAlignmentState::None;
 	return;
 }
@@ -95,8 +84,6 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 	if (!IsValid(Other)) return;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return;
-
-	bSocializing = true;
 
 	FString OtherName = Other->GetName();
 
@@ -113,7 +100,6 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
 {
-	if (bSocializing) return;
 	TMap<EEmotionalState, float>EmotionalScores;
 
 	float Multiplier = 0;
