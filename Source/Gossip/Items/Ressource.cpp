@@ -33,6 +33,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 
 	for (FRessourceData Ressource : RessourceInfos->RessourceDataArray)
 	{
+		if (RessourceType == EAIGoal::None) return;
 		if (Ressource.RessourceType == RessourceType)
 		{
 			UStaticMesh* MeshPtr;
@@ -45,7 +46,6 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 			DeadColor = Ressource.DeadColor;
 			RespawnTime = Ressource.RespawnTime;
 			AnimMontage = Ressource.Montage;
-			break;
 		}
 	}
 }
@@ -54,6 +54,9 @@ void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UMaterialInterface* Material = Mesh->GetMaterial(0);
+	MaterialInstance = Mesh->CreateDynamicMaterialInstance(0, Material);
+	MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 }
 
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
@@ -69,9 +72,12 @@ void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
 void ARessource::RessourceEmpty()
 {
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	K2_RessourceStateChanged(DeadColor);
 	FTimerHandle Timer;
 	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, RespawnTime);
+	if (MaterialInstance)
+	{
+		MaterialInstance->SetVectorParameterValue("Base Color", DeadColor);
+	}
 }
 
 void ARessource::RessourceRespawn()
@@ -88,5 +94,8 @@ void ARessource::RessourceRespawn()
 		}
 	}
 	CollisionBox->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
-	K2_RessourceStateChanged(LivingColor);
+	if (MaterialInstance)
+	{
+		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
+	}
 }

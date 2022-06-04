@@ -61,6 +61,6 @@ protected:
 	virtual void BeginPlay() override;	
 
 private:
-
+	class UMaterialInstanceDynamic* MaterialInstance;
 
 };
