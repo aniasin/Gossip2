@@ -35,11 +35,9 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	if (!InitializeService(OwnerComp)) return;
 	//UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
 
-	// Check something needed now & Take action
+	StopSearching();
 	SetGoalAndAction();	
-
 	CheckStock();
-	// TODO Goal is still none: entertainment.
 	SetTravelRoute();
 
 	AIController->SetAIGoal(NewGoal);
@@ -68,10 +66,27 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 
 	PreviousGoal = AIController->GetAIGoal();
 	PreviousAction = AIController->GetAIAction();
+	TimeSearching = AIController->HasTimeSearchingElapsed();
 	NewGoal = (uint8)EAIGoal::None;
 	NewAction = (uint8)EAIAction::None;
 
 	return true;
+}
+
+void UBTService_SetAIGoalAndAction::StopSearching()
+{
+	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor)
+	{
+		if (!AIController->HasTimeSearchingElapsed()) return;
+		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
+		{
+			if (Instinct.Goal != (EAIGoal)PreviousGoal) continue;
+			float ValueToReport = Instinct.CurrentValue;
+			Instinct.CurrentValue = 0;
+			Instinct.GrowCoeffient += ValueToReport;
+		}
+		AIController->SetTimeSearching();
+	}
 }
 
 void UBTService_SetAIGoalAndAction::SetGoalAndAction()
@@ -151,6 +166,14 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
 		AIController->SetTargetActor(TargetActor);
 		NewAction = (uint8)EAIAction::TravelProcessor;
+	}
+}
+
+void UBTService_SetAIGoalAndAction::StartSearching()
+{
+	if (NewAction == (uint8)EAIAction::SearchCollector || NewAction == (uint8)EAIAction::SearchProcessor)
+	{
+		AIController->SetTimeSearching();
 	}
 }
 

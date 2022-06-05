@@ -36,9 +36,12 @@ private:
 	uint8 PreviousAction;
 	uint8 NewGoal;
 	uint8 NewAction;
+	float TimeSearching;
 
+	void StopSearching();
 	void SetGoalAndAction();
 	void SetAction();
 	void SetTravelRoute();
+	void StartSearching();
 	void CheckStock();
 };

@@ -165,7 +165,7 @@ struct FRessourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor DeadColor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float RespawnTimeInGameHour;
+	float RespawnTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* Montage;
 };

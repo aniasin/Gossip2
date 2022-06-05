@@ -51,11 +51,14 @@ public:
 	void SetAIAction(uint8 Action);
 	uint8 GetAIGoal();
 	uint8 GetAIAction();
+	void SetTimeSearching();
+	bool HasTimeSearchingElapsed();
 
 	void SetTargetActor(AActor* TargetActor);
 	void ClearTargetLocation();
 
 private:
 	bool bCanSeeHostile;
+	float TimeSearching;
 	
 };
