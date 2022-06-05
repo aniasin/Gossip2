@@ -6,11 +6,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
 
+#include "Gossip/Core/GS_Singleton.h"
+
 #include "Gossip/AI/GS_AIController.h"
 #include "Gossip/AI/SocialComponent.h"
 #include "Gossip/AI/InstinctsComponent.h"
 
 #include "Gossip/Items/InventoryComponent.h"
+
+#include "Gossip/Data/CharactersDataAsset.h"
 
 // Sets default values
 ANonPlayerCharacter::ANonPlayerCharacter()
@@ -44,6 +48,21 @@ void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CharactersData = CharactersDataAsset->CharactersData;
+
+	if (!bMale)
+	{
+		FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
+
+		TArray<FSoftObjectPath> ItemsPath;
+		ItemsPath.AddUnique(CharactersData[ECharacterProfile::Female].MeshPtr.ToSoftObjectPath());
+
+		for (FSoftObjectPath& Item : ItemsPath)
+		{
+			Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &ANonPlayerCharacter::OnMeshLoaded));
+		}
+	}
+
 	AIController = Cast<AGS_AIController>(Controller);
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
@@ -71,6 +90,13 @@ void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 	float Speed;
 	bRunning ? Speed = RunSpeed : Speed = WalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
+}
+
+void ANonPlayerCharacter::OnMeshLoaded()
+{
+	USkeletalMesh* SkeletalMesh = CharactersData[ECharacterProfile::Female].MeshPtr.Get();
+	GetMesh()->SetSkeletalMesh(SkeletalMesh);
+	GetMesh()->SetAnimInstanceClass(CharactersData[ECharacterProfile::Female].AnimBPClass);
 }
 
 // Broadcast from AlignmentComp

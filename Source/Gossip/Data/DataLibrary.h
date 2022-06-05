@@ -170,6 +170,26 @@ struct FRessourceData
 	UAnimMontage* Montage;
 };
 
+// Characters
+UENUM(BlueprintType)
+enum class ECharacterProfile : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Male			UMETA(DisplayName = "Male"),
+	Female		UMETA(DisplayName = "Female"),
+};
+
+USTRUCT(BlueprintType)
+struct FCharactersData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<USkeletalMesh> MeshPtr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimBlueprintGeneratedClass* AnimBPClass;
+};
+
 UCLASS()
 class GOSSIP_API UDataLibrary : public UBlueprintFunctionLibrary
 {

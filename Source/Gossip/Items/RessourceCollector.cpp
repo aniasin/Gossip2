@@ -11,6 +11,8 @@ ARessourceCollector::ARessourceCollector()
 
 void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
 {
+	if (!IsValid(InventoryComp)) return;
+
 	Super::CollectRessource(InventoryComp);
 	if (ContentCount <= 0) return;
 
@@ -22,6 +24,8 @@ void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
 
 void ARessourceCollector::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
 {
+	if (!IsValid(InventoryComp)) return;
+
 	InventoryComp->AddKnownRessourceCollector(this);
 }
 

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "Gossip/Data/DataLibrary.h"
 #include "NonPlayerCharacter.generated.h"
 
 class AGS_AIController;
@@ -23,12 +25,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UInstinctsComponent* InstinctsComp;
+	class UInstinctsComponent* InstinctsComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TMap<ECharacterProfile, FCharactersData>CharactersData;
 
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 200;
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
+	UPROPERTY(EditAnywhere)
+	bool bMale = true;
 
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);
@@ -40,6 +47,8 @@ public:
 	void SetSelected(bool Value) { bSelected = Value; }
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	class UCharactersDataAsset* CharactersDataAsset;
 
 	virtual void BeginPlay() override;
 
@@ -48,6 +57,8 @@ private:
 	AActor* ActorInVincinity;
 
 	bool bSelected;
+
+	void OnMeshLoaded();
 
 	UFUNCTION()
 	void OnAiGoalChanded(bool bRun);

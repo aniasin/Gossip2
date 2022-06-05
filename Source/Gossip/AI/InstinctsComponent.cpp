@@ -52,14 +52,15 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
 			Instinct.CurrentValue -= 1 * Instinct.UpdateMultiplier;
 		}
+
 		switch (CurrentInstinct)
 		{
 		case EAIInstinct::Assimilation:
-			if (Instinct.Instinct == EAIInstinct::Conservation)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+			if (Instinct.Instinct == EAIInstinct::Conservation) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
 		case EAIInstinct::Conservation:
-			if (Instinct.Instinct == EAIInstinct::Reproduction)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+			if (Instinct.Instinct == EAIInstinct::Reproduction) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
 		case EAIInstinct::Reproduction:
-			if (Instinct.Instinct == EAIInstinct::Assimilation)	Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break;
+			if (Instinct.Instinct == EAIInstinct::Assimilation) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
 		}
 	}	
 }
