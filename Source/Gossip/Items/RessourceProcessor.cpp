@@ -13,6 +13,7 @@ ARessourceProcessor::ARessourceProcessor()
 void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	Super::CollectRessource(InventoryComp);
+
 	if (InventoryComp)
 	{
 		InventoryComp->RemoveOwnedItem(RessourceType, true);

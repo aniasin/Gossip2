@@ -5,6 +5,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 #include "SocialComponent.h"
+#include "InstinctsComponent.h"
+
+#include "Gossip/Items/Ressource.h"
 
 
 EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -20,14 +23,23 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	USocialComponent* SocialComp = Cast<USocialComponent>(SocialComponent);
 	if (!SocialComp) return EBTNodeResult::Failed;
 
+	UActorComponent* InstinctComponent = NPC->FindComponentByClass(UInstinctsComponent::StaticClass());
+	if (!InstinctComponent) return EBTNodeResult::Failed;
+	UInstinctsComponent* InstinctComp = Cast<UInstinctsComponent>(InstinctComponent);
+	if (!InstinctComp) return EBTNodeResult::Failed;
+
 	AActor* OtherActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
 	if (!IsValid(OtherActor)) return EBTNodeResult::Failed;
-
-	if (!SocialComp->InitiateInteraction(OtherActor)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed;}
 
 	AGS_AIController* OtherController = Cast<AGS_AIController>(OtherActor->GetInstigatorController());
 	if (!IsValid(OtherController)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed; }
 
+	bool bSuccessfulInteraction = SocialComp->InitiateInteraction(OtherActor);
+
+	if (bSuccessfulInteraction)
+	{
+		InstinctComp->SatisfyInstinct(EAIGoal::Sex);
+	}
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::None);

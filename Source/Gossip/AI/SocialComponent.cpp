@@ -13,8 +13,6 @@
 USocialComponent::USocialComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-
 }
 
 #if WITH_EDITOR
@@ -31,7 +29,6 @@ void USocialComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
@@ -58,14 +55,14 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
 
-	bool bSuccess = UpdateAlignment(Other);	
+	bool bsuccess = UpdateAlignment(Other);
 	FString Message;
-	bSuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
+	bsuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
 	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
 
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
-	return true;
+	return bsuccess;
 }
 
 bool USocialComponent::RespondToInteraction(AActor* Other)
@@ -77,7 +74,7 @@ bool USocialComponent::RespondToInteraction(AActor* Other)
 	bSuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
 	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
 
-	return true;
+	return bSuccess;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
@@ -105,6 +102,10 @@ bool USocialComponent::UpdateAlignment(AActor* Other)
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
 	CurrentAlignmentState = AlignmentState;
+
+	int32 SexualMultiplier = 0;
+	bSuccess ? SexualMultiplier = 1 : SexualMultiplier = -1;
+	KnownOthers[OtherName].Sexual += SexualMultiplier;
 
 	return bSuccess;
 }

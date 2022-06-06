@@ -49,6 +49,7 @@ public:
 
 	void SetAIGoal(uint8 Instinct);
 	void SetAIAction(uint8 Action);
+
 	uint8 GetAIGoal();
 	uint8 GetAIAction();
 	void SetTimeSearching();

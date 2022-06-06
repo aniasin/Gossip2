@@ -14,10 +14,12 @@ struct FAlignment
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	float Respect;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	float Love;
+	UPROPERTY(meta=(ClampMax="10", ClampMin ="0"))
+	int32 Sexual;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

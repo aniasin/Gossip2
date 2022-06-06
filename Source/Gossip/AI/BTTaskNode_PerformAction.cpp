@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 #include "InstinctsComponent.h"
+#include "SocialComponent.h"
 
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Items/InventoryComponent.h"
@@ -28,6 +29,11 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (!InventoryComponent) return EBTNodeResult::Failed;
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(InventoryComponent);
 	if (!InventoryComp) return EBTNodeResult::Failed;
+
+	UActorComponent* SocialComponent = NPC->FindComponentByClass(USocialComponent::StaticClass());
+	if (!SocialComponent) return EBTNodeResult::Failed;
+	USocialComponent* SocialComp = Cast<USocialComponent>(SocialComponent);
+	if (!SocialComp) return EBTNodeResult::Failed;
 
 	EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 	EAIAction Action = (EAIAction)(BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName));
@@ -74,16 +80,18 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			Ressource->CollectRessource(InventoryComp);
 			BlackboardComp->ClearValue("TargetActor");
 			break;
+
 		case EAIInstinct::Conservation:
 			InstinctsComp->SatisfyInstinct(Goal);
+			BlackboardComp->ClearValue("TargetActor");
 			break;
-		case EAIInstinct::Reproduction:
-			InstinctsComp->SatisfyInstinct(Goal);
+
+		case EAIInstinct::Reproduction:	
+			BlackboardComp->ClearValue("TargetActor");
+			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
 			break;
 		}
-		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
-
 	}
 	return EBTNodeResult::Failed;
 }
