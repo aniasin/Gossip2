@@ -103,9 +103,9 @@ bool USocialComponent::UpdateAlignment(AActor* Other)
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
 	CurrentAlignmentState = AlignmentState;
 
-	int32 SexualMultiplier = 0;
-	bSuccess ? SexualMultiplier = 1 : SexualMultiplier = -1;
-	KnownOthers[OtherName].Sexual += SexualMultiplier;
+	int32 AffinityMultiplier = 0;
+	bSuccess ? AffinityMultiplier = 1 : AffinityMultiplier = -1;
+	KnownOthers[OtherName].Affinity += AffinityMultiplier;
 
 	return bSuccess;
 }
@@ -151,10 +151,30 @@ AActor* USocialComponent::FindSocialPartner()
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
 	if (!AIController) return nullptr;
 
+	TArray<AActor*>KnownOthersInVincinity;
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
 	for (AActor* Actor : CurrentlyPerceivedActors)
 	{
-		if (Actor->FindComponentByClass(USocialComponent::StaticClass())) return Actor;
+		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
+		if (KnownOthers.Contains(Actor->GetName()) && KnownOthers[Actor->GetName()].Affinity > 0) KnownOthersInVincinity.Add(Actor);
+	}
+
+	if (KnownOthersInVincinity.Num() <= 0 && CurrentlyPerceivedActors.Num() > 0)
+	{
+		return CurrentlyPerceivedActors[0];
+	}
+
+	if (KnownOthersInVincinity.Num() > 0)
+	{
+		TMap<AActor*, int32>OthersToSort;
+		for (AActor* Other : KnownOthersInVincinity)
+		{
+			OthersToSort.Add(Other, KnownOthers[Other->GetName()].Affinity);
+		}
+		OthersToSort.ValueSort([](const int32& A, const int32& B) {	return A > B; });
+		TArray<AActor*>SortedKeys;
+		OthersToSort.GenerateKeyArray(SortedKeys);
+		return SortedKeys[0];
 	}
 
 	return nullptr;

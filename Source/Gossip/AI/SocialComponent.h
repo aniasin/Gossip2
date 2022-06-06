@@ -18,8 +18,8 @@ struct FAlignment
 	float Respect;
 	UPROPERTY()
 	float Love;
-	UPROPERTY(meta=(ClampMax="10", ClampMin ="0"))
-	int32 Sexual;
+	UPROPERTY(meta=(ClampMax="10", ClampMin ="-10"))
+	int32 Affinity;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
