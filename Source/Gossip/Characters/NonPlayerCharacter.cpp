@@ -90,7 +90,7 @@ void ANonPlayerCharacter::OnAsyncLoadComplete()
 	if (!IsValid(SkeletalMesh)) { UE_LOG(LogTemp, Error, TEXT("CharacterDataAsset has not been filled!")) return; }
 
 	GetMesh()->SetSkeletalMesh(SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(CharactersData[ECharacterProfile::Female].AnimBPClass);
+	GetMesh()->SetAnimInstanceClass(CharactersData[CharacterProfile].AnimBPClass);
 }
 
 void ANonPlayerCharacter::OrderMove(FVector Location)

@@ -28,6 +28,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EAIGoal RessourceType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> Owners;
 	UPROPERTY(BlueprintReadWrite)
 	bool bRaw;
 	UPROPERTY(BlueprintReadWrite)

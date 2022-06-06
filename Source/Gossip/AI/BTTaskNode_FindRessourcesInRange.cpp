@@ -42,18 +42,19 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlap: %s"), *Hit.GetActor()->GetName())
+		Ressource = Cast<ARessource>(Hit.GetActor());
+		if (Ressource->Owners.Num() > 0 && !Ressource->Owners.Contains(AIController->GetPawn())) continue;
+
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
 			|| Action == EAIAction::StockRaw && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
-			Ressource = Cast<ARessource>(Hit.GetActor());
 			if (Ressource->ContentCount <= 0)
 			{
 				InventoryComp->RemoveKnownRessourceCollector(Ressource);
-				break;
+				continue;
 			}
 			InventoryComp->AddKnownRessourceCollector(Ressource);
-			if (Ressource->RessourceType != Goal) break;
+			if (Ressource->RessourceType != Goal) continue;
 
 			AIController->SetTargetActor(Ressource);
 			return EBTNodeResult::Succeeded;
@@ -61,8 +62,7 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass())
 			|| Action == EAIAction::StockProcessed && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
-			Ressource = Cast<ARessource>(Hit.GetActor());
-			if (Ressource->RessourceType != Goal) break;
+			if (Ressource->RessourceType != Goal) continue;
 
 			AIController->SetTargetActor(Ressource);
 			return EBTNodeResult::Succeeded;

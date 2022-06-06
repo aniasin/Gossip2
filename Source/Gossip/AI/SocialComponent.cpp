@@ -58,7 +58,11 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
 
-	UpdateAlignment(Other);	
+	bool bSuccess = UpdateAlignment(Other);	
+	FString Message;
+	bSuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
+	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
+
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	return true;
@@ -68,7 +72,10 @@ bool USocialComponent::RespondToInteraction(AActor* Other)
 {
 	if (!IsValid(Other)) return false;
 
-	UpdateAlignment(Other);
+	bool bSuccess =	UpdateAlignment(Other);
+	FString Message;
+	bSuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
+	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
 
 	return true;
 }
@@ -79,16 +86,18 @@ void USocialComponent::EndInteraction(AActor* Other)
 	return;
 }
 
-void USocialComponent::UpdateAlignment(AActor* Other)
+bool USocialComponent::UpdateAlignment(AActor* Other)
 {
-	if (!IsValid(Other)) return;
+	bool bSuccess = false;
+	if (!IsValid(Other)) return bSuccess;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (!IsValid(OtherSocialComp)) return;
+	if (!IsValid(OtherSocialComp)) return bSuccess;
 
 	FString OtherName = Other->GetName();
 
 	FAlignment NewAlignment;
-	NewAlignment = CalculateAlignmentChange(Other);
+
+	NewAlignment = CalculateAlignmentChange(Other, bSuccess);
 	NewAlignment.Respect += KnownOthers[OtherName].Respect;
 	NewAlignment.Love += KnownOthers[OtherName].Love;
 
@@ -96,6 +105,8 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
 	CurrentAlignmentState = AlignmentState;
+
+	return bSuccess;
 }
 
 void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
@@ -148,8 +159,9 @@ AActor* USocialComponent::FindSocialPartner()
 	return nullptr;
 }
 
-FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
+FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other, bool &bSuccess)
 {
+	bSuccess = false;
 	FAlignment AlignmentChange;
 	AlignmentChange.Respect = 0;
 	AlignmentChange.Love = 0;
@@ -185,6 +197,7 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 
 	AlignmentChange.Respect = RespectChange;
 	AlignmentChange.Love = LoveChange;
+	bSuccess = RespectChange + LoveChange > 0;
 
 	return AlignmentChange;
 }

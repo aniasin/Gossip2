@@ -70,7 +70,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		{
 		case EAIInstinct::None:
 			break;
-
 		case EAIInstinct::Assimilation:
 			Ressource->CollectRessource(InventoryComp);
 			BlackboardComp->ClearValue("TargetActor");

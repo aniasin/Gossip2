@@ -45,7 +45,6 @@ public:
 	bool RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 
-	void UpdateAlignment(AActor* Other);
 	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);
 
 	EAlignmentState GetAlignment(float Respect, float Love);
@@ -86,7 +85,8 @@ private:
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
 
-	FAlignment CalculateAlignmentChange(AActor* Other);
+	bool UpdateAlignment(AActor* Other);
+	FAlignment CalculateAlignmentChange(AActor* Other, bool& bSuccess);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

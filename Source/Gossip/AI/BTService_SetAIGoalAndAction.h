@@ -42,6 +42,5 @@ private:
 	void SetGoalAndAction();
 	void SetAction();
 	void SetTravelRoute();
-	void StartSearching();
 	void CheckStock();
 };

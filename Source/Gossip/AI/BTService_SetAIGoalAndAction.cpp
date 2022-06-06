@@ -16,7 +16,7 @@ UBTService_SetAIGoalAndAction::UBTService_SetAIGoalAndAction(const FObjectInitia
 
 void UBTService_SetAIGoalAndAction::OnSearchStart(FBehaviorTreeSearchData& SearchData)
 {
-	
+	// Needed for Interval between tick to take effect.	
 }
 
 void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -166,14 +166,6 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
 		AIController->SetTargetActor(TargetActor);
 		NewAction = (uint8)EAIAction::TravelProcessor;
-	}
-}
-
-void UBTService_SetAIGoalAndAction::StartSearching()
-{
-	if (NewAction == (uint8)EAIAction::SearchCollector || NewAction == (uint8)EAIAction::SearchProcessor)
-	{
-		AIController->SetTimeSearching();
 	}
 }
 
