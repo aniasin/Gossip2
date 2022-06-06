@@ -50,18 +50,7 @@ void ANonPlayerCharacter::BeginPlay()
 
 	CharactersData = CharactersDataAsset->CharactersData;
 
-	if (!bMale)
-	{
-		FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
-
-		TArray<FSoftObjectPath> ItemsPath;
-		ItemsPath.AddUnique(CharactersData[ECharacterProfile::Female].MeshPtr.ToSoftObjectPath());
-
-		for (FSoftObjectPath& Item : ItemsPath)
-		{
-			Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &ANonPlayerCharacter::OnMeshLoaded));
-		}
-	}
+	InitializeCharacterProfile();
 
 	AIController = Cast<AGS_AIController>(Controller);
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
@@ -80,6 +69,30 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 	}	
 }
 
+void ANonPlayerCharacter::InitializeCharacterProfile()
+{
+	if (CharacterProfile == ECharacterProfile::None) { UE_LOG(LogTemp, Error, TEXT("%s - Character Profile has not been set"), *GetName()) return; }
+
+	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
+
+	TArray<FSoftObjectPath> ItemsPath;
+	ItemsPath.AddUnique(CharactersData[CharacterProfile].MeshPtr.ToSoftObjectPath());
+
+	for (FSoftObjectPath& Item : ItemsPath)
+	{
+		Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &ANonPlayerCharacter::OnAsyncLoadComplete));
+	}
+}
+
+void ANonPlayerCharacter::OnAsyncLoadComplete()
+{
+	USkeletalMesh* SkeletalMesh = CharactersData[CharacterProfile].MeshPtr.Get();
+	if (!IsValid(SkeletalMesh)) { UE_LOG(LogTemp, Error, TEXT("CharacterDataAsset has not been filled!")) return; }
+
+	GetMesh()->SetSkeletalMesh(SkeletalMesh);
+	GetMesh()->SetAnimInstanceClass(CharactersData[ECharacterProfile::Female].AnimBPClass);
+}
+
 void ANonPlayerCharacter::OrderMove(FVector Location)
 {
 	AIController->AIMoveToLocation(Location);
@@ -92,19 +105,13 @@ void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
-void ANonPlayerCharacter::OnMeshLoaded()
-{
-	USkeletalMesh* SkeletalMesh = CharactersData[ECharacterProfile::Female].MeshPtr.Get();
-	GetMesh()->SetSkeletalMesh(SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(CharactersData[ECharacterProfile::Female].AnimBPClass);
-}
-
 // Broadcast from AlignmentComp
 void ANonPlayerCharacter::OnAiGoalChanded(bool bRun)
 {
 	SetMoveSpeed(bRun);
 }
 
+// Broadcast from Controller
 void ANonPlayerCharacter::OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts)
 {
 	SocialComp->UpdateEmotionalState(HungryInstincts);

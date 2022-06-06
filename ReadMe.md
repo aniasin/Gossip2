@@ -7,6 +7,7 @@
 - Right click on project icon and Generate Project files
 - Import Unreal Manikin from Third Person Template
 - Set SkeletonMesh of BP_Npc as Unreal Manikin
+- Fill Content/Data/CharacterProfileDataAsset with sensible values
 - Enjoy
 
 ## Features:

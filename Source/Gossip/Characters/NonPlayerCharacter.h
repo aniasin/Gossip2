@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
 	UPROPERTY(EditAnywhere)
-	bool bMale = true;
+	ECharacterProfile CharacterProfile;
 
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);
@@ -52,13 +52,15 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	void InitializeCharacterProfile();
+
 private:
 	AGS_AIController* AIController;
 	AActor* ActorInVincinity;
 
 	bool bSelected;
 
-	void OnMeshLoaded();
+	void OnAsyncLoadComplete();
 
 	UFUNCTION()
 	void OnAiGoalChanded(bool bRun);

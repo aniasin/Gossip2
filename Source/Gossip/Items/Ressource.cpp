@@ -46,7 +46,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 			ContentCount = Ressource.ContentCount;
 			LivingColor = Ressource.LivingColor;
 			DeadColor = Ressource.DeadColor;
-			RespawnTime = Ressource.RespawnTime;
+			RespawnTime = Ressource.RespawnTimeInGameHour;
 			AnimMontage = Ressource.Montage;
 			break;
 		}
@@ -75,9 +75,12 @@ void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
 
 void ARessource::RessourceEmpty()
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!GM) return;
+
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	FTimerHandle Timer;
-	float TimerTime = RespawnTime;
+	float TimerTime = RespawnTime * GM->GameHourDurationSeconds;
 	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, TimerTime);
 	if (MaterialInstance)
 	{
