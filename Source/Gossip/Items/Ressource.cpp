@@ -40,7 +40,14 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 		{
 			UStaticMesh* MeshPtr;
 			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.MeshSoftPath.ToString());
-			Mesh->SetStaticMesh(MeshPtr);
+			if (IsValid(Mesh))
+			{
+				Mesh->SetStaticMesh(MeshPtr);
+			}
+			else
+			{
+				Mesh->SetStaticMesh(NULL);
+			}
 			bRaw = Ressource.bRaw;
 			WaitTime = Ressource.WaitTime;
 			ContentCount = Ressource.ContentCount;
@@ -57,10 +64,14 @@ void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMaterialInterface* Material = Mesh->GetMaterial(0);
-	MaterialInstance = Mesh->CreateDynamicMaterialInstance(0, Material);
-	MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
+	if (RessourceType == EAIGoal::Sex) CollisionBox->SetBoxExtent(FVector(10, 10, 10));
 
+	if (IsValid(Mesh->GetStaticMesh()))
+	{
+		UMaterialInterface* Material = Mesh->GetMaterial(0);
+		MaterialInstance = Mesh->CreateDynamicMaterialInstance(0, Material);
+		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
+	}
 }
 
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
