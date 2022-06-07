@@ -64,8 +64,6 @@ void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (RessourceType == EAIGoal::Sex) CollisionBox->SetBoxExtent(FVector(10, 10, 10));
-
 	if (IsValid(Mesh->GetStaticMesh()))
 	{
 		UMaterialInterface* Material = Mesh->GetMaterial(0);

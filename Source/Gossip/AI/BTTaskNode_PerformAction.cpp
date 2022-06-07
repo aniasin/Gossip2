@@ -87,8 +87,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			break;
 
 		case EAIInstinct::Reproduction:	
-			BlackboardComp->ClearValue("TargetActor");
-			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
+			// Directly set in SetAIGoalAndAction
 			break;
 		}
 		return EBTNodeResult::Succeeded;
