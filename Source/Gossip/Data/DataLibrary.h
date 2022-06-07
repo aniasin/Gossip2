@@ -13,6 +13,8 @@ enum class EAIStatus : uint8
 	PlayerOrder			UMETA(DisplayName = "PlayerOrder"),
 	SearchSocialize		UMETA(DisplayName = "SearchSocialize"),
 	Socialize			UMETA(DisplayName = "Socialize"),
+	Follow				UMETA(DisplayName = "Follow"),
+	LeadHome			UMETA(DisplayName = "LeadHome"),
 };
 
 // Instincts
@@ -70,6 +72,8 @@ struct FInstinctValues
 	float UpdateMultiplier;
 	UPROPERTY(EditAnywhere)
 	float GrowCoeffient;
+	UPROPERTY(EditAnywhere)
+	float ReportedValue;
 	UPROPERTY(EditAnywhere)
 	bool bStockable;
 };

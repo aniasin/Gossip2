@@ -82,10 +82,15 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 		if (!AIController->HasTimeSearchingElapsed()) return;
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 		{
-			if (Instinct.Goal != (EAIGoal)PreviousGoal) continue;
+			if (Instinct.Goal != (EAIGoal)PreviousGoal)
+			{
+				Instinct.CurrentValue += Instinct.ReportedValue;
+				Instinct.ReportedValue = 0;
+				continue;
+			}
 			float ValueToReport = Instinct.CurrentValue;
 			Instinct.CurrentValue = 0;
-			Instinct.GrowCoeffient += ValueToReport;
+			Instinct.ReportedValue += ValueToReport;
 		}
 		AIController->SetTimeSearching();
 	}
@@ -145,7 +150,7 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		return;
 
 	case EAIInstinct::Reproduction:
-		AIController->BlackboardComponent->SetValueAsEnum("EAIStatus", (uint8)EAIStatus::SearchSocialize);
+		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
 		return;
 	}
 

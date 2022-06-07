@@ -18,8 +18,10 @@ struct FAlignment
 	float Respect;
 	UPROPERTY()
 	float Love;
-	UPROPERTY(meta=(ClampMax="10", ClampMin ="-10"))
-	int32 Affinity;
+	UPROPERTY()
+	int32 Proximity;
+	UPROPERTY()
+	ECharacterProfile Gender;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -33,6 +35,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESocialPosition SocialPosition;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECharacterProfile CharacterProfile;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEmotionalState OwnEmotionalState;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data") 
@@ -43,15 +47,15 @@ public:
 	TArray<FEmotionalUpdateTable> EmotionalUpdateTable;
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
-	bool InitiateInteraction(AActor* Other);
-	bool RespondToInteraction(AActor* Other);
+	int32 InitiateInteraction(AActor* Other);
+	int32 RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 
 	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);
 
 	EAlignmentState GetAlignment(float Respect, float Love);
 
-	AActor* FindSocialPartner();
+	AActor* FindSocialPartner(bool bOppositeGender);
 
 	TMap<FString, FAlignment> GetKnownOthers() { return KnownOthers; }
 	UFUNCTION(BlueprintCallable)
@@ -87,8 +91,8 @@ private:
 	TMap<FString, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
 
-	bool UpdateAlignment(AActor* Other);
-	FAlignment CalculateAlignmentChange(AActor* Other, bool& bSuccess);
+	void UpdateAlignment(AActor* Other);
+	FAlignment CalculateAlignmentChange(AActor* Other);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

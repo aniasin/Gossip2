@@ -34,8 +34,6 @@ public:
 	float WalkSpeed = 200;
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
-	UPROPERTY(EditAnywhere)
-	ECharacterProfile CharacterProfile;
 
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(bool bRunning);

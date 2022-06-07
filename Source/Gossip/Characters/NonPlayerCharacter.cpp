@@ -71,12 +71,12 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 
 void ANonPlayerCharacter::InitializeCharacterProfile()
 {
-	if (CharacterProfile == ECharacterProfile::None) { UE_LOG(LogTemp, Error, TEXT("%s - Character Profile has not been set"), *GetName()) return; }
+	if (SocialComp->CharacterProfile == ECharacterProfile::None) { UE_LOG(LogTemp, Error, TEXT("%s - Character Profile has not been set"), *GetName()) return; }
 
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
 	TArray<FSoftObjectPath> ItemsPath;
-	ItemsPath.AddUnique(CharactersData[CharacterProfile].MeshPtr.ToSoftObjectPath());
+	ItemsPath.AddUnique(CharactersData[SocialComp->CharacterProfile].MeshPtr.ToSoftObjectPath());
 
 	for (FSoftObjectPath& Item : ItemsPath)
 	{
@@ -86,11 +86,11 @@ void ANonPlayerCharacter::InitializeCharacterProfile()
 
 void ANonPlayerCharacter::OnAsyncLoadComplete()
 {
-	USkeletalMesh* SkeletalMesh = CharactersData[CharacterProfile].MeshPtr.Get();
+	USkeletalMesh* SkeletalMesh = CharactersData[SocialComp->CharacterProfile].MeshPtr.Get();
 	if (!IsValid(SkeletalMesh)) { UE_LOG(LogTemp, Error, TEXT("CharacterDataAsset has not been filled!")) return; }
 
 	GetMesh()->SetSkeletalMesh(SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(CharactersData[CharacterProfile].AnimBPClass);
+	GetMesh()->SetAnimInstanceClass(CharactersData[SocialComp->CharacterProfile].AnimBPClass);
 }
 
 void ANonPlayerCharacter::OrderMove(FVector Location)

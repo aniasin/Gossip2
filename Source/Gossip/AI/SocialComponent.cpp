@@ -3,6 +3,7 @@
 
 #include "SocialComponent.h"
 #include "GS_AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 #include "Gossip/Data/EmotionalDataAsset.h"
 #include "Gossip/Data/EmotionalUpdateDataAsset.h"
@@ -33,7 +34,7 @@ void USocialComponent::BeginPlay()
 
 EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 {
-	USocialComponent* OtherAlignmentComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
 
 	FString Name = Other->GetName();
 	if (!KnownOthers.Contains(Name))
@@ -41,6 +42,8 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 		FAlignment NewAlignment;
 		NewAlignment.Love = 0;
 		NewAlignment.Respect = 0;
+		NewAlignment.Proximity = 0;
+		NewAlignment.Gender = OtherSocialComp->CharacterProfile;
 		KnownOthers.Add(Name, NewAlignment);
 	}
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Name].Respect, KnownOthers[Name].Love);
@@ -48,66 +51,59 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 	return AlignmentState;
 }
 
-bool USocialComponent::InitiateInteraction(AActor* Other)
+int32 USocialComponent::InitiateInteraction(AActor* Other)
 {
-	if (!IsValid(Other)) return false;
+	if (!IsValid(Other)) return 0;
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (!IsValid(OtherSocialComp)) return false;
+	if (!IsValid(OtherSocialComp)) return 0;
 
-	bool bsuccess = UpdateAlignment(Other);
+	UpdateAlignment(Other);
 	FString Message;
-	bsuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
-	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
+	KnownOthers[Other->GetName()].Proximity > 0 ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
+	UE_LOG(LogTemp, Log, TEXT("%s %s Proximity: %i"), *Message, *GetOwner()->GetName(), KnownOthers[Other->GetName()].Proximity)
 
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
-	return bsuccess;
+	return KnownOthers[Other->GetName()].Proximity;
 }
 
-bool USocialComponent::RespondToInteraction(AActor* Other)
+int32 USocialComponent::RespondToInteraction(AActor* Other)
 {
-	if (!IsValid(Other)) return false;
+	if (!IsValid(Other)) return 0;
 
-	bool bSuccess =	UpdateAlignment(Other);
+	UpdateAlignment(Other);
 	FString Message;
-	bSuccess ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
-	UE_LOG(LogTemp, Log, TEXT("%s %s"), *Message, *GetOwner()->GetName())
+	KnownOthers[Other->GetName()].Proximity > 0 ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
+	UE_LOG(LogTemp, Log, TEXT("%s %s Proximity: %i"), *Message, *GetOwner()->GetName(), KnownOthers[Other->GetName()].Proximity)
 
-	return bSuccess;
+	return KnownOthers[Other->GetName()].Proximity;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
 	CurrentAlignmentState = EAlignmentState::None;
-	return;
 }
 
-bool USocialComponent::UpdateAlignment(AActor* Other)
+void USocialComponent::UpdateAlignment(AActor* Other)
 {
-	bool bSuccess = false;
-	if (!IsValid(Other)) return bSuccess;
+	if (!IsValid(Other)) return;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (!IsValid(OtherSocialComp)) return bSuccess;
+	if (!IsValid(OtherSocialComp)) return;
 
 	FString OtherName = Other->GetName();
 
 	FAlignment NewAlignment;
-
-	NewAlignment = CalculateAlignmentChange(Other, bSuccess);
+	NewAlignment = CalculateAlignmentChange(Other);
 	NewAlignment.Respect += KnownOthers[OtherName].Respect;
 	NewAlignment.Love += KnownOthers[OtherName].Love;
-
+	int32 ProximityChanged = NewAlignment.Proximity + KnownOthers[OtherName].Proximity;
+	NewAlignment.Proximity = FMath::Clamp(ProximityChanged, -10, 10);
 	KnownOthers.Add(OtherName, NewAlignment);
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
 	CurrentAlignmentState = AlignmentState;
 
-	int32 AffinityMultiplier = 0;
-	bSuccess ? AffinityMultiplier = 1 : AffinityMultiplier = -1;
-	KnownOthers[OtherName].Affinity += AffinityMultiplier;
-
-	return bSuccess;
 }
 
 void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
@@ -146,7 +142,7 @@ EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 	return EAlignmentState::None;
 }
 
-AActor* USocialComponent::FindSocialPartner()
+AActor* USocialComponent::FindSocialPartner(bool bOppositeGender)
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
 	if (!AIController) return nullptr;
@@ -156,12 +152,25 @@ AActor* USocialComponent::FindSocialPartner()
 	for (AActor* Actor : CurrentlyPerceivedActors)
 	{
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-		if (KnownOthers.Contains(Actor->GetName()) && KnownOthers[Actor->GetName()].Affinity > 0) KnownOthersInVincinity.Add(Actor);
+		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= 0) continue;
+		if (AIController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex && KnownOthers[Actor->GetName()].Gender == CharacterProfile) continue;
+		if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
+
+		KnownOthersInVincinity.Add(Actor);
 	}
 
 	if (KnownOthersInVincinity.Num() <= 0 && CurrentlyPerceivedActors.Num() > 0)
 	{
-		return CurrentlyPerceivedActors[0];
+		for (AActor* Actor : CurrentlyPerceivedActors)
+		{
+			UActorComponent* OtherSocialComponent = Actor->FindComponentByClass(USocialComponent::StaticClass());
+			if (!OtherSocialComponent) continue;
+			USocialComponent* OtherSocialComp = Cast<USocialComponent>(OtherSocialComponent);
+			if (!OtherSocialComp) continue;
+			if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
+			if (AIController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex && OtherSocialComp->CharacterProfile == CharacterProfile) continue;
+			return Actor;
+		}
 	}
 
 	if (KnownOthersInVincinity.Num() > 0)
@@ -169,7 +178,7 @@ AActor* USocialComponent::FindSocialPartner()
 		TMap<AActor*, int32>OthersToSort;
 		for (AActor* Other : KnownOthersInVincinity)
 		{
-			OthersToSort.Add(Other, KnownOthers[Other->GetName()].Affinity);
+			OthersToSort.Add(Other, KnownOthers[Other->GetName()].Proximity);
 		}
 		OthersToSort.ValueSort([](const int32& A, const int32& B) {	return A > B; });
 		TArray<AActor*>SortedKeys;
@@ -180,12 +189,13 @@ AActor* USocialComponent::FindSocialPartner()
 	return nullptr;
 }
 
-FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other, bool &bSuccess)
+FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 {
-	bSuccess = false;
 	FAlignment AlignmentChange;
 	AlignmentChange.Respect = 0;
 	AlignmentChange.Love = 0;
+	AlignmentChange.Proximity = 0;
+	AlignmentChange.Gender = CharacterProfile;
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return AlignmentChange;
@@ -216,9 +226,9 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other, bool &bSucc
 		LoveChange += TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
 	}
 
-	AlignmentChange.Respect = RespectChange;
-	AlignmentChange.Love = LoveChange;
-	bSuccess = RespectChange + LoveChange > 0;
+	AlignmentChange.Respect = RespectChange + KnownOthers[Other->GetName()].Proximity / 10;
+	AlignmentChange.Love = LoveChange + KnownOthers[Other->GetName()].Proximity / 10;
+	AlignmentChange.Proximity = RespectChange + LoveChange > 0 ? 1 : -1;
 
 	return AlignmentChange;
 }

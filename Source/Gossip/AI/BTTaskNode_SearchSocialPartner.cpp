@@ -21,7 +21,9 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 	USocialComponent* SocialComp = Cast<USocialComponent>(SocialComponent);
 	if (!SocialComp) return EBTNodeResult::Failed;
 
-	AActor* TargetActor = SocialComp->FindSocialPartner();
+	bool bOppositeGender = BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex;
+
+	AActor* TargetActor = SocialComp->FindSocialPartner(bOppositeGender);
 	if (!TargetActor) return EBTNodeResult::Failed;
 
 	BlackboardComp->SetValueAsObject("TargetActor", TargetActor);
