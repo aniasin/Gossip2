@@ -34,6 +34,7 @@ private:
 	class UInstinctsComponent* InstinctsComp;
 	uint8 PreviousGoal;
 	uint8 PreviousAction;
+	uint8 PreviousAISatus;
 	uint8 NewGoal;
 	uint8 NewAction;
 	float TimeSearching;
