@@ -65,6 +65,11 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CurrentSelections.Num() > 0)
+	{
+		SetActorLocation(CurrentSelections[0]->GetActorLocation());
+	}
+
 }
 
 void APlayerPawn::StartBoxSelection()

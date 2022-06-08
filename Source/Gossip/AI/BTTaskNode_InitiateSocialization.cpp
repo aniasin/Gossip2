@@ -58,6 +58,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
 
 			OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
+			OtherController->GetBlackboardComponent()->SetValueAsVector("TargetLocation", BlackboardComp->GetValueAsVector("HomeLocation"));
 			OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Follow);
 			UE_LOG(LogTemp, Log, TEXT("%s Should follow"), *OtherActor->GetName())
 			return EBTNodeResult::Succeeded;
