@@ -50,7 +50,9 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 			CurrentInstinct = (EAIInstinct)Instinct.Instinct;
 
 			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
-			Instinct.CurrentValue -= 1 * Instinct.UpdateMultiplier;
+			float NewValue = FMath::Abs(Instinct.CurrentValue);
+			NewValue -= 1 * Instinct.UpdateMultiplier;
+			Instinct.CurrentValue = NewValue;
 		}
 
 		switch (CurrentInstinct)
@@ -70,7 +72,7 @@ void UInstinctsComponent::InstinctsUpdate()
 	TArray<EAIGoal> HungryInstincts;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		Instinct.CurrentValue += FMath::Abs(Instinct.GrowCoeffient) * Instinct.UpdateMultiplier;
+		Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier;
 		if (Instinct.CurrentValue >= 1) HungryInstincts.AddUnique(Instinct.Goal);
 	}
 	OnInstinctsUpdated.Broadcast(HungryInstincts);

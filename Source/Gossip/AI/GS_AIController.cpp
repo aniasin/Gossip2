@@ -10,6 +10,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "Gossip/Core/GossipGameMode.h"
+
 
 
 AGS_AIController::AGS_AIController()
@@ -115,7 +117,9 @@ void AGS_AIController::SetTimeSearching()
 
 bool AGS_AIController::HasTimeSearchingElapsed()
 {
-	return GetWorld()->GetTimeSeconds() - TimeSearching > 60;
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GM) return false;
+	return GetWorld()->GetTimeSeconds() - TimeSearching > GM->GameHourDurationSeconds;
 }
 
 void AGS_AIController::SetTargetActor(AActor* TargetActor)

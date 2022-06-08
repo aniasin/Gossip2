@@ -39,6 +39,14 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	AGS_AIController* OtherController = Cast<AGS_AIController>(OtherActor->GetInstigatorController());
 	if (!IsValid(OtherController)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed; }
 
+	if (OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::LeadHome
+		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Follow
+		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize)
+	{
+		BlackboardComp->ClearValue("TargetActor");
+		return EBTNodeResult::Failed;
+	}
+
 	int32 Proximity = SocialComp->InitiateInteraction(OtherActor);
 
 	if (BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex)

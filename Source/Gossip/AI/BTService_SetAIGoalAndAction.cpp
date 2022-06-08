@@ -88,9 +88,8 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 				Instinct.ReportedValue = 0;
 				continue;
 			}
-			float ValueToReport = Instinct.CurrentValue;
+			Instinct.ReportedValue += Instinct.CurrentValue;
 			Instinct.CurrentValue = 0;
-			Instinct.ReportedValue += ValueToReport;
 		}
 		AIController->SetTimeSearching();
 	}

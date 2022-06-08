@@ -30,7 +30,8 @@ EBTNodeResult::Type UBTTaskNode_EndSocialization::ExecuteTask(UBehaviorTreeCompo
 
 	if (BlackboardComp->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Follow || BlackboardComp->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::LeadHome)
 	{
-		return EBTNodeResult::Succeeded;
+		BlackboardComp->SetValueAsObject("TargetActor", OtherActor);
+		return EBTNodeResult::Aborted;
 	}
 
 	BlackboardComp->ClearValue("TargetActor");
