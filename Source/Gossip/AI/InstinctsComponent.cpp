@@ -73,7 +73,7 @@ void UInstinctsComponent::InstinctsUpdate()
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
 		Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier;
-		if (Instinct.CurrentValue >= 1) HungryInstincts.AddUnique(Instinct.Goal);
+		if (FMath::Abs(Instinct.CurrentValue) >= 1) HungryInstincts.AddUnique(Instinct.Goal);
 	}
 	OnInstinctsUpdated.Broadcast(HungryInstincts);
 	SortInstinctsByPriority();

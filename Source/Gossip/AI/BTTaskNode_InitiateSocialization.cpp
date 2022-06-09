@@ -44,7 +44,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize)
 	{
 		NPC->SetMoveSpeed(0);
-		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
+		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Failed;
@@ -55,7 +55,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 
 	if (BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex)
 	{
-		if (Proximity >= 10 && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
+		if (Proximity >= 2 && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
 		{
 			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
 			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
