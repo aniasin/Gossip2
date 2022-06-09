@@ -39,6 +39,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	CheckStock();
 	SetTravelRoute();
 
+	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
 	AIController->SetAIGoal(NewGoal);
 	AIController->SetAIAction(NewAction);
 }
@@ -86,6 +87,7 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 			}
 			if (AIController->HasTimeSearchingElapsed())
 			{
+				if (Instinct.CurrentValue < 1) continue;
 				Instinct.ReportedValue += Instinct.CurrentValue;
 				Instinct.CurrentValue = 0;
 				AIController->SetTimeSearching();
