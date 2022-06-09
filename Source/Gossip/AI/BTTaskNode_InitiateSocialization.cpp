@@ -43,7 +43,8 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Follow
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize)
 	{
-		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+		NPC->SetMoveSpeed(0);
+		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
 		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Failed;

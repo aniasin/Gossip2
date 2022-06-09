@@ -63,12 +63,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!Ressource) return EBTNodeResult::Failed;
 
-		if (Ressource->ContentCount <= 0)
-		{
-			InventoryComp->RemoveKnownRessourceCollector(Ressource);
-			return EBTNodeResult::Failed;
-		}
-
 		switch (CurrentInctinct)
 		{
 		case EAIInstinct::None:
