@@ -4,10 +4,10 @@
 #include "BTTaskNode_InitiateSocialization.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
-#include "SocialComponent.h"
 #include "InstinctsComponent.h"
+#include "SocialComponent.h"
 
-#include "Gossip/Items/Ressource.h"
+#include "Gossip/Characters/NonPlayerCharacter.h"
 
 
 EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -15,7 +15,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
-	APawn* NPC = OwnerComp.GetAIOwner()->GetPawn();
+	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!NPC) return EBTNodeResult::Failed;
 
 	UActorComponent* SocialComponent = NPC->FindComponentByClass(USocialComponent::StaticClass());
@@ -43,16 +43,18 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Follow
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize)
 	{
+		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Failed;
 	}
 
 	int32 Proximity = SocialComp->InitiateInteraction(OtherActor);
+	NPC->SetMoveSpeed(0);
 
 	if (BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex)
 	{
-		InstinctComp->SatisfyInstinct(EAIGoal::Sex);
-		if (Proximity >= 10)
+		if (Proximity >= 10 && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
 		{
 			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
 			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
@@ -64,7 +66,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 			return EBTNodeResult::Succeeded;
 		}
 	}
-
+	InstinctComp->SatisfyInstinct(EAIGoal::Sex);
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::None);

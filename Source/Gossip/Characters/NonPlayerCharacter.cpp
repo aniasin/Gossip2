@@ -98,17 +98,17 @@ void ANonPlayerCharacter::OrderMove(FVector Location)
 	AIController->AIMoveToLocation(Location);
 }
 
-void ANonPlayerCharacter::SetMoveSpeed(bool bRunning)
+void ANonPlayerCharacter::SetMoveSpeed(int32 SpeedLevel)
 {
-	float Speed;
-	bRunning ? Speed = RunSpeed : Speed = WalkSpeed;
+	float Speed = 0;
+	SpeedLevel == 0 ? Speed = WalkSpeed : Speed = FastWalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
 // Broadcast from AlignmentComp
-void ANonPlayerCharacter::OnAiGoalChanded(bool bRun)
+void ANonPlayerCharacter::OnAiGoalChanded(int32 SpeedLevel)
 {
-	SetMoveSpeed(bRun);
+	SetMoveSpeed(SpeedLevel);
 }
 
 // Broadcast from Controller

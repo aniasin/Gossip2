@@ -10,6 +10,13 @@ ARessourceProcessor::ARessourceProcessor()
 
 }
 
+#if WITH_EDITOR
+void ARessourceProcessor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+#endif WITH_EDITOR
+
 void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	Super::CollectRessource(InventoryComp);

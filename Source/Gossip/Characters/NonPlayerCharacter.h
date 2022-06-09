@@ -33,10 +33,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 200;
 	UPROPERTY(EditAnywhere)
+	float FastWalkSpeed = 300;
+	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
 
 	void OrderMove(FVector Location);
-	void SetMoveSpeed(bool bRunning);
+	void SetMoveSpeed(int32 SpeedLevel);
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -61,7 +63,7 @@ private:
 	void OnAsyncLoadComplete();
 
 	UFUNCTION()
-	void OnAiGoalChanded(bool bRun);
+	void OnAiGoalChanded(int32 SpeedLevel);
 	UFUNCTION()
 	void OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts);
 

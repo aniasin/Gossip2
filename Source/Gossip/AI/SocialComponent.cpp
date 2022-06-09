@@ -142,7 +142,7 @@ EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 	return EAlignmentState::None;
 }
 
-AActor* USocialComponent::FindSocialPartner(bool bOppositeGender)
+AActor* USocialComponent::FindSocialPartner()
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
 	if (!AIController) return nullptr;
@@ -153,7 +153,6 @@ AActor* USocialComponent::FindSocialPartner(bool bOppositeGender)
 	{
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
 		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= 0) continue;
-		if (AIController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex && KnownOthers[Actor->GetName()].Gender == CharacterProfile) continue;
 		if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 
 		KnownOthersInVincinity.Add(Actor);
@@ -163,12 +162,8 @@ AActor* USocialComponent::FindSocialPartner(bool bOppositeGender)
 	{
 		for (AActor* Actor : CurrentlyPerceivedActors)
 		{
-			UActorComponent* OtherSocialComponent = Actor->FindComponentByClass(USocialComponent::StaticClass());
-			if (!OtherSocialComponent) continue;
-			USocialComponent* OtherSocialComp = Cast<USocialComponent>(OtherSocialComponent);
-			if (!OtherSocialComp) continue;
+			if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
 			if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
-			if (AIController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex && OtherSocialComp->CharacterProfile == CharacterProfile) continue;
 			return Actor;
 		}
 	}
@@ -185,7 +180,6 @@ AActor* USocialComponent::FindSocialPartner(bool bOppositeGender)
 		OthersToSort.GenerateKeyArray(SortedKeys);
 		return SortedKeys[0];
 	}
-
 	return nullptr;
 }
 

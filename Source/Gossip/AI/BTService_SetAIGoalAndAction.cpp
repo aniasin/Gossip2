@@ -33,7 +33,6 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	if (!InitializeService(OwnerComp)) return;
-	//UE_LOG(LogTemp, Log, TEXT("SERVICE SetAIGoalAndAction"))
 
 	StopSearching();
 	SetGoalAndAction();	
@@ -42,8 +41,6 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	AIController->SetAIGoal(NewGoal);
 	AIController->SetAIAction(NewAction);
-	AIController->OnAIGoalChanged.Broadcast(bRun);
-
 }
 
 //////////////////////////////////////////////////////////////
@@ -76,8 +73,8 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 
 void UBTService_SetAIGoalAndAction::StopSearching()
 {
-	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor ||
-		PreviousAction == (uint8)EAIAction::None || PreviousAISatus == (uint8)EAIStatus::SearchSocialize)
+	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor
+		|| PreviousAISatus == (uint8)EAIStatus::SearchSocialize)
 	{
 		if (!AIController->HasTimeSearchingElapsed()) return;
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
@@ -181,7 +178,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
-		if (Instinct.bStockable == false) break;
+		if (Instinct.bStockable == false) continue;
 		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && PreviousAction != (uint8)EAIAction::StockProcessed
 			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= InventoryComp->StockingLimit)
 		{

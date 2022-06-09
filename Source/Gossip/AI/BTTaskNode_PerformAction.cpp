@@ -69,9 +69,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			return EBTNodeResult::Failed;
 		}
 
-		BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime);
-		Ressource->AddRessourceAsKnown(InventoryComp);
-
 		switch (CurrentInctinct)
 		{
 		case EAIInstinct::None:
@@ -90,6 +87,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			// Directly set in SetAIGoalAndAction
 			break;
 		}
+		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;

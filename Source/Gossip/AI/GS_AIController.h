@@ -8,7 +8,7 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "GS_AIController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, bool, bRun);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIGoalChangedSignature, int32, SpeedLevel);
 
 UCLASS()
 class GOSSIP_API AGS_AIController : public AAIController

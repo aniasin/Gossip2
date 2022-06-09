@@ -55,7 +55,7 @@ public:
 
 	EAlignmentState GetAlignment(float Respect, float Love);
 
-	AActor* FindSocialPartner(bool bOppositeGender);
+	AActor* FindSocialPartner();
 
 	TMap<FString, FAlignment> GetKnownOthers() { return KnownOthers; }
 	UFUNCTION(BlueprintCallable)

@@ -9,6 +9,13 @@ ARessourceCollector::ARessourceCollector()
 
 }
 
+#if WITH_EDITOR
+void ARessourceCollector::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+#endif WITH_EDITOR
+
 void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
 {
 	if (!IsValid(InventoryComp)) return;

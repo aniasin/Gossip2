@@ -18,6 +18,9 @@ public:
 
 
 protected:
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+#endif WITH_EDITOR
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp) override;
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp)override;
 	virtual void BeginPlay() override;
