@@ -149,11 +149,12 @@ AActor* USocialComponent::FindSocialPartner()
 
 	TArray<AActor*>KnownOthersInVincinity;
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
-	for (AActor* Actor : CurrentlyPerceivedActors)
-	{
+	for (AActor* Actor : CurrentlyPerceivedActors)	{
+
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= 0) continue;
-		if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
+		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= 2) continue;
+		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+		if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 
 		KnownOthersInVincinity.Add(Actor);
 	}
@@ -163,7 +164,9 @@ AActor* USocialComponent::FindSocialPartner()
 		for (AActor* Actor : CurrentlyPerceivedActors)
 		{
 			if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-			if (AIController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
+			if (KnownOthers.Contains(Actor->GetName())) continue; // if it's here it has a proximity less than 2
+			AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+			if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 			return Actor;
 		}
 	}

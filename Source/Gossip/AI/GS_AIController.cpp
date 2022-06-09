@@ -119,7 +119,7 @@ bool AGS_AIController::HasTimeSearchingElapsed()
 {
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
-	return GetWorld()->GetTimeSeconds() - TimeSearching > GM->GameHourDurationSeconds;
+	return GetWorld()->GetTimeSeconds() - TimeSearching >= GM->GameHourDurationSeconds;
 }
 
 void AGS_AIController::SetTargetActor(AActor* TargetActor)

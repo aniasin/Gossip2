@@ -102,6 +102,7 @@ void ANonPlayerCharacter::SetMoveSpeed(int32 SpeedLevel)
 {
 	float Speed = 0;
 	SpeedLevel == 0 ? Speed = WalkSpeed : Speed = FastWalkSpeed;
+	SpeedLevel == 2 ? Speed = RunSpeed : Speed = Speed;
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 

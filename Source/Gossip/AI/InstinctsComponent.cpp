@@ -48,21 +48,21 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 		if (Instinct.Goal == Goal)
 		{
 			CurrentInstinct = (EAIInstinct)Instinct.Instinct;
-
 			Instinct.GrowCoeffient += 0.1 * Instinct.UpdateMultiplier;
 			float NewValue = FMath::Abs(Instinct.CurrentValue);
 			NewValue -= 1 * Instinct.UpdateMultiplier;
 			Instinct.CurrentValue = NewValue;
+			break;
 		}
-
-		switch (CurrentInstinct)
+	}
+	for (FInstinctValues& Instinct : InstinctsInfo)
+	{
+		if (Instinct.Goal == Goal) continue;
+		if (CurrentInstinct == EAIInstinct::Assimilation && Instinct.Instinct == EAIInstinct::Conservation
+			|| CurrentInstinct == EAIInstinct::Conservation && Instinct.Instinct == EAIInstinct::Reproduction
+			|| CurrentInstinct == EAIInstinct::Reproduction && Instinct.Instinct == EAIInstinct::Assimilation)
 		{
-		case EAIInstinct::Assimilation:
-			if (Instinct.Instinct == EAIInstinct::Conservation) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
-		case EAIInstinct::Conservation:
-			if (Instinct.Instinct == EAIInstinct::Reproduction) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
-		case EAIInstinct::Reproduction:
-			if (Instinct.Instinct == EAIInstinct::Assimilation) { Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; break; }
+			Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier; 
 		}
 	}	
 }

@@ -77,22 +77,15 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor
 		|| PreviousAISatus == (uint8)EAIStatus::SearchSocialize)
 	{
+		if (!AIController->HasTimeSearchingElapsed()) return;
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 		{
-			if (Instinct.Goal != (EAIGoal)PreviousGoal)
-			{
-				Instinct.CurrentValue += Instinct.ReportedValue;
-				Instinct.ReportedValue = 0;
-				continue;
-			}
-			if (AIController->HasTimeSearchingElapsed())
-			{
-				if (Instinct.CurrentValue < 1) continue;
-				Instinct.ReportedValue += Instinct.CurrentValue;
-				Instinct.CurrentValue = 0;
-				AIController->SetTimeSearching();
-			}
-		}		
+			if (Instinct.Goal == (EAIGoal)PreviousGoal) continue;
+			Instinct.ReportedValue += Instinct.CurrentValue;
+			Instinct.CurrentValue = 0;
+			AIController->SetTimeSearching();
+			break;
+		}
 	}
 }
 
@@ -110,6 +103,7 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 	}
 	if (NewGoal != (uint8)EAIGoal::None)
 	{
+		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 		SetAction();
 	}
 

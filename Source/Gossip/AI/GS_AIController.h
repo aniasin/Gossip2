@@ -29,11 +29,11 @@ public:
 	UBlackboardComponent* BlackboardComponent;
 
 	UPROPERTY()
-	float SightRange = 2000;
+	float SightRange = 4000;
 	UPROPERTY()
-	float LoseSightRange = 2500;
+	float LoseSightRange = 4500;
 	UPROPERTY()
-	float HearingRange = 1000;
+	float HearingRange = 2000;
 
 	virtual void OnPossess(APawn* InPawn);
 
