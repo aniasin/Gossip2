@@ -239,7 +239,7 @@ struct FSaveStruct
 	UPROPERTY()
 	FGuid Id;
 	UPROPERTY()
-	FSaveValues Values;
+	TMap<FString, FSaveValues> SaveValues;
 
 };
 

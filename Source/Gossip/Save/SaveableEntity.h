@@ -24,8 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData);
-	void RestoreState(TMap<FString, FSaveValues>SaveData);
+	FSaveStruct CaptureState(FSaveStruct SaveData);
+	void RestoreState(FSaveStruct SaveData);
 
 		
 };

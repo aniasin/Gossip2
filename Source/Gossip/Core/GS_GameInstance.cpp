@@ -193,23 +193,9 @@ void UGS_GameInstance::QuitGame()
 	GetFirstLocalPlayerController()->ConsoleCommand("quit");
 }
 
-void UGS_GameInstance::CreateNewSaveGame()
-{
-	if (!CurrentSaveGame)
-	{
-		USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass());
-		if (NewSaveGame)
-		{
-			CurrentSaveGame = Cast<UGS_SaveGame_Object>(NewSaveGame);
-		}
-	}
-}
-
 void UGS_GameInstance::SaveGame()
 {
-	//CreateNewSaveGame();
-
-	TMap<FGuid,TMap<FString, FSaveValues>>SaveData;
+	TMap<FGuid,FSaveStruct>SaveData;
 	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
@@ -221,10 +207,29 @@ void UGS_GameInstance::SaveGame()
 
 		if (!SaveData.Contains(SaveableEntity->Id))
 		{
-			TMap<FString, FSaveValues> NewValues;
+			FSaveStruct NewValues;
 			SaveData.Add(SaveableEntity->Id, NewValues);
 		}
-		TMap<FString, FSaveValues> NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
+		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
 		SaveData.Add(SaveableEntity->Id, NewValues);
 	}
+	CreateNewSaveGame(SaveData);
+}
+
+bool UGS_GameInstance::CreateNewSaveGame(TMap<FGuid, FSaveStruct>SaveData)
+{
+	if (!CurrentSaveGame)
+	{
+		USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass());
+		if (NewSaveGame)
+		{
+			CurrentSaveGame = Cast<UGS_SaveGame_Object>(NewSaveGame);
+		}
+	}
+	else
+	{
+		CurrentSaveGame->CreateSaveGame("SaveGame");
+	}
+	CurrentSaveGame->SaveData = SaveData;
+	return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, "SaveGame", 0);
 }

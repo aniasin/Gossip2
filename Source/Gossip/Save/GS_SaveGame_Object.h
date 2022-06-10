@@ -22,7 +22,7 @@ public:
 	UPROPERTY()
 	FDateTime CreationTime;
 	UPROPERTY()
-	TMap<FString, FSaveStruct> SaveData;
+	TMap<FGuid, FSaveStruct> SaveData;
 
 	void CreateSaveGame(const FString& SlotName)
 	{

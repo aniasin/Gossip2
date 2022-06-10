@@ -37,7 +37,7 @@ public:
 		void QuitGame() override;
 
 	UFUNCTION()
-	void CreateNewSaveGame();
+	bool CreateNewSaveGame(TMap<FGuid, FSaveStruct>SaveData);
 	UFUNCTION()
 	void SaveGame();
 

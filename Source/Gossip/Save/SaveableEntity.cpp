@@ -19,7 +19,7 @@ void USaveableEntity::BeginPlay()
 	
 }
 
-TMap<FString, FSaveValues> USaveableEntity::CaptureState(TMap<FString, FSaveValues>SaveData)
+FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveData)
 {
 	TArray<UActorComponent*> Saveables = GetOwner()->GetComponentsByInterface(USaveGameInterface::StaticClass());
 	for (UActorComponent* Saveable : Saveables)
@@ -27,13 +27,14 @@ TMap<FString, FSaveValues> USaveableEntity::CaptureState(TMap<FString, FSaveValu
 		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Saveable);
 		FSaveValues Values = SaveGameInterface->CaptureState();
 
-		SaveData.Add(GetClass()->GetName(), Values);		
+		SaveData.Id = Id;
+		SaveData.SaveValues.Add(GetClass()->GetName(), Values);
 	}
 
 	return SaveData;
 }
 
-void USaveableEntity::RestoreState(TMap<FString, FSaveValues>SaveData)
+void USaveableEntity::RestoreState(FSaveStruct SaveData)
 {
 
 }
