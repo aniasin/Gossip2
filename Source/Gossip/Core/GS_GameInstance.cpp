@@ -3,11 +3,14 @@
 
 #include "GS_GameInstance.h"
 #include "OnlineSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "OnlineSessionSettings.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
-#include "Gossip/Save/SaveGameInterface.h"
+#include "Gossip/Save/GS_SaveGame_Object.h"
+#include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/MenuSystem/MenuBase.h"
 
 const static FName SESSION_NAME = TEXT("My Session");
@@ -190,13 +193,31 @@ void UGS_GameInstance::QuitGame()
 	GetFirstLocalPlayerController()->ConsoleCommand("quit");
 }
 
+void UGS_GameInstance::CreateNewSaveGame()
+{
+	if (!CurrentSaveGame)
+	{
+		USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass());
+		if (NewSaveGame)
+		{
+			CurrentSaveGame = Cast<UGS_SaveGame_Object>(NewSaveGame);
+		}
+	}
+}
+
 void UGS_GameInstance::SaveGame()
 {
+	//CreateNewSaveGame();
+
+	TMap<FString, FSaveValues>SaveData;
+
 	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
 	{
-		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Actor);
-		if (SaveGameInterface) UE_LOG(LogTemp, Warning, TEXT("Found Saveable Actor: %s"), *Actor->GetName());
+		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
+		if (!ActorSaveable) continue;
+		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
+		SaveableEntity->CaptureState(SaveData);
 	}
 }

@@ -6,11 +6,12 @@
 #include "Components/ActorComponent.h"
 
 #include "Gossip/Data/DataLibrary.h"
+#include "Gossip/Save/SaveGameInterface.h"
 #include "SocialComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GOSSIP_API USocialComponent : public UActorComponent
+class GOSSIP_API USocialComponent : public UActorComponent, public ISaveGameInterface
 {
 	GENERATED_BODY()
 
@@ -47,6 +48,10 @@ public:
 	EAlignmentState GetAlignmentState() {return CurrentAlignmentState;}
 	UFUNCTION(BlueprintCallable)
 	EEmotionalState GetEmotionalState() { return OwnEmotionalState; }
+
+	// ISaveGameInterface
+	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData)override;
+	virtual void RestoreState(TMap<FString, FSaveValues>SaveData)override;
 
 
 protected:

@@ -6,6 +6,7 @@
 #include "Gossip/Data/DataLibrary.h"
 #include "Components/ActorComponent.h"
 
+#include "Gossip/Save/SaveGameInterface.h"
 #include "InventoryComponent.generated.h"
 
 class ARessource;
@@ -24,7 +25,7 @@ struct FInventoryItem
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GOSSIP_API UInventoryComponent : public UActorComponent
+class GOSSIP_API UInventoryComponent : public UActorComponent, public ISaveGameInterface
 {
 	GENERATED_BODY()
 
@@ -51,6 +52,10 @@ public:
 	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
 	void RemoveOwnedItem(EAIGoal RessourceType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
+
+	// ISaveGameInterface
+	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData)override;
+	virtual void RestoreState(TMap<FString, FSaveValues>SaveData)override;
 
 private:
 

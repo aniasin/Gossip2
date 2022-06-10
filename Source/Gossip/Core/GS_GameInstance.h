@@ -37,7 +37,10 @@ public:
 		void QuitGame() override;
 
 	UFUNCTION()
+	void CreateNewSaveGame();
+	UFUNCTION()
 	void SaveGame();
+
 
 private:
 	class UMenuBase* Menu;
@@ -46,6 +49,9 @@ private:
 
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
+
+	FString SaveName;
+	class UGS_SaveGame_Object* CurrentSaveGame;
 
 	void CreateSession();
 	void DestroySession();

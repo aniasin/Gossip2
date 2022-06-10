@@ -115,3 +115,14 @@ TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessou
 	return RessourceToSort;
 }
 
+// ISavegameInterface override
+TMap<FString, FSaveValues> UInventoryComponent::CaptureState(TMap<FString, FSaveValues>SaveData)
+{
+	UE_LOG(LogTemp, Warning, TEXT("CaptureCalled on %s!"), *GetName())
+	return SaveData;
+}
+
+void UInventoryComponent::RestoreState(TMap<FString, FSaveValues>SaveData)
+{
+
+}

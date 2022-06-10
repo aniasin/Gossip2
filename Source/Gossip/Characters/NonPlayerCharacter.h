@@ -13,7 +13,7 @@ class AGS_AIController;
 class ARessource;
 
 UCLASS()
-class GOSSIP_API ANonPlayerCharacter : public ACharacter, public ISaveGameInterface
+class GOSSIP_API ANonPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -21,12 +21,16 @@ public:
 	// Sets default values for this character's properties
 	ANonPlayerCharacter();
 
+	UPROPERTY()
+	FGuid UniqueId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USocialComponent* SocialComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInstinctsComponent* InstinctsComp;
+	UPROPERTY()
+	class USaveableEntity* SaveComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TMap<ECharacterProfile, FCharactersData>CharactersData;
@@ -46,10 +50,6 @@ public:
 	AGS_AIController* GetAIController() { return AIController; }
 
 	void SetSelected(bool Value) { bSelected = Value; }
-
-	// SaveInterface
-	virtual FSaveValues CaptureState()override;
-	virtual void RestoreState(FSaveValues Values)override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")

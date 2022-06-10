@@ -16,6 +16,8 @@
 
 #include "Gossip/Data/CharactersDataAsset.h"
 
+#include "Gossip/Save/SaveableEntity.h"
+
 // Sets default values
 ANonPlayerCharacter::ANonPlayerCharacter()
 {
@@ -41,6 +43,11 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
+
+	if (!UniqueId.IsValid()) UniqueId = UniqueId.NewGuid();
+	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComponent"));
+	SaveComponent->UniqueId = UniqueId;
+	
 }
 
 // Called when the game starts or when spawned
@@ -124,19 +131,5 @@ void ANonPlayerCharacter::OnAiGoalChanded(int32 SpeedLevel)
 void ANonPlayerCharacter::OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts)
 {
 	SocialComp->UpdateEmotionalState(HungryInstincts);
-}
-
-// SaveInterface
-FSaveValues ANonPlayerCharacter::CaptureState()
-{
-	FSaveValues SaveValues;
-	SaveValues.Transform = GetActorTransform();
-
-	return SaveValues;
-}
-
-void ANonPlayerCharacter::RestoreState(FSaveValues Values)
-{
-	SetActorTransform(Values.Transform);
 }
 

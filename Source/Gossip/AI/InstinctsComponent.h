@@ -6,12 +6,13 @@
 #include "Gossip/Data/DataLibrary.h"
 #include "Components/ActorComponent.h"
 
+#include "Gossip/Save/SaveGameInterface.h"
 #include "InstinctsComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInstinctsUpdateSignature, TArray<EAIGoal>, HungryInstincts);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GOSSIP_API UInstinctsComponent : public UActorComponent
+class GOSSIP_API UInstinctsComponent : public UActorComponent, public ISaveGameInterface
 {
 	GENERATED_BODY()
 
@@ -25,6 +26,10 @@ public:
 	FOnInstinctsUpdateSignature OnInstinctsUpdated;
 
 	void SatisfyInstinct(EAIGoal Goal);
+
+	// ISaveGameInterface
+	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData)override;
+	virtual void RestoreState(TMap<FString, FSaveValues>SaveData)override;
 
 
 protected:

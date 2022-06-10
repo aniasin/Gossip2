@@ -235,7 +235,7 @@ struct FSaveStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString Id;
+	FGuid Id;
 	UPROPERTY()
 	FSaveValues Values;
 };
