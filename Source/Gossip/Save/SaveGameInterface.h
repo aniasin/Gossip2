@@ -24,6 +24,6 @@ class GOSSIP_API ISaveGameInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData) = 0;
-	virtual void RestoreState(TMap<FString, FSaveValues>SaveData) = 0;
+	virtual FSaveValues CaptureState() = 0;
+	virtual void RestoreState(FSaveValues SaveValues) = 0;
 };

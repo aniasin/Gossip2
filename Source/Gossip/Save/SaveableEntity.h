@@ -17,7 +17,7 @@ public:
 	// Sets default values for this component's properties
 	USaveableEntity();
 
-	FGuid UniqueId;
+	FGuid Id;
 
 protected:
 	// Called when the game starts

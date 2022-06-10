@@ -28,8 +28,8 @@ public:
 	void SatisfyInstinct(EAIGoal Goal);
 
 	// ISaveGameInterface
-	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData)override;
-	virtual void RestoreState(TMap<FString, FSaveValues>SaveData)override;
+	virtual FSaveValues CaptureState()override;
+	virtual void RestoreState(FSaveValues SaveData)override;
 
 
 protected:

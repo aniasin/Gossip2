@@ -209,8 +209,8 @@ void UGS_GameInstance::SaveGame()
 {
 	//CreateNewSaveGame();
 
-	TMap<FString, FSaveValues>SaveData;
-
+	TMap<FGuid,TMap<FString, FSaveValues>>SaveData;
+	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
@@ -218,6 +218,13 @@ void UGS_GameInstance::SaveGame()
 		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
 		if (!ActorSaveable) continue;
 		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
-		SaveableEntity->CaptureState(SaveData);
+
+		if (!SaveData.Contains(SaveableEntity->Id))
+		{
+			TMap<FString, FSaveValues> NewValues;
+			SaveData.Add(SaveableEntity->Id, NewValues);
+		}
+		TMap<FString, FSaveValues> NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
+		SaveData.Add(SaveableEntity->Id, NewValues);
 	}
 }

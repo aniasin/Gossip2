@@ -233,13 +233,14 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 }
 
 // ISavegameInterface override
-TMap<FString, FSaveValues> USocialComponent::CaptureState(TMap<FString, FSaveValues>SaveData)
+FSaveValues USocialComponent::CaptureState()
 {
+	FSaveValues SaveValues;
 	UE_LOG(LogTemp, Warning, TEXT("CaptureCalled on %s!"), *GetName())
-	return SaveData;
+		return SaveValues;
 }
 
-void USocialComponent::RestoreState(TMap<FString, FSaveValues>SaveData)
+void USocialComponent::RestoreState(FSaveValues SaveValues)
 {
 
 }

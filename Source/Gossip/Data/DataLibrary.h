@@ -216,6 +216,8 @@ struct FSaveValues
 	GENERATED_BODY()
 
 	UPROPERTY()
+	FString ComponentClassName;
+	UPROPERTY()
 	FTransform Transform;
 	UPROPERTY()
 	ECharacterProfile CharacterProfile;
@@ -238,6 +240,7 @@ struct FSaveStruct
 	FGuid Id;
 	UPROPERTY()
 	FSaveValues Values;
+
 };
 
 UCLASS()

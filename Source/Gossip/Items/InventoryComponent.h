@@ -54,8 +54,8 @@ public:
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
 
 	// ISaveGameInterface
-	virtual TMap<FString, FSaveValues> CaptureState(TMap<FString, FSaveValues>SaveData)override;
-	virtual void RestoreState(TMap<FString, FSaveValues>SaveData)override;
+	virtual FSaveValues CaptureState()override;
+	virtual void RestoreState(FSaveValues SaveData)override;
 
 private:
 

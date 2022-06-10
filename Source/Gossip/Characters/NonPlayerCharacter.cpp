@@ -46,7 +46,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 
 	if (!UniqueId.IsValid()) UniqueId = UniqueId.NewGuid();
 	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComponent"));
-	SaveComponent->UniqueId = UniqueId;
+	SaveComponent->Id = UniqueId;
 	
 }
 

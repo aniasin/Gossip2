@@ -25,7 +25,9 @@ TMap<FString, FSaveValues> USaveableEntity::CaptureState(TMap<FString, FSaveValu
 	for (UActorComponent* Saveable : Saveables)
 	{
 		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Saveable);
-		SaveGameInterface->CaptureState(SaveData);
+		FSaveValues Values = SaveGameInterface->CaptureState();
+
+		SaveData.Add(GetClass()->GetName(), Values);		
 	}
 
 	return SaveData;

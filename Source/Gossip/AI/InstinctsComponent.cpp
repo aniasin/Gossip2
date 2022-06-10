@@ -87,13 +87,14 @@ void UInstinctsComponent::SortInstinctsByPriority()
 }
 
 // ISavegameInterface override
-TMap<FString, FSaveValues> UInstinctsComponent::CaptureState(TMap<FString, FSaveValues>SaveData)
+FSaveValues UInstinctsComponent::CaptureState()
 {
+	FSaveValues SaveValues;
 	UE_LOG(LogTemp, Warning, TEXT("CaptureCalled on %s!"), *GetName())
-	return SaveData;
+		return SaveValues;
 }
 
-void UInstinctsComponent::RestoreState(TMap<FString, FSaveValues>SaveData)
+void UInstinctsComponent::RestoreState(FSaveValues SaveValues)
 {
 
 }
