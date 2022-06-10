@@ -9,21 +9,6 @@
 #include "SocialComponent.generated.h"
 
 
-USTRUCT(BlueprintType)
-struct FAlignment
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	float Respect;
-	UPROPERTY()
-	float Love;
-	UPROPERTY()
-	int32 Proximity;
-	UPROPERTY()
-	ECharacterProfile Gender;
-};
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API USocialComponent : public UActorComponent
 {

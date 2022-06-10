@@ -7,6 +7,14 @@
 #include "DataLibrary.generated.h"
 
 UENUM(BlueprintType)
+enum class ECharacterProfile : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Male			UMETA(DisplayName = "Male"),
+	Female		UMETA(DisplayName = "Female"),
+};
+
+UENUM(BlueprintType)
 enum class EAIStatus : uint8
 {
 	None				UMETA(DisplayName = "None"),
@@ -79,6 +87,21 @@ struct FInstinctValues
 };
 
 // Social
+USTRUCT(BlueprintType)
+struct FAlignment
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+		float Respect;
+	UPROPERTY()
+		float Love;
+	UPROPERTY()
+		int32 Proximity;
+	UPROPERTY()
+		ECharacterProfile Gender;
+};
+
 UENUM(BlueprintType)
 enum class EEmotionalState : uint8
 {
@@ -175,14 +198,6 @@ struct FRessourceData
 };
 
 // Characters
-UENUM(BlueprintType)
-enum class ECharacterProfile : uint8
-{
-	None			UMETA(DisplayName = "None"),
-	Male			UMETA(DisplayName = "Male"),
-	Female		UMETA(DisplayName = "Female"),
-};
-
 USTRUCT(BlueprintType)
 struct FCharactersData
 {
@@ -192,6 +207,37 @@ struct FCharactersData
 	TSoftObjectPtr<USkeletalMesh> MeshPtr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimBlueprintGeneratedClass* AnimBPClass;
+};
+
+// SaveGame
+USTRUCT(BlueprintType)
+struct FSaveValues
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FTransform Transform;
+	UPROPERTY()
+	ECharacterProfile CharacterProfile;
+	UPROPERTY()
+	TMap<FString, FAlignment> KnownOthers;
+	UPROPERTY()
+	TArray<FInstinctValues> InstinctsValues;
+	UPROPERTY()
+	EAIGoal RessourceType;
+	UPROPERTY()
+	int32 ContentCount;
+};
+
+USTRUCT(BlueprintType)
+struct FSaveStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Id;
+	UPROPERTY()
+	FSaveValues Values;
 };
 
 UCLASS()

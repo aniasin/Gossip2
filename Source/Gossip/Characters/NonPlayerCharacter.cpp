@@ -126,3 +126,17 @@ void ANonPlayerCharacter::OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts)
 	SocialComp->UpdateEmotionalState(HungryInstincts);
 }
 
+// SaveInterface
+FSaveValues ANonPlayerCharacter::CaptureState()
+{
+	FSaveValues SaveValues;
+	SaveValues.Transform = GetActorTransform();
+
+	return SaveValues;
+}
+
+void ANonPlayerCharacter::RestoreState(FSaveValues Values)
+{
+	SetActorTransform(Values.Transform);
+}
+

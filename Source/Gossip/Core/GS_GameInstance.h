@@ -36,6 +36,9 @@ public:
 	UFUNCTION()
 		void QuitGame() override;
 
+	UFUNCTION()
+	void SaveGame();
+
 private:
 	class UMenuBase* Menu;
 	TSubclassOf<class UUserWidget> MenuClass;

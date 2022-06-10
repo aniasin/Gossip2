@@ -5,7 +5,9 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
+#include "Gossip/Save/SaveGameInterface.h"
 #include "Gossip/MenuSystem/MenuBase.h"
 
 const static FName SESSION_NAME = TEXT("My Session");
@@ -186,4 +188,15 @@ void UGS_GameInstance::QuitGame()
 {
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Quiting... "));
 	GetFirstLocalPlayerController()->ConsoleCommand("quit");
+}
+
+void UGS_GameInstance::SaveGame()
+{
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+	for (AActor* Actor : Actors)
+	{
+		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Actor);
+		if (SaveGameInterface) UE_LOG(LogTemp, Warning, TEXT("Found Saveable Actor: %s"), *Actor->GetName());
+	}
 }

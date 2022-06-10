@@ -42,6 +42,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APlayerPawn::InputPitch);
 
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerPawn::EscapeMenu);
+	PlayerInputComponent->BindAction("Save", IE_Pressed, this, &APlayerPawn::SaveGame);
 	PlayerInputComponent->BindAction("LeftClick", IE_Pressed, this, &APlayerPawn::LeftClickPressed);
 	PlayerInputComponent->BindAction("LeftClick", IE_Released, this, &APlayerPawn::LeftClickReleased);
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &APlayerPawn::RightClickPressed);
@@ -175,5 +176,12 @@ void APlayerPawn::EscapeMenu()
 	UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetGameInstance());
 	if (!GI) return;
 	GI->LoadGameMenu();
+}
+
+void APlayerPawn::SaveGame()
+{
+	UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetGameInstance());
+	if (!GI) return;
+	GI->SaveGame();
 }
 
