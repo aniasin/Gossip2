@@ -67,7 +67,7 @@ void APlayerPawn::Tick(float DeltaTime)
 
 	if (CurrentSelections.Num() > 0)
 	{
-		SetActorLocation(CurrentSelections[0]->GetActorLocation());
+
 	}
 
 }

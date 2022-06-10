@@ -65,7 +65,6 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 	PreviousGoal = AIController->GetAIGoal();
 	PreviousAction = AIController->GetAIAction();
 	PreviousAISatus = AIController->BlackboardComponent->GetValueAsEnum("AIStatus");
-	TimeSearching = AIController->HasTimeSearchingElapsed();
 	NewGoal = (uint8)EAIGoal::None;
 	NewAction = (uint8)EAIAction::None;
 
@@ -80,13 +79,17 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 		if (!AIController->HasTimeSearchingElapsed()) return;
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 		{
-			if (Instinct.Goal == (EAIGoal)PreviousGoal) continue;
-			Instinct.ReportedValue += Instinct.CurrentValue;
-			Instinct.CurrentValue = 0;
-			AIController->SetTimeSearching();
-			break;
+			if (Instinct.Goal == (EAIGoal)PreviousGoal)
+			{
+				Instinct.ReportedValue += Instinct.CurrentValue;
+				Instinct.CurrentValue = 0;
+				continue;
+			}
+			Instinct.CurrentValue += Instinct.ReportedValue;
+			Instinct.ReportedValue = 0;
 		}
 	}
+	AIController->SetTimeSearching();
 }
 
 void UBTService_SetAIGoalAndAction::SetGoalAndAction()

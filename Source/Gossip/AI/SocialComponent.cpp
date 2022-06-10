@@ -152,7 +152,7 @@ AActor* USocialComponent::FindSocialPartner()
 	for (AActor* Actor : CurrentlyPerceivedActors)	{
 
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= 2) continue;
+		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= -2) continue;
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 		if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 
@@ -164,7 +164,7 @@ AActor* USocialComponent::FindSocialPartner()
 		for (AActor* Actor : CurrentlyPerceivedActors)
 		{
 			if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-			if (KnownOthers.Contains(Actor->GetName())) continue; // if it's here it has a proximity less than 2
+			if (KnownOthers.Contains(Actor->GetName())) continue; // if it's here it has a proximity less than -2
 			AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 			if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 			return Actor;
@@ -209,7 +209,7 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 
 	for (FSocialChangeTable TableIndex : SocialChangeTable)
 	{
-		if (TableIndex.Alignment != OwnAlignment) break;
+		if (TableIndex.Alignment != OwnAlignment) continue;
 		RespectChange += TableIndex.OtherAlignmentEffect[OtherAlignment];
 	}
 
@@ -219,13 +219,15 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 
 	for (FEmotionalChangeTable TableIndex : EmotionalChangeTable)
 	{
-		if (TableIndex.EmotionalState != OwnEmotionalState) break;
+		if (TableIndex.EmotionalState != OwnEmotionalState) continue;
 		LoveChange += TableIndex.OtherEmotionalStateEffect[OtherEmotionalState];
 	}
 
-	AlignmentChange.Respect = RespectChange + KnownOthers[Other->GetName()].Proximity / 10;
-	AlignmentChange.Love = LoveChange + KnownOthers[Other->GetName()].Proximity / 10;
-	AlignmentChange.Proximity = RespectChange + LoveChange > 0 ? 1 : -1;
+	AlignmentChange.Respect = RespectChange;
+	AlignmentChange.Love = LoveChange;
+	int32 ValueToAdd = 0;
+	RespectChange + LoveChange >= 0 ? ValueToAdd = 1 : ValueToAdd = -1;
+	AlignmentChange.Proximity += ValueToAdd;
 
 	return AlignmentChange;
 }

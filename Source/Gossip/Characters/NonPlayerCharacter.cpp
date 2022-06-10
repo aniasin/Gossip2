@@ -62,10 +62,18 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FString Message; //TODO make UI
+	//TODO make UI
 	if (bSelected)
 	{
 		DrawDebugString(GetWorld(), FVector(0, 0, 100), "Selected", this, FColor::Green, DeltaTime);
+// 		float PosZ = 200;
+// 		for (auto& KnownOther : SocialComp->GetKnownOthers())
+// 		{
+// 			FString Message = FString::Printf(TEXT("%s : %i"), *KnownOther.Key, KnownOther.Value.Proximity);
+// 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+// 			PosZ += 30;
+// 		}
+// 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), "KNOWN OTHERS", this, FColor::Cyan, DeltaTime);
 	}	
 }
 

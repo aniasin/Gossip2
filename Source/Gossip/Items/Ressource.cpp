@@ -23,6 +23,7 @@ ARessource::ARessource()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+
 }
 
 #if WITH_EDITOR

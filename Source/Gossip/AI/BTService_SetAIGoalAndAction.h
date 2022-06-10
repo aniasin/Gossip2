@@ -37,7 +37,6 @@ private:
 	uint8 PreviousAISatus;
 	uint8 NewGoal;
 	uint8 NewAction;
-	float TimeSearching;
 
 	void StopSearching();
 	void SetGoalAndAction();
