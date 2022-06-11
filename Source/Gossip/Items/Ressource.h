@@ -6,17 +6,21 @@
 #include "Gossip/Data/DataLibrary.h"
 #include "GameFramework/Actor.h"
 
+#include "Gossip/Save/SaveGameInterface.h"
 #include "Ressource.generated.h"
 
 
 
 UCLASS()
-class GOSSIP_API ARessource : public AActor
+class GOSSIP_API ARessource : public AActor, public ISaveGameInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	ARessource();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGuid Id;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USceneComponent* SceneRoot;
@@ -24,6 +28,8 @@ public:
 	class UBoxComponent* CollisionBox;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USaveableEntity* SaveGameComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class URessourceDataAsset* RessourceData;
@@ -55,6 +61,10 @@ public:
 	void RessourceRespawn();
 
 	float CurrentDistanceToQuerier;
+
+	// ISaveGameInterface
+	virtual FSaveValues CaptureState()override;
+	virtual void RestoreState(FSaveValues SaveData)override;
 
 protected:
 #if WITH_EDITOR

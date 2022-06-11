@@ -18,6 +18,14 @@ void USaveableEntity::BeginPlay()
 
 FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveStruct)
 {
+	if (ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(GetOwner()))
+	{
+		FSaveValues Values = SaveGameInterface->CaptureState();
+
+		SaveStruct.Id = Id;
+		SaveStruct.SaveValues.Add(GetOwner()->GetClass()->GetName(), Values);
+	}
+
 	TArray<UActorComponent*> Saveables = GetOwner()->GetComponentsByInterface(USaveGameInterface::StaticClass());
 	for (UActorComponent* Saveable : Saveables)
 	{
@@ -32,6 +40,14 @@ FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveStruct)
 
 void USaveableEntity::RestoreState(FSaveStruct SaveStruct)
 {
+	if (ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(GetOwner()))
+	{
+		if (SaveStruct.SaveValues.Contains(GetOwner()->GetClass()->GetName()))
+		{
+			SaveGameInterface->RestoreState(SaveStruct.SaveValues[GetOwner()->GetClass()->GetName()]);
+		}
+	}
+
 	TArray<UActorComponent*> Saveables = GetOwner()->GetComponentsByInterface(USaveGameInterface::StaticClass());
 	for (UActorComponent* Saveable : Saveables)
 	{

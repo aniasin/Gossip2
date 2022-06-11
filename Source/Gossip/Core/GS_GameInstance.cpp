@@ -198,7 +198,7 @@ void UGS_GameInstance::SaveGame()
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
 	
 	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
 	{
 		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
@@ -243,7 +243,7 @@ void UGS_GameInstance::RestoreGameState()
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
 
 	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
 	{
 		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());

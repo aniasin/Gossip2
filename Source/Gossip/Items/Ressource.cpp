@@ -27,6 +27,8 @@ ARessource::ARessource()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 
+	SaveGameComp = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveGameComp"));
+
 }
 
 #if WITH_EDITOR
@@ -119,4 +121,20 @@ void ARessource::RessourceRespawn()
 	{
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 	}
+}
+
+// ISaveGameInterface
+FSaveValues ARessource::CaptureState()
+{
+	FSaveValues SaveValues;
+	SaveValues.ContentCount = ContentCount;
+	UE_LOG(LogTemp, Warning, TEXT("CAPTURED %s"), *GetName())
+	return SaveValues;
+}
+
+void ARessource::RestoreState(FSaveValues SaveData)
+{
+	ContentCount = SaveData.ContentCount;
+	if (ContentCount <= 0) RessourceEmpty();
+	UE_LOG(LogTemp, Warning, TEXT("RESTORING %s"), *GetName())
 }
