@@ -185,7 +185,10 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 		{
 			NewAction = (uint8)EAIAction::StockRaw;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);
-			if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+			if (IsValid(TargetActor))
+			{
+				AIController->SetTargetActor(TargetActor);
+			}
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}
@@ -193,7 +196,10 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 		{
 			NewAction = (uint8)EAIAction::StockProcessed;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);
-			if (IsValid(TargetActor)) AIController->SetTargetActor(TargetActor);
+			if (IsValid(TargetActor))
+			{
+				AIController->SetTargetActor(TargetActor);
+			}
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}

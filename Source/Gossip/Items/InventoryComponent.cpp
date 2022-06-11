@@ -121,11 +121,13 @@ FSaveValues UInventoryComponent::CaptureState()
 	FSaveValues SaveValues;
 	SaveValues.ComponentClassName = GetClass()->GetName();
 	SaveValues.Transform = GetOwner()->GetTransform();
+	SaveValues.Inventory = InventoryItems;
 	
 	return SaveValues;
 }
 
 void UInventoryComponent::RestoreState(FSaveValues SaveValues)
 {
+	InventoryItems = SaveValues.Inventory;
 	GetOwner()->SetActorTransform(SaveValues.Transform);
 }

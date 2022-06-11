@@ -2,6 +2,7 @@
 
 
 #include "Ressource.h"
+#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
@@ -16,8 +17,10 @@ ARessource::ARessource()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	RootComponent = SceneRoot;
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	RootComponent = CollisionBox;
+	CollisionBox->SetupAttachment(RootComponent);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
 	CollisionBox->SetBoxExtent(FVector(100, 100, 100));
 

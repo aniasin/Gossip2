@@ -64,7 +64,6 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			|| Action == EAIAction::StockProcessed && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
 			if (Ressource->RessourceType != Goal) continue;
-
 			AIController->SetTargetActor(Ressource);
 			return EBTNodeResult::Succeeded;
 		}

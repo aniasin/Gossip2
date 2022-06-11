@@ -236,12 +236,12 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 FSaveValues USocialComponent::CaptureState()
 {
 	FSaveValues SaveValues;
-	UE_LOG(LogTemp, Warning, TEXT("CaptureCalled on %s!"), *GetName())
-		return SaveValues;
+	SaveValues.KnownOthers = KnownOthers;
+	return SaveValues;
 }
 
 void USocialComponent::RestoreState(FSaveValues SaveValues)
 {
-
+	KnownOthers = SaveValues.KnownOthers;
 }
 

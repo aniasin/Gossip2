@@ -19,9 +19,11 @@ public:
 	ARessource();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* Mesh;
+	class USceneComponent* SceneRoot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UBoxComponent* CollisionBox;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class URessourceDataAsset* RessourceData;
@@ -30,19 +32,20 @@ public:
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> Owners;
-	UPROPERTY(BlueprintReadWrite)
+
+	UPROPERTY()
 	bool bRaw;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	float WaitTime = 5;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	int32 ContentCount = 5;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FLinearColor LivingColor;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FLinearColor DeadColor;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float RespawnTime;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class UAnimMontage* AnimMontage; 
 
 	virtual void CollectRessource(class UInventoryComponent* InventoryComp);

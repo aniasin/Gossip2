@@ -90,12 +90,12 @@ void UInstinctsComponent::SortInstinctsByPriority()
 FSaveValues UInstinctsComponent::CaptureState()
 {
 	FSaveValues SaveValues;
-	UE_LOG(LogTemp, Warning, TEXT("CaptureCalled on %s!"), *GetName())
-		return SaveValues;
+	SaveValues.InstinctsValues = InstinctsInfo;
+	return SaveValues;
 }
 
 void UInstinctsComponent::RestoreState(FSaveValues SaveValues)
 {
-
+	InstinctsInfo = SaveValues.InstinctsValues;
 }
 

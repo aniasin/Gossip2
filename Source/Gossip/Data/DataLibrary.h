@@ -209,6 +209,20 @@ struct FCharactersData
 	UAnimBlueprintGeneratedClass* AnimBPClass;
 };
 
+// Inventory
+USTRUCT(BlueprintType)
+struct FInventoryItem
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+		EAIGoal Ressource;
+	UPROPERTY()
+		bool bRaw;
+	UPROPERTY()
+		float Time;
+};
+
 // SaveGame
 USTRUCT(BlueprintType)
 struct FSaveValues
@@ -229,6 +243,8 @@ struct FSaveValues
 	EAIGoal RessourceType;
 	UPROPERTY()
 	int32 ContentCount;
+	UPROPERTY()
+	TArray<FInventoryItem>Inventory;
 };
 
 USTRUCT(BlueprintType)

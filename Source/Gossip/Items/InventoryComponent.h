@@ -11,19 +11,6 @@
 
 class ARessource;
 
-USTRUCT(BlueprintType)
-struct FInventoryItem
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	EAIGoal Ressource;
-	UPROPERTY()
-	bool bRaw;
-	UPROPERTY()
-	float Time;
-};
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UInventoryComponent : public UActorComponent, public ISaveGameInterface
 {

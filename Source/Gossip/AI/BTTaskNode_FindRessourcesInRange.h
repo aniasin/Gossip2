@@ -23,6 +23,4 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float DistanceToTrace = 2000;
 
-	UPROPERTY(VisibleAnywhere)
-		FBlackboardKeySelector BBValueToSetKey;
 };
