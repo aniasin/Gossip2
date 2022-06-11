@@ -13,7 +13,7 @@ class AGS_AIController;
 class ARessource;
 
 UCLASS()
-class GOSSIP_API ANonPlayerCharacter : public ACharacter
+class GOSSIP_API ANonPlayerCharacter : public ACharacter, public ISaveGameInterface
 {
 	GENERATED_BODY()
 
@@ -50,6 +50,10 @@ public:
 	AGS_AIController* GetAIController() { return AIController; }
 
 	void SetSelected(bool Value) { bSelected = Value; }
+
+	// ISaveGameInterface
+	virtual FSaveValues CaptureState()override;
+	virtual void RestoreState(FSaveValues SaveValues)override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")

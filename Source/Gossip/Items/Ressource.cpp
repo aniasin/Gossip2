@@ -128,7 +128,7 @@ FSaveValues ARessource::CaptureState()
 {
 	FSaveValues SaveValues;
 	SaveValues.ContentCount = ContentCount;
-	UE_LOG(LogTemp, Warning, TEXT("CAPTURED %s"), *GetName())
+
 	return SaveValues;
 }
 
@@ -136,5 +136,4 @@ void ARessource::RestoreState(FSaveValues SaveData)
 {
 	ContentCount = SaveData.ContentCount;
 	if (ContentCount <= 0) RessourceEmpty();
-	UE_LOG(LogTemp, Warning, TEXT("RESTORING %s"), *GetName())
 }

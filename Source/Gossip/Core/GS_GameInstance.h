@@ -60,6 +60,6 @@ private:
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
-	bool CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData);
-	TMap<FGuid, FSaveStruct> LoadGameData();
+	bool CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData);
+	TMap<FGuid, FSaveStruct> LoadGameDataBinary();
 };

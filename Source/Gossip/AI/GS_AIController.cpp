@@ -100,6 +100,13 @@ void AGS_AIController::SetAIAction(uint8 Action)
 	BlackboardComponent->SetValueAsEnum("Action", Action);
 }
 
+void AGS_AIController::ResetAI()
+{
+	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
+	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
+	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+}
+
 uint8 AGS_AIController::GetAIGoal()
 {
 	return BlackboardComponent->GetValueAsEnum("Goal");

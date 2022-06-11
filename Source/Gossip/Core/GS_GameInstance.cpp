@@ -195,7 +195,8 @@ void UGS_GameInstance::QuitGame()
 
 void UGS_GameInstance::SaveGame()
 {
-	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
+	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
@@ -213,34 +214,39 @@ void UGS_GameInstance::SaveGame()
 		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
 		SaveData.Add(SaveableEntity->Id, NewValues);
 	}
-	CreateSaveGame(SaveData);
+	CreateSaveGameBinary(SaveData);
 }
 
-TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameData()
+TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary()
 {
 	TMap<FGuid, FSaveStruct>SaveData;
-	if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromSlot("SaveGame", 0)))
+	TArray<uint8>OutSaveData;
+	if (UGameplayStatics::LoadDataFromSlot(OutSaveData, "SaveGame", 0))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LOADED: %s"), *CurrentSaveGame->SaveGameName)
-		return CurrentSaveGame->SaveData;		
+		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
+		{
+			SaveData = CurrentSaveGame->SaveData;
+		}
 	}
 	return SaveData;
 }
 
-bool UGS_GameInstance::CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData)
+bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 {
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
-	if (CurrentSaveGame)
-	{
-		CurrentSaveGame->SaveData = SaveData;
-	}	
-	return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, "SaveGame", 0);
+	if (!CurrentSaveGame) return false;
+	CurrentSaveGame->SaveData = SaveData;
+
+	TArray<uint8>OutSaveData;
+	if (!UGameplayStatics::SaveGameToMemory(CurrentSaveGame, OutSaveData)) return false;
+	
+	return UGameplayStatics::SaveDataToSlot(OutSaveData, "SaveGame", 0);
 }
 
 void UGS_GameInstance::RestoreGameState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Try Restore GameState"))
-	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
+	UE_LOG(LogTemp, Warning, TEXT("Loading Game..."))
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
