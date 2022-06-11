@@ -48,6 +48,7 @@ protected:
 	void RightClickReleased();
 	void EscapeMenu();
 	void SaveGame();
+	void LoadGame();
 
 private:
 	class APlayerController* PC;

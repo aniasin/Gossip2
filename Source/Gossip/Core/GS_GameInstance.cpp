@@ -195,7 +195,7 @@ void UGS_GameInstance::QuitGame()
 
 void UGS_GameInstance::SaveGame()
 {
-	TMap<FGuid,FSaveStruct>SaveData;
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
 	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
@@ -213,10 +213,25 @@ void UGS_GameInstance::SaveGame()
 		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
 		SaveData.Add(SaveableEntity->Id, NewValues);
 	}
-	CreateNewSaveGame(SaveData);
+	CreateSaveGame(SaveData);
 }
 
-bool UGS_GameInstance::CreateNewSaveGame(TMap<FGuid, FSaveStruct>SaveData)
+TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameData()
+{
+	TMap<FGuid, FSaveStruct>SaveData;
+	USaveGame* SaveGameLoaded = LoadSaveGame("SaveGame");
+	if (SaveGameLoaded)
+	{
+		UGS_SaveGame_Object* SaveGameObject = Cast<UGS_SaveGame_Object>(SaveGameLoaded);
+		if (SaveGameObject)
+		{
+			SaveData = SaveGameObject->SaveData;
+		}
+	}
+	return SaveData;
+}
+
+bool UGS_GameInstance::CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData)
 {
 	if (!CurrentSaveGame)
 	{
@@ -233,3 +248,31 @@ bool UGS_GameInstance::CreateNewSaveGame(TMap<FGuid, FSaveStruct>SaveData)
 	CurrentSaveGame->SaveData = SaveData;
 	return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, "SaveGame", 0);
 }
+
+class USaveGame* UGS_GameInstance::LoadSaveGame(FString Name)
+{
+	if (!UGameplayStatics::DoesSaveGameExist(Name, 0)) return nullptr;
+
+	return UGameplayStatics::LoadGameFromSlot(Name, 0);
+}
+
+void UGS_GameInstance::RestoreGameState()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Try Restore GameState"))
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameData();
+
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), Actors);
+	for (AActor* Actor : Actors)
+	{
+		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
+		if (!ActorSaveable) continue;
+		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
+
+		for (auto& Save : SaveData)
+		{
+			if (Save.Key == SaveableEntity->Id) SaveableEntity->RestoreState(Save.Value);
+		}		
+	}
+}
+

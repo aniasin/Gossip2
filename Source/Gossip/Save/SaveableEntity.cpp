@@ -7,19 +7,16 @@ USaveableEntity::USaveableEntity()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-
 }
 
 
 void USaveableEntity::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 	
 }
 
-FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveData)
+FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveStruct)
 {
 	TArray<UActorComponent*> Saveables = GetOwner()->GetComponentsByInterface(USaveGameInterface::StaticClass());
 	for (UActorComponent* Saveable : Saveables)
@@ -27,15 +24,23 @@ FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveData)
 		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Saveable);
 		FSaveValues Values = SaveGameInterface->CaptureState();
 
-		SaveData.Id = Id;
-		SaveData.SaveValues.Add(GetClass()->GetName(), Values);
+		SaveStruct.Id = Id;
+		SaveStruct.SaveValues.Add(Saveable->GetClass()->GetName(), Values);
 	}
-
-	return SaveData;
+	return SaveStruct;
 }
 
-void USaveableEntity::RestoreState(FSaveStruct SaveData)
+void USaveableEntity::RestoreState(FSaveStruct SaveStruct)
 {
-
+	TArray<UActorComponent*> Saveables = GetOwner()->GetComponentsByInterface(USaveGameInterface::StaticClass());
+	for (UActorComponent* Saveable : Saveables)
+	{
+		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Saveable);
+		for (auto& Values : SaveStruct.SaveValues)
+		{
+			if (SaveStruct.Id != Id) continue;
+			if (Values.Key == Saveable->GetClass()->GetName()) SaveGameInterface->RestoreState(Values.Value);
+		}
+	}
 }
 

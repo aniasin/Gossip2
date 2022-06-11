@@ -37,9 +37,9 @@ public:
 		void QuitGame() override;
 
 	UFUNCTION()
-	bool CreateNewSaveGame(TMap<FGuid, FSaveStruct>SaveData);
-	UFUNCTION()
 	void SaveGame();
+	UFUNCTION()
+	void RestoreGameState();
 
 
 private:
@@ -62,4 +62,8 @@ private:
 	void JoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+
+	class USaveGame* LoadSaveGame(FString SaveName);
+	bool CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData);
+	TMap<FGuid, FSaveStruct> LoadGameData();
 };
