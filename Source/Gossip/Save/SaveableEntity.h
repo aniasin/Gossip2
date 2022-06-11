@@ -17,6 +17,7 @@ public:
 	// Sets default values for this component's properties
 	USaveableEntity();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
 
 protected:

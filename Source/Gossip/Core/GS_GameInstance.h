@@ -50,9 +50,6 @@ private:
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 
-	FString SaveName;
-	class UGS_SaveGame_Object* CurrentSaveGame;
-
 	void CreateSession();
 	void DestroySession();
 
@@ -63,7 +60,6 @@ private:
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
-	class USaveGame* LoadSaveGame(FString SaveName);
 	bool CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData);
 	TMap<FGuid, FSaveStruct> LoadGameData();
 };

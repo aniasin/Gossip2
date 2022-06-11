@@ -21,15 +21,15 @@ public:
 	// Sets default values for this character's properties
 	ANonPlayerCharacter();
 
-	UPROPERTY()
-	FGuid UniqueId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGuid Id;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USocialComponent* SocialComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInstinctsComponent* InstinctsComp;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USaveableEntity* SaveComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")

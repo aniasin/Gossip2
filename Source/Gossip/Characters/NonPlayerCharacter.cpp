@@ -43,11 +43,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
-
-	if (!UniqueId.IsValid()) UniqueId = UniqueId.NewGuid();
 	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComponent"));
-	SaveComponent->Id = UniqueId;
-	
 }
 
 // Called when the game starts or when spawned

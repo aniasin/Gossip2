@@ -219,41 +219,22 @@ void UGS_GameInstance::SaveGame()
 TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameData()
 {
 	TMap<FGuid, FSaveStruct>SaveData;
-	USaveGame* SaveGameLoaded = LoadSaveGame("SaveGame");
-	if (SaveGameLoaded)
+	if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromSlot("SaveGame", 0)))
 	{
-		UGS_SaveGame_Object* SaveGameObject = Cast<UGS_SaveGame_Object>(SaveGameLoaded);
-		if (SaveGameObject)
-		{
-			SaveData = SaveGameObject->SaveData;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("LOADED: %s"), *CurrentSaveGame->SaveGameName)
+		return CurrentSaveGame->SaveData;		
 	}
 	return SaveData;
 }
 
 bool UGS_GameInstance::CreateSaveGame(TMap<FGuid, FSaveStruct>SaveData)
 {
-	if (!CurrentSaveGame)
+	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
+	if (CurrentSaveGame)
 	{
-		USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass());
-		if (NewSaveGame)
-		{
-			CurrentSaveGame = Cast<UGS_SaveGame_Object>(NewSaveGame);
-		}
-	}
-	else
-	{
-		CurrentSaveGame->CreateSaveGame("SaveGame");
-	}
-	CurrentSaveGame->SaveData = SaveData;
+		CurrentSaveGame->SaveData = SaveData;
+	}	
 	return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, "SaveGame", 0);
-}
-
-class USaveGame* UGS_GameInstance::LoadSaveGame(FString Name)
-{
-	if (!UGameplayStatics::DoesSaveGameExist(Name, 0)) return nullptr;
-
-	return UGameplayStatics::LoadGameFromSlot(Name, 0);
 }
 
 void UGS_GameInstance::RestoreGameState()
@@ -269,10 +250,10 @@ void UGS_GameInstance::RestoreGameState()
 		if (!ActorSaveable) continue;
 		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
 
-		for (auto& Save : SaveData)
+		if (SaveData.Contains(SaveableEntity->Id))
 		{
-			if (Save.Key == SaveableEntity->Id) SaveableEntity->RestoreState(Save.Value);
-		}		
+			SaveableEntity->RestoreState(SaveData[SaveableEntity->Id]);
+		}
 	}
 }
 

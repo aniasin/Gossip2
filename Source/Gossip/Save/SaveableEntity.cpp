@@ -36,10 +36,10 @@ void USaveableEntity::RestoreState(FSaveStruct SaveStruct)
 	for (UActorComponent* Saveable : Saveables)
 	{
 		ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(Saveable);
-		for (auto& Values : SaveStruct.SaveValues)
+
+		if (SaveStruct.SaveValues.Contains(Saveable->GetClass()->GetName()))
 		{
-			if (SaveStruct.Id != Id) continue;
-			if (Values.Key == Saveable->GetClass()->GetName()) SaveGameInterface->RestoreState(Values.Value);
+			SaveGameInterface->RestoreState(SaveStruct.SaveValues[Saveable->GetClass()->GetName()]);
 		}
 	}
 }

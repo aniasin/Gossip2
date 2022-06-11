@@ -15,6 +15,8 @@ UCLASS()
 class GOSSIP_API UGS_SaveGame_Object : public USaveGame
 {
 	GENERATED_BODY()
+	
+	UGS_SaveGame_Object();
 
 public:
 	UPROPERTY()
@@ -24,11 +26,4 @@ public:
 	UPROPERTY()
 	TMap<FGuid, FSaveStruct> SaveData;
 
-	void CreateSaveGame(const FString& SlotName)
-	{
-		SaveGameName = SlotName;
-		CreationTime = FDateTime::Now();
-		SaveData.Empty();
-		
-	}
 };
