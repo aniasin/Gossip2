@@ -59,10 +59,6 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	if (!IsValid(OtherSocialComp)) return 0;
 
 	UpdateAlignment(Other);
-	FString Message;
-	KnownOthers[Other->GetName()].Proximity > 0 ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
-	UE_LOG(LogTemp, Log, TEXT("%s %s Proximity: %i"), *Message, *GetOwner()->GetName(), KnownOthers[Other->GetName()].Proximity)
-
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	return KnownOthers[Other->GetName()].Proximity;
@@ -73,9 +69,6 @@ int32 USocialComponent::RespondToInteraction(AActor* Other)
 	if (!IsValid(Other)) return 0;
 
 	UpdateAlignment(Other);
-	FString Message;
-	KnownOthers[Other->GetName()].Proximity > 0 ? Message = "Socialization was a success for" : Message = "Socialization was a failure for";
-	UE_LOG(LogTemp, Log, TEXT("%s %s Proximity: %i"), *Message, *GetOwner()->GetName(), KnownOthers[Other->GetName()].Proximity)
 
 	return KnownOthers[Other->GetName()].Proximity;
 }
@@ -103,7 +96,6 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
 	CurrentAlignmentState = AlignmentState;
-
 }
 
 void USocialComponent::UpdateEmotionalState(TArray<EAIGoal>HungryInstincts)
@@ -149,8 +141,8 @@ AActor* USocialComponent::FindSocialPartner()
 
 	TArray<AActor*>KnownOthersInVincinity;
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
-	for (AActor* Actor : CurrentlyPerceivedActors)	{
-
+	for (AActor* Actor : CurrentlyPerceivedActors)	
+	{
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
 		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= -2) continue;
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());

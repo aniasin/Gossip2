@@ -9,13 +9,6 @@ USaveableEntity::USaveableEntity()
 
 }
 
-
-void USaveableEntity::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 FSaveStruct USaveableEntity::CaptureState(FSaveStruct SaveStruct)
 {
 	if (ISaveGameInterface* SaveGameInterface = Cast<ISaveGameInterface>(GetOwner()))

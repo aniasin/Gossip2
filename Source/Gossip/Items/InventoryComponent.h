@@ -19,12 +19,10 @@ class GOSSIP_API UInventoryComponent : public UActorComponent, public ISaveGameI
 public:	
 	UInventoryComponent();
 
-	UPROPERTY(VisibleAnywhere) // For testing, should be private
-	TArray<FInventoryItem> InventoryItems;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) // For testing, should be private
 	int32 StockingLimit = 10;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
 	void AddKnownRessourceCollector(ARessource* RessourceActor);
@@ -48,6 +46,7 @@ private:
 
 	TArray<ARessource*> KnownRessourcesCollector;
 	TArray<ARessource*> KnownRessourcesProcessor;
+	TArray<FInventoryItem> InventoryItems;
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

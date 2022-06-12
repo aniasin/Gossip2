@@ -12,7 +12,6 @@
 #include "Gossip/Data/RessourceDataAsset.h"
 
 
-// Sets default values
 ARessource::ARessource()
 {
 	PrimaryActorTick.bCanEverTick = false;

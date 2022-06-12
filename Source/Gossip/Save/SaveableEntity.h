@@ -14,15 +14,13 @@ class GOSSIP_API USaveableEntity : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	USaveableEntity();
 
+	// This is set in the Owner Constructor BP
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 public:	
 	FSaveStruct CaptureState(FSaveStruct SaveData);

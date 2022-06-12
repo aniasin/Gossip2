@@ -18,9 +18,9 @@ class GOSSIP_API ANonPlayerCharacter : public ACharacter, public ISaveGameInterf
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ANonPlayerCharacter();
 
+	// Warning! This must be regenerated when Alt-Moving (duplicating) actors!
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -42,13 +42,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
 
-	void OrderMove(FVector Location);
-	void SetMoveSpeed(int32 SpeedLevel);
-
 	virtual void Tick(float DeltaTime) override;
 
 	AGS_AIController* GetAIController() { return AIController; }
 
+	void OrderMove(FVector Location);
+	void SetMoveSpeed(int32 SpeedLevel);
 	void SetSelected(bool Value) { bSelected = Value; }
 
 	// ISaveGameInterface
