@@ -21,7 +21,4 @@ protected:
 		FBlackboardKeySelector GoalKey;
 	UPROPERTY(VisibleAnywhere)
 		FBlackboardKeySelector ActionKey;
-
-	UPROPERTY(EditAnywhere)
-		EAIAction ActionOverride;
 };

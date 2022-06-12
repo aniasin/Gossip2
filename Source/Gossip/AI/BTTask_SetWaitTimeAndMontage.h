@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_SetWaitTime.generated.h"
+#include "BTTask_SetWaitTimeAndMontage.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GOSSIP_API UBTTask_SetWaitTime : public UBTTaskNode
+class GOSSIP_API UBTTask_SetWaitTimeAndMontage : public UBTTaskNode
 {
 	GENERATED_BODY()
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)override;

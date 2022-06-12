@@ -50,6 +50,7 @@ public:
 	void SetMoveSpeed(int32 SpeedLevel);
 	void SetSelected(bool Value) { bSelected = Value; }
 
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveValues)override;

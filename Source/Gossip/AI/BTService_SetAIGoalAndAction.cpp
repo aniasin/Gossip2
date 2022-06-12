@@ -28,22 +28,6 @@ void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& Own
 	
 }
 
-void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
-	if (!InitializeService(OwnerComp)) return;
-
-	StopSearching();
-	SetGoalAndAction();	
-	CheckStock();
-	SetTravelRoute();
-
-	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
-	AIController->SetAIGoal(NewGoal);
-	AIController->SetAIAction(NewAction);
-}
-
 //////////////////////////////////////////////////////////////
 bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& OwnerComp)
 {
@@ -69,6 +53,22 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 	NewAction = (uint8)EAIAction::None;
 
 	return true;
+}
+
+void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+	if (!InitializeService(OwnerComp)) return;
+
+	StopSearching();
+	SetGoalAndAction();	
+	CheckStock();
+	SetTravelRoute();
+
+	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
+	AIController->SetAIGoal(NewGoal);
+	AIController->SetAIAction(NewAction);
 }
 
 void UBTService_SetAIGoalAndAction::StopSearching()
@@ -109,7 +109,6 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 		SetAction();
 	}
-
 }
 
 void UBTService_SetAIGoalAndAction::SetAction()
@@ -118,11 +117,9 @@ void UBTService_SetAIGoalAndAction::SetAction()
 
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
-		if (Instinct.Goal == (EAIGoal)NewGoal)
-		{
-			NewInstinct = Instinct.Instinct;
-			break;
-		}
+		if (Instinct.Goal != (EAIGoal)NewGoal) continue;		
+		NewInstinct = Instinct.Instinct;
+		break;		
 	}	
 
 	int32 OwnedRessourceProcessed = 0;
@@ -150,7 +147,6 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
 		return;
 	}
-
 	NewAction = (uint8)EAIInstinct::None;
 }
 

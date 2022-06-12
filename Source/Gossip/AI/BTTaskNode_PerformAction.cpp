@@ -37,6 +37,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 
 	EAIGoal Goal = (EAIGoal)(BlackboardComp->GetValueAsEnum(GoalKey.SelectedKeyName));
 	EAIAction Action = (EAIAction)(BlackboardComp->GetValueAsEnum(ActionKey.SelectedKeyName));
+
 	if (Action == EAIAction::Satisfy)
 	{	
 		InstinctsComp->SatisfyInstinct(Goal);
@@ -45,8 +46,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
 	}
-
-	if (ActionOverride != EAIAction::None) { Action = ActionOverride; }
 
 	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor
 		|| Action == EAIAction::StockRaw || Action == EAIAction::StockProcessed)
@@ -81,6 +80,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			// Directly set in SetAIGoalAndAction
 			break;
 		}
+		NPC->StopAnimMontage();
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		return EBTNodeResult::Succeeded;
 	}

@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTTask_SetWaitTime.h"
+#include "BTTask_SetWaitTimeAndMontage.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
+#include "Animation/AnimMontage.h" 
 
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Items/Ressource.h"
 
-EBTNodeResult::Type UBTTask_SetWaitTime::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
@@ -34,6 +35,18 @@ EBTNodeResult::Type UBTTask_SetWaitTime::ExecuteTask(UBehaviorTreeComponent& Own
 		InventoryComp->RemoveKnownRessourceCollector(Ressource);
 		return EBTNodeResult::Failed;
 	}
+
+	UAnimMontage* AnimMontage = Ressource->GetAnimMontageMontage();
+	if (AnimMontage)
+	{
+		NPC->PlayAnimMontage(AnimMontage);
+		if (BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sleep)
+		{
+			NPC->SetActorLocation(Ressource->GetActorLocation());
+			NPC->SetActorRotation(Ressource->GetActorRotation());
+		}
+	}
+
 	BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime);
 	return EBTNodeResult::Succeeded;
 }

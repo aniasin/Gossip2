@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Animation/AnimMontage.h"
 
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Data/RessourceDataAsset.h"
@@ -121,6 +122,11 @@ void ARessource::RessourceRespawn()
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 	}
 }
+
+UAnimMontage* ARessource::GetAnimMontageMontage()
+{
+	return AnimMontage;
+} 
 
 // ISaveGameInterface
 FSaveValues ARessource::CaptureState()

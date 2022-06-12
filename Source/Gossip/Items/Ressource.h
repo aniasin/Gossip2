@@ -60,6 +60,8 @@ public:
 	void RessourceEmpty();
 	void RessourceRespawn();
 
+	class UAnimMontage* GetAnimMontageMontage();
+
 	float CurrentDistanceToQuerier;
 
 	// ISaveGameInterface

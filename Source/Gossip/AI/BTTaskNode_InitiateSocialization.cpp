@@ -43,7 +43,8 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 
 	if (OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::LeadHome
 		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Follow
-		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize)
+		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize
+		|| OtherController->GetBlackboardComponent()->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sleep)
 	{
 		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
