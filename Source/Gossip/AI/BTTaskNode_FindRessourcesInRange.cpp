@@ -57,14 +57,14 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			InventoryComp->AddKnownRessourceCollector(Ressource);
 			if (Ressource->RessourceType != Goal) continue;
 
-			AIController->SetTargetActor(Ressource);
+			AIController->BlackboardComponent->SetValueAsObject("TargetActor", Ressource);
 			return EBTNodeResult::Succeeded;
 		}
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass())
 			|| Action == EAIAction::StockProcessed && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
 			if (Ressource->RessourceType != Goal) continue;
-			AIController->SetTargetActor(Ressource);
+			AIController->BlackboardComponent->SetValueAsObject("TargetActor", Ressource);
 			return EBTNodeResult::Succeeded;
 		}
 	}	

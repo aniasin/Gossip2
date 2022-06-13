@@ -16,7 +16,6 @@
 
 AGS_AIController::AGS_AIController()
 {
-	// Creating Perception component
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(FName("SightConfig"));
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(FName("HearingConfig"));
@@ -30,16 +29,13 @@ AGS_AIController::AGS_AIController()
 	HearingConfig->DetectionByAffiliation.bDetectNeutrals = false;
 	HearingConfig->DetectionByAffiliation.bDetectFriendlies = false;
 
-	// Assign the sight and hearing sense to the perception component
 	PerceptionComponent->ConfigureSense(*SightConfig);
 	PerceptionComponent->ConfigureSense(*HearingConfig);
 	PerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
 
-	// Configure range of sight and hearing sense
 	SightConfig->SightRadius = SightRange;
 	SightConfig->LoseSightRadius = LoseSightRange;
 	HearingConfig->HearingRange = HearingRange;
-
 }
 
 void AGS_AIController::OnPossess(APawn* InPawn)
@@ -90,31 +86,11 @@ TArray<AActor*> AGS_AIController::GetCurrentlyPerceivedActors()
 	return SeenActors;
 }
 
-void AGS_AIController::SetAIGoal(uint8 Instinct)
-{
-	BlackboardComponent->SetValueAsEnum("Goal", Instinct);
-}
-
-void AGS_AIController::SetAIAction(uint8 Action)
-{
-	BlackboardComponent->SetValueAsEnum("Action", Action);
-}
-
 void AGS_AIController::ResetAI()
 {
 	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-}
-
-uint8 AGS_AIController::GetAIGoal()
-{
-	return BlackboardComponent->GetValueAsEnum("Goal");
-}
-
-uint8 AGS_AIController::GetAIAction()
-{
-	return BlackboardComponent->GetValueAsEnum("Action");
 }
 
 void AGS_AIController::SetTimeSearching()
@@ -127,15 +103,5 @@ bool AGS_AIController::HasTimeSearchingElapsed()
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
 	return GetWorld()->GetTimeSeconds() - TimeSearching >= GM->GameHourDurationSeconds;
-}
-
-void AGS_AIController::SetTargetActor(AActor* TargetActor)
-{
-	BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
-}
-
-void AGS_AIController::ClearTargetLocation()
-{
-	BlackboardComponent->ClearValue("TargetLocation");
 }
 

@@ -46,8 +46,8 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 	InstinctsComp = Cast<UInstinctsComponent>(Instincts);
 	if (!InstinctsComp) return false;
 
-	PreviousGoal = AIController->GetAIGoal();
-	PreviousAction = AIController->GetAIAction();
+	PreviousGoal = AIController->BlackboardComponent->GetValueAsEnum("Goal");
+	PreviousAction = AIController->BlackboardComponent->GetValueAsEnum("Action");
 	PreviousAISatus = AIController->BlackboardComponent->GetValueAsEnum("AIStatus");
 	NewGoal = (uint8)EAIGoal::None;
 	NewAction = (uint8)EAIAction::None;
@@ -67,8 +67,8 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	SetTravelRoute();
 
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
-	AIController->SetAIGoal(NewGoal);
-	AIController->SetAIAction(NewAction);
+	AIController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
+	AIController->BlackboardComponent->SetValueAsEnum("Action", NewAction);
 }
 
 void UBTService_SetAIGoalAndAction::StopSearching()
@@ -156,7 +156,7 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 	{
 		TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchCollector; return;	}
-		AIController->SetTargetActor(TargetActor);
+		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 		NewAction = (uint8)EAIAction::TravelCollector;
 		return;
 	}
@@ -164,7 +164,7 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 	{
 		TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
-		AIController->SetTargetActor(TargetActor);
+		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 		NewAction = (uint8)EAIAction::TravelProcessor;
 	}
 }
@@ -183,7 +183,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);
 			if (IsValid(TargetActor))
 			{
-				AIController->SetTargetActor(TargetActor);
+				AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 			}
 			NewGoal = (uint8)Instinct.Goal;
 			return;
@@ -194,7 +194,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);
 			if (IsValid(TargetActor))
 			{
-				AIController->SetTargetActor(TargetActor);
+				AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 			}
 			NewGoal = (uint8)Instinct.Goal;
 			return;
