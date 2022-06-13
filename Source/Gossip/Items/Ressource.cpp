@@ -45,22 +45,19 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 		if (Ressource.RessourceType == RessourceType)
 		{
 			UStaticMesh* MeshPtr;
-			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.MeshSoftPath.ToString());
-			if (IsValid(Mesh))
-			{
-				Mesh->SetStaticMesh(MeshPtr);
-			}
-			else
-			{
-				Mesh->SetStaticMesh(NULL);
-			}
+			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.MeshPath.ToString());
+			if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); } 
+			else { Mesh->SetStaticMesh(nullptr); }
+			UAnimMontage* MontagePtr;
+			MontagePtr = LoadObject<UAnimMontage>(nullptr, *Ressource.MontagePath.ToString());
+			if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
+			else { AnimMontage = nullptr; }
 			bRaw = Ressource.bRaw;
 			WaitTime = Ressource.WaitTime;
 			ContentCount = Ressource.ContentCount;
 			LivingColor = Ressource.LivingColor;
 			DeadColor = Ressource.DeadColor;
 			RespawnTime = Ressource.RespawnTimeInGameHour;
-			AnimMontage = Ressource.Montage;
 			break;
 		}
 	}

@@ -180,7 +180,7 @@ struct FRessourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FSoftObjectPath MeshSoftPath;
+	FSoftObjectPath MeshPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bRaw;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -194,7 +194,7 @@ struct FRessourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RespawnTimeInGameHour;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* Montage;
+	FSoftObjectPath MontagePath;
 };
 
 // Characters
