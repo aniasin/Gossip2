@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include "Gossip/Data/DataLibrary.h"
 #include "Shelter.generated.h"
 
 UCLASS()
@@ -13,9 +15,8 @@ class GOSSIP_API AShelter : public AActor
 	
 public:	
 	AShelter();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class USceneComponent* SceneRoot;
+	UPROPERTY()
+		class USceneComponent* SceneRoot;
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionBox;
 	UPROPERTY(VisibleAnywhere)
@@ -27,15 +28,30 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallD;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UShelterDataAsset* ShelterData;
+	UPROPERTY(EditAnywhere)
+	ESocialPosition ShelterGrade;
+	UPROPERTY()
+	int32 ConstructionStep;
+	UPROPERTY()
+	float ConstructionTime;
+
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime)override;
+
+	void SetShelterSize();
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+
+	void InitializeShelter();
+
 #endif WITH_EDITOR
 
 private:	
-
+	void OnAsyncLoadComplete();
 
 };

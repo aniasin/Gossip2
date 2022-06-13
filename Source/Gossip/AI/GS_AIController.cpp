@@ -52,7 +52,8 @@ void AGS_AIController::OnPossess(APawn* InPawn)
 	
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AGS_AIController::OnTargetPerceptionUpdate);
 
-	RunBehaviorTree(BehaviorTree);
+	FTimerHandle Timer;
+	GetWorldTimerManager().SetTimer(Timer, this, &AGS_AIController::StartAi, 5);
 }
 
 void AGS_AIController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
@@ -103,5 +104,10 @@ bool AGS_AIController::HasTimeSearchingElapsed()
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
 	return GetWorld()->GetTimeSeconds() - TimeSearching >= GM->GameHourDurationSeconds;
+}
+
+void AGS_AIController::StartAi()
+{
+	RunBehaviorTree(BehaviorTree);
 }
 

@@ -171,6 +171,24 @@ struct FEmotionalUpdateTable
 	TMap<EEmotionalState, float>EmotionalEffect;
 };
 
+// Shelter
+USTRUCT(BlueprintType)
+struct FShelterData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSoftObjectPtr<UStaticMesh> WallMeshesPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSoftObjectPtr<UStaticMesh> PillarMeshesPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSoftObjectPtr<UStaticMesh> ConstructionMeshPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FSoftObjectPath ConstructionMontagePath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ConstructionTime;
+};
+
 // Ressource
 USTRUCT(BlueprintType)
 struct FRessourceData

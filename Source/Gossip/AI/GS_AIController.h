@@ -55,5 +55,7 @@ public:
 private:
 	bool bCanSeeHostile;
 	float TimeSearching;
+
+	void StartAi();
 	
 };
