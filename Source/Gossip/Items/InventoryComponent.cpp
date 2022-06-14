@@ -70,40 +70,6 @@ AActor* UInventoryComponent::SearchNearestKnownRessourceCollector(EAIGoal Ressou
 	return SortedRessources[0];
 }
 
-void UInventoryComponent::AddOwnedItem(EAIGoal RessourceType, bool bRaw)
-{
-	FInventoryItem Item;
-	Item.Ressource = RessourceType;
-	Item.bRaw = bRaw;
-	Item.Time = 0;
-	InventoryItems.Add(Item);
-}
-
-void UInventoryComponent::RemoveOwnedItem(EAIGoal RessourceType, bool bRaw)
-{
-	int32 Index = 0;
-	for (FInventoryItem Item : InventoryItems)
-	{
-		if (Item.Ressource == RessourceType && Item.bRaw == bRaw)
-		{
-			InventoryItems.RemoveAt(Index);
-			return;
-		}
-		Index++;
-	}
-}
-
-int32 UInventoryComponent::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
-{
-	// TODO check for Time and remove if spoiled
-	int32 Count = 0;
-	for (FInventoryItem Item : InventoryItems)
-	{
-		if (Item.Ressource == RessourceType && Item.bRaw == bRaw) Count++;
-	}
-	return Count;
-}
-
 TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessource*> RessourceToSort)
 {
 	auto SortPred = [](ARessource& A, ARessource& B)->bool

@@ -12,7 +12,7 @@
 
 AShelter::AShelter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	RootComponent = SceneRoot;
@@ -47,11 +47,6 @@ void AShelter::BeginPlay()
 	Super::BeginPlay();
 	
 	InitializeShelter();
-}
-
-void AShelter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AShelter::InitializeShelter()

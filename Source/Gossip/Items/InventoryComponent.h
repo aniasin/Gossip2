@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Inventory.h"
 #include "Gossip/Data/DataLibrary.h"
 #include "Components/ActorComponent.h"
 
@@ -12,15 +13,12 @@
 class ARessource;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GOSSIP_API UInventoryComponent : public UActorComponent, public ISaveGameInterface
+class GOSSIP_API UInventoryComponent : public UInventory, public ISaveGameInterface
 {
 	GENERATED_BODY()
 
 public:	
 	UInventoryComponent();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) // For testing, should be private
-	int32 StockingLimit = 10;
 
 	UFUNCTION()
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
@@ -34,10 +32,6 @@ public:
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceProcessor(EAIGoal RessourceType);
 
-	void AddOwnedItem(EAIGoal RessourceType, bool bRaw);
-	void RemoveOwnedItem(EAIGoal RessourceType, bool bRaw);
-	int32 GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw);
-
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;
@@ -46,7 +40,7 @@ private:
 
 	TArray<ARessource*> KnownRessourcesCollector;
 	TArray<ARessource*> KnownRessourcesProcessor;
-	TArray<FInventoryItem> InventoryItems;
+
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>
