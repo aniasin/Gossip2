@@ -43,12 +43,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UShelterDataAsset* ShelterDataAsset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class ANonPlayerCharacter> NpcToSpawnClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class ARessource* SleepCollector;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class ARessource* FoodProcessor;
 	UPROPERTY(EditAnywhere)
 	ESocialPosition ShelterGrade;
 	UPROPERTY(EditAnywhere)
-	TArray<AActor*>Owners;
-	UPROPERTY(EditAnywhere)
 	class UAnimMontage* ConstructMontage;
+	UPROPERTY()
+	TArray<AActor*>Owners;
 	UPROPERTY()
 	int32 CurrentLevel;
 	UPROPERTY()
@@ -63,6 +69,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	void SpawnNPC();
 
 	void SetShelterSize();
 

@@ -36,7 +36,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EAIGoal RessourceType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	TArray<AActor*> Owners;
 
 	UPROPERTY()

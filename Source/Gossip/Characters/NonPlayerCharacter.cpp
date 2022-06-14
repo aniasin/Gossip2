@@ -42,14 +42,6 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 void ANonPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CharactersData = CharactersDataAsset->CharactersData;
-
-	InitializeCharacterProfile();
-
-	AIController = Cast<AGS_AIController>(Controller);
-	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
-	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
 }
 
 void ANonPlayerCharacter::Tick(float DeltaTime)
@@ -69,6 +61,24 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 // 		}
 // 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), "KNOWN OTHERS", this, FColor::Cyan, DeltaTime);
 	}	
+}
+
+void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
+{
+	ECharacterProfile ProfileToSet = ECharacterProfile::None;
+	float RandomFloat = FMath::RandRange(0, 1);
+	RandomFloat > 0.51 ? ProfileToSet = ECharacterProfile::Female : ProfileToSet = ECharacterProfile::Male;
+	SocialComp->CharacterProfile = ProfileToSet;
+
+	InventoryComp->ShelterActor = ShelterActor;
+
+	CharactersData = CharactersDataAsset->CharactersData;
+
+	AIController = Cast<AGS_AIController>(Controller);
+	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
+	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
+
+	InitializeCharacterProfile();
 }
 
 void ANonPlayerCharacter::InitializeCharacterProfile()

@@ -20,6 +20,9 @@ class GOSSIP_API UInventoryComponent : public UInventory, public ISaveGameInterf
 public:	
 	UInventoryComponent();
 
+	UPROPERTY()
+	AActor* ShelterActor;
+
 	UFUNCTION()
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);
 
@@ -35,6 +38,9 @@ public:
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;
+
+protected:
+	virtual void BeginPlay()override;
 
 private:
 

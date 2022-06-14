@@ -2,13 +2,17 @@
 
 
 #include "Shelter.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Inventory.h"
+#include "Ressource.h"
 
 #include "Gossip/Core/GS_Singleton.h"
+#include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Data/ShelterDataAsset.h"
-#include "Gossip/Items/Inventory.h"
+
 #include "Engine/StaticMesh.h"
 
 AShelter::AShelter()
@@ -57,9 +61,23 @@ void AShelter::BeginPlay()
 	Super::BeginPlay();
 
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
-	CurrentLevel = ShelterData.ShelterLevel;	
+	CurrentLevel = ShelterData.ShelterLevel;
 
 	InitializeShelter();
+	SpawnNPC();
+}
+
+void AShelter::SpawnNPC()
+{
+	if (IsValid(NpcToSpawnClass))
+	{
+		if (!NpcToSpawnClass) return;
+		ANonPlayerCharacter* NPC = GetWorld()->SpawnActor<ANonPlayerCharacter>(NpcToSpawnClass, GetActorTransform());
+		if (!IsValid(NPC)) return;
+		NPC->SetCharacterProfile(this);
+		SleepCollector->Owners.AddUnique(NPC);
+		FoodProcessor->Owners.AddUnique(NPC);
+	}
 }
 
 void AShelter::InitializeShelter()

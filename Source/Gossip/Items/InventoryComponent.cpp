@@ -3,12 +3,21 @@
 
 #include "InventoryComponent.h"
 #include "Ressource.h"
+#include "Shelter.h"
 
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+}
+
+void UInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AShelter* OwnedShelter = Cast<AShelter>(ShelterActor);
+	if (OwnedShelter) OwnedShelter->Owners.AddUnique(GetOwner());
 }
 
 void UInventoryComponent::AddKnownRessourceCollector(ARessource* RessourceActor)
@@ -95,3 +104,4 @@ void UInventoryComponent::RestoreState(FSaveValues SaveValues)
 {
 	InventoryItems = SaveValues.Inventory;
 }
+

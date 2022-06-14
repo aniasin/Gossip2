@@ -44,6 +44,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void SetCharacterProfile(AActor* ShelterActor);
+
 	AGS_AIController* GetAIController() { return AIController; }
 
 	void OrderMove(FVector Location);
