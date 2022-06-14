@@ -21,6 +21,7 @@ AShelter::AShelter()
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionBox->SetupAttachment(RootComponent);
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
 	CollisionBox->SetBoxExtent(FVector(300, 300, 300));
 
 	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
@@ -54,18 +55,29 @@ void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEven
 void AShelter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
+	CurrentLevel = ShelterData.ShelterLevel;	
+
 	InitializeShelter();
 }
 
 void AShelter::InitializeShelter()
 {
-	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
+	WallA->SetStaticMesh(nullptr);
+	WallB->SetStaticMesh(nullptr);
+	WallC->SetStaticMesh(nullptr);
+	WallD->SetStaticMesh(nullptr);
+
+	PillarA->SetStaticMesh(nullptr);
+	PillarB->SetStaticMesh(nullptr);
+	PillarC->SetStaticMesh(nullptr);
+	PillarD->SetStaticMesh(nullptr);
 
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
 	TArray<FSoftObjectPath> ItemsPath;
-	switch (ShelterData.ShelterLevel)
+	switch (CurrentLevel)
 	{
 		case 0:
 			break;
@@ -87,12 +99,29 @@ void AShelter::InitializeShelter()
 	Inventory->StockingLimit = ShelterData.InventoryCapability * ShelterData.ShelterLevel;
 }
 
+
+void AShelter::ConstructShelter()
+{
+	CurrentConstructionStep += 1;
+
+	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ShelterData.ConstructionTime));
+	if (CurrentConstructionStep >= ShelterData.ConstructionTime)
+	{
+		UpgradeShelter();
+	}
+}
+
+void AShelter::UpgradeShelter()
+{
+	UE_LOG(LogTemp, Log, TEXT("Shelter has been Upgraded! New level: %i"), CurrentLevel);
+}
+
 void AShelter::OnAsyncLoadComplete()
 {
 	UStaticMesh* WallMesh = nullptr;
 	UStaticMesh* PillarMesh = nullptr;
 
-	switch (ShelterData.ShelterLevel)
+	switch (CurrentLevel)
 	{
 	case 0:
 		break;

@@ -45,10 +45,20 @@ public:
 	class UShelterDataAsset* ShelterDataAsset;
 	UPROPERTY(EditAnywhere)
 	ESocialPosition ShelterGrade;
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*>Owners;
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* ConstructMontage;
+	UPROPERTY()
+	int32 CurrentLevel;
 	UPROPERTY()
 	int32 ConstructionStep;
 	UPROPERTY()
 	float ConstructionTime;
+	UPROPERTY()
+	float CurrentConstructionStep;
+
+	void ConstructShelter();
 
 
 protected:
@@ -64,6 +74,8 @@ protected:
 #endif WITH_EDITOR
 
 private:	
+	void UpgradeShelter();
+
 	void OnAsyncLoadComplete();
 
 	FShelterData ShelterData;

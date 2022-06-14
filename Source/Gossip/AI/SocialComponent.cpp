@@ -156,7 +156,6 @@ AActor* USocialComponent::FindSocialPartner()
 		for (AActor* Actor : CurrentlyPerceivedActors)
 		{
 			if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-			if (KnownOthers.Contains(Actor->GetName())) continue; // if it's here it has a proximity less than -2
 			AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 			if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize
 				|| OtherController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sleep) continue;

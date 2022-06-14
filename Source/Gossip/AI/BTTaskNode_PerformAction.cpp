@@ -7,6 +7,7 @@
 #include "InstinctsComponent.h"
 #include "SocialComponent.h"
 
+#include "Gossip/Items/Shelter.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Items/Ressource.h"
@@ -45,6 +46,14 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
+	}
+
+	if (Action == EAIAction::Improve)
+	{
+		InstinctsComp->SatisfyInstinct(Goal);
+		AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
+		if (!ShelterActor) return EBTNodeResult::Failed;
+		ShelterActor->ConstructShelter();
 	}
 
 	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor

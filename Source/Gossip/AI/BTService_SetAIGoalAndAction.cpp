@@ -6,6 +6,7 @@
 #include "InstinctsComponent.h"
 #include "GS_AIController.h"
 
+#include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Items/InventoryComponent.h"
 
 UBTService_SetAIGoalAndAction::UBTService_SetAIGoalAndAction(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
@@ -22,6 +23,12 @@ void UBTService_SetAIGoalAndAction::OnSearchStart(FBehaviorTreeSearchData& Searc
 void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
+
+	AGossipGameMode* GM = Cast<AGossipGameMode>(OwnerComp.GetAIOwner()->GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		Interval = GM->GameHourDurationSeconds * 2;
+	}
 
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) { return; }
@@ -140,8 +147,17 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		return;
 
 	case EAIInstinct::Conservation:
-		NewAction = (uint8)EAIAction::TravelCollector;
-		return;
+		switch ((EAIGoal)NewGoal)
+		{
+		case EAIGoal::Sleep:
+			NewAction = (uint8)EAIAction::TravelCollector;
+			return;
+		case  EAIGoal::Shelter:
+			if (!InventoryComp->ShelterActor) return;
+			AIController->BlackboardComponent->SetValueAsObject("TargetActor", InventoryComp->ShelterActor);
+			NewAction = (uint8)EAIAction::Improve;
+			return;
+		}
 
 	case EAIInstinct::Reproduction:
 		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);

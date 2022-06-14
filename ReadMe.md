@@ -16,6 +16,7 @@
 
 - AI will search, consume and stock resources when neeeded.
 - AI will start social interaction with each others when nothing else to do.
+- AI will eventually build for themself a shelter and improve it.
 - AI Alignment towards each other will evolve and eventually stabilize after a couple of accointance.
 - AI Emotional State will evolve depending on Instincts feeding.
 

@@ -54,6 +54,7 @@ enum class EAIAction : uint8
 	SearchProcessor		UMETA(DisplayName = "SearchProcessor"),
 	TravelCollector		UMETA(DisplayName = "TravelCollector"),
 	TravelProcessor		UMETA(DisplayName = "TravelProcessor"),
+	Improve				UMETA(DisplayName = "Improve"),
 };
 
 UENUM(BlueprintType)

@@ -6,6 +6,8 @@
 #include "GS_AIController.h"
 #include "Animation/AnimMontage.h" 
 
+#include "Gossip/Items/Shelter.h"
+#include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Items/Ressource.h"
@@ -26,8 +28,25 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 	if (!Ressource)
 	{
-		BlackboardComp->SetValueAsFloat("WaitTime", 1);
-		return EBTNodeResult::Succeeded;
+		EAIGoal CurrentGoal = (EAIGoal)BlackboardComp->GetValueAsEnum("Goal");
+		switch (CurrentGoal)
+		{
+		case EAIGoal::Food:
+			BlackboardComp->SetValueAsFloat("WaitTime", 1);
+			return EBTNodeResult::Succeeded;
+
+		case EAIGoal::Shelter:
+			AGossipGameMode* GM = Cast<AGossipGameMode>(NPC->GetWorld()->GetAuthGameMode());
+			if (!GM) return EBTNodeResult::Failed;
+			BlackboardComp->SetValueAsFloat("WaitTime", GM->GameHourDurationSeconds);
+			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
+			if (!ShelterActor) return EBTNodeResult::Failed;
+			if (ShelterActor->ConstructMontage)
+			{
+				NPC->PlayAnimMontage(ShelterActor->ConstructMontage);
+			}
+			return EBTNodeResult::Succeeded;
+		}
 	}
 
 	if (Ressource->ContentCount <= 0)

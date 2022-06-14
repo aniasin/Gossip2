@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	for (FHitResult Hit : Hits)
 	{
 		Ressource = Cast<ARessource>(Hit.GetActor());
-		if (Ressource->IsAttachedTo(AIController->GetPawn())) continue;
+		if (!IsValid(Ressource)) continue;
 		if (Ressource->Owners.Num() > 0 && !Ressource->Owners.Contains(AIController->GetPawn())) continue;
 
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())

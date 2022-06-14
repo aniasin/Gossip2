@@ -16,6 +16,9 @@ class GOSSIP_API UInventory : public UActorComponent
 public:	
 	UInventory();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* ShelterActor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) // For testing, should be private
 	int32 StockingLimit = 10;
 
