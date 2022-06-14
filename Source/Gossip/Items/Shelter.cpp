@@ -23,17 +23,23 @@ AShelter::AShelter()
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CollisionBox->SetBoxExtent(FVector(300, 300, 300));
 
-	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Wall A"));
+	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
 	WallA->SetupAttachment(RootComponent);
-
-	WallB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Wall B"));
+	WallB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
 	WallB->SetupAttachment(RootComponent);
-
-	WallC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Wall C"));
+	WallC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallC"));
 	WallC->SetupAttachment(RootComponent);
-
-	WallD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Wall D"));
+	WallD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallD"));
 	WallD->SetupAttachment(RootComponent);
+
+	PillarA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarA"));
+	PillarA->SetupAttachment(RootComponent);
+	PillarB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarB"));
+	PillarB->SetupAttachment(RootComponent);
+	PillarC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarC"));
+	PillarC->SetupAttachment(RootComponent);
+	PillarD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarD"));
+	PillarD->SetupAttachment(RootComponent);
 
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
@@ -58,23 +64,21 @@ void AShelter::InitializeShelter()
 
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
-	FSoftObjectPath WallPath;
-	int32 ShelterLevel = ShelterData.ShelterLevel;
-
-	switch (ShelterLevel)
+	TArray<FSoftObjectPath> ItemsPath;
+	switch (ShelterData.ShelterLevel)
 	{
 		case 0:
 			break;
 		case 1:
-			WallPath = ShelterData.WallMeshesPath.ToSoftObjectPath();
+			ItemsPath.AddUnique(ShelterData.WallMeshesPath.ToSoftObjectPath());
+			ItemsPath.AddUnique(ShelterData.PillarMeshesPath.ToSoftObjectPath());
+			break;
 		case 2:
 			break;
 		case 3:
 			break;
 	}
 
-	TArray<FSoftObjectPath> ItemsPath;
-	ItemsPath.AddUnique(WallPath);
 	for (FSoftObjectPath& Item : ItemsPath)
 	{
 		Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &AShelter::OnAsyncLoadComplete));
@@ -85,28 +89,38 @@ void AShelter::InitializeShelter()
 
 void AShelter::OnAsyncLoadComplete()
 {
-	TSoftObjectPtr<UStaticMesh> WallPtr;
-	int32 ShelterLevel = ShelterData.ShelterLevel;
+	UStaticMesh* WallMesh = nullptr;
+	UStaticMesh* PillarMesh = nullptr;
 
-	switch (ShelterLevel)
+	switch (ShelterData.ShelterLevel)
 	{
 	case 0:
 		break;
 	case 1:
-		WallPtr = ShelterData.WallMeshesPath;
+		WallMesh = ShelterData.WallMeshesPath.Get();
+		PillarMesh = ShelterData.PillarMeshesPath.Get();
 	case 2:
 		break;
 	case 3:
 		break;
 	}
 
-	UStaticMesh* StaticMesh = WallPtr.Get();
-	if (!IsValid(StaticMesh)) return;
+	if (WallMesh)
+	{
+		WallA->SetStaticMesh(WallMesh);
+		WallB->SetStaticMesh(WallMesh);
+		WallC->SetStaticMesh(WallMesh);
+		WallD->SetStaticMesh(WallMesh);
+	}
 
-	WallA->SetStaticMesh(StaticMesh);
-	WallB->SetStaticMesh(StaticMesh);
-	WallC->SetStaticMesh(StaticMesh);
-	WallD->SetStaticMesh(StaticMesh);
+	if (PillarMesh)
+	{
+		PillarA->SetStaticMesh(PillarMesh);
+		PillarB->SetStaticMesh(PillarMesh);
+		PillarC->SetStaticMesh(PillarMesh);
+		PillarD->SetStaticMesh(PillarMesh);
+	}
+
 
 	SetShelterSize();
 }
@@ -115,13 +129,15 @@ void AShelter::SetShelterSize()
 {
 	WallA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
 	WallA->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
 	WallB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, 0));
 	WallB->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
 	WallC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
 	WallC->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
 	WallD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
 	WallD->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
+
+	PillarA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
+	PillarB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1 , 0));
+	PillarC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, 0));
+	PillarD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
 }

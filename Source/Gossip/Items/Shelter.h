@@ -15,8 +15,10 @@ class GOSSIP_API AShelter : public AActor
 	
 public:	
 	AShelter();
+
 	UPROPERTY()
-		class USceneComponent* SceneRoot;
+	class USceneComponent* SceneRoot;
+
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionBox;
 	UPROPERTY(VisibleAnywhere)
@@ -27,6 +29,15 @@ public:
 	UStaticMeshComponent* WallC;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallD;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* PillarA;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* PillarB;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* PillarC;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* PillarD;
+
 	UPROPERTY(VisibleAnywhere)
 	class UInventory* Inventory;
 
