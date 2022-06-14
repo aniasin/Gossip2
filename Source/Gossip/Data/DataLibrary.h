@@ -178,15 +178,19 @@ struct FShelterData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSoftObjectPtr<UStaticMesh> WallMeshesPath;
+	TSoftObjectPtr<UStaticMesh> WallMeshesPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSoftObjectPtr<UStaticMesh> PillarMeshesPath;
+	TSoftObjectPtr<UStaticMesh> PillarMeshesPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSoftObjectPtr<UStaticMesh> ConstructionMeshPath;
+	TSoftObjectPtr<UStaticMesh> ConstructionMeshPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FSoftObjectPath ConstructionMontagePath;
+	FSoftObjectPath ConstructionMontagePath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ConstructionTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ShelterLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 InventoryCapability;
 };
 
 // Ressource

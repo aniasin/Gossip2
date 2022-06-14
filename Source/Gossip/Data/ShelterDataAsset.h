@@ -17,5 +17,5 @@ class GOSSIP_API UShelterDataAsset : public UDataAsset
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<ESocialPosition, FShelterData> ShelterDataAsset;
+	TMap<ESocialPosition, FShelterData> ShelterDataMap;
 };

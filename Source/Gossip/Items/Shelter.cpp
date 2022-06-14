@@ -8,6 +8,7 @@
 
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/Data/ShelterDataAsset.h"
+#include "Gossip/Items/Inventory.h"
 #include "Engine/StaticMesh.h"
 
 AShelter::AShelter()
@@ -33,6 +34,8 @@ AShelter::AShelter()
 
 	WallD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Wall D"));
 	WallD->SetupAttachment(RootComponent);
+
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
 #if WITH_EDITOR
 void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -51,19 +54,53 @@ void AShelter::BeginPlay()
 
 void AShelter::InitializeShelter()
 {
+	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
+
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
+	FSoftObjectPath WallPath;
+	int32 ShelterLevel = ShelterData.ShelterLevel;
+
+	switch (ShelterLevel)
+	{
+		case 0:
+			break;
+		case 1:
+			WallPath = ShelterData.WallMeshesPath.ToSoftObjectPath();
+		case 2:
+			break;
+		case 3:
+			break;
+	}
+
 	TArray<FSoftObjectPath> ItemsPath;
-	ItemsPath.AddUnique(ShelterData->ShelterDataAsset[ShelterGrade].WallMeshesPath.ToSoftObjectPath());
+	ItemsPath.AddUnique(WallPath);
 	for (FSoftObjectPath& Item : ItemsPath)
 	{
 		Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &AShelter::OnAsyncLoadComplete));
 	}
+
+	Inventory->StockingLimit = ShelterData.InventoryCapability * ShelterData.ShelterLevel;
 }
 
 void AShelter::OnAsyncLoadComplete()
 {
-	UStaticMesh* StaticMesh = ShelterData->ShelterDataAsset[ShelterGrade].WallMeshesPath.Get();
+	TSoftObjectPtr<UStaticMesh> WallPtr;
+	int32 ShelterLevel = ShelterData.ShelterLevel;
+
+	switch (ShelterLevel)
+	{
+	case 0:
+		break;
+	case 1:
+		WallPtr = ShelterData.WallMeshesPath;
+	case 2:
+		break;
+	case 3:
+		break;
+	}
+
+	UStaticMesh* StaticMesh = WallPtr.Get();
 	if (!IsValid(StaticMesh)) return;
 
 	WallA->SetStaticMesh(StaticMesh);

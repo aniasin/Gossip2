@@ -27,9 +27,11 @@ public:
 	UStaticMeshComponent* WallC;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallD;
+	UPROPERTY(VisibleAnywhere)
+	class UInventory* Inventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UShelterDataAsset* ShelterData;
+	class UShelterDataAsset* ShelterDataAsset;
 	UPROPERTY(EditAnywhere)
 	ESocialPosition ShelterGrade;
 	UPROPERTY()
@@ -52,5 +54,7 @@ protected:
 
 private:	
 	void OnAsyncLoadComplete();
+
+	FShelterData ShelterData;
 
 };
