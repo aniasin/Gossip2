@@ -37,32 +37,26 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceType];
 
-	for (auto& Ressource : RessourceInfos->RessourceDataMap)
-	{
-		if (RessourceType == EAIGoal::None) return;
-		if (Ressource.Key == RessourceType)
-		{
-			UStaticMesh* MeshPtr;
-			if (!Ressource.Value.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
-			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.Value.MeshesPtr[DiversityIndex].ToString());
-			if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); } 
-			else { Mesh->SetStaticMesh(nullptr); }
-			UAnimMontage* MontagePtr;
-			MontagePtr = LoadObject<UAnimMontage>(nullptr, *Ressource.Value.MontagePath.ToString());
-			if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
-			else { AnimMontage = nullptr; }
-			bRaw = Ressource.Value.bRaw;
-			WaitTime = Ressource.Value.WaitTime;
-			ContentCount = Ressource.Value.ContentCount;
-			LivingColor = Ressource.Value.LivingColor;
-			DeadColor = Ressource.Value.DeadColor;
-			RespawnTime = Ressource.Value.RespawnTimeInGameHour;
-			break;
-		}
-	}
+	
+	UStaticMesh* MeshPtr;
+	if (!RessourceData.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
+	MeshPtr = LoadObject<UStaticMesh>(nullptr, *RessourceData.MeshesPtr[DiversityIndex].ToString());
+	if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); } 
+	else { Mesh->SetStaticMesh(nullptr); }
+	UAnimMontage* MontagePtr;
+	MontagePtr = LoadObject<UAnimMontage>(nullptr, *RessourceData.MontagePath.ToString());
+	if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
+	else { AnimMontage = nullptr; }
+	bRaw = RessourceData.bRaw;
+	WaitTime = RessourceData.WaitTime;
+	ContentCount = RessourceData.ContentCount;
+	LivingColor = RessourceData.LivingColor;
+	DeadColor = RessourceData.DeadColor;
+	RespawnTime = RessourceData.RespawnTimeInGameHour;
 }
 #endif WITH_EDITOR
 void ARessource::BeginPlay()
@@ -104,17 +98,7 @@ void ARessource::RessourceEmpty()
 
 void ARessource::RessourceRespawn()
 {
-	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
-	if (!RessourceInfos) return;
-
-	for (auto& Ressource : RessourceInfos->RessourceDataMap)
-	{
-		if (Ressource.Key == RessourceType)
-		{
-			ContentCount = Ressource.Value.ContentCount;
-			break;
-		}
-	}
+	ContentCount = RessourceData.ContentCount;
 	CollisionBox->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
 	if (MaterialInstance)
 	{

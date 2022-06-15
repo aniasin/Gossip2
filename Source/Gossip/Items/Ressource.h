@@ -32,7 +32,7 @@ public:
 	class USaveableEntity* SaveGameComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class URessourceDataAsset* RessourceData;
+	class URessourceDataAsset* RessourceDataAsset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EAIGoal RessourceType;
@@ -78,6 +78,7 @@ protected:
 	virtual void BeginPlay() override;	
 
 private:
+	FRessourceData RessourceData;
 	class UMaterialInstanceDynamic* MaterialInstance;
 
 };
