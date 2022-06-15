@@ -20,9 +20,16 @@ class GOSSIP_API APlayerPawn : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USaveableEntity* SaveComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UPlayerOrdersComponent* PlayerOrdersComponent;
 
 public:
 	APlayerPawn();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGuid Id = FGuid(1, 3, 3, 7);
 
 	virtual void Tick(float DeltaTime) override;
 

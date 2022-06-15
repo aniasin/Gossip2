@@ -3,10 +3,12 @@
 
 #include "BTTask_FinishReproduction.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GS_AIController.h"
 #include "InstinctsComponent.h"
 
 #include "Gossip/Characters/NonPlayerCharacter.h"
+#include "Gossip/Characters/PlayerPawn.h"
 #include "Gossip/Data/DataLibrary.h"
 
 EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -23,9 +25,9 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 	if (!InstinctComp) return EBTNodeResult::Failed;
 
 	InstinctComp->SatisfyInstinct(EAIGoal::Sex);
-	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-	BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
-	BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
-	BlackboardComp->ClearValue("TargetActor");
-	return EBTNodeResult::Succeeded;
+
+	AActor* PlayerActor = UGameplayStatics::GetActorOfClass(NPC->GetWorld(), APlayerPawn::StaticClass());
+	APlayerPawn* Player = Cast<APlayerPawn>(PlayerActor);
+	UE_LOG(LogTemp, Warning, TEXT("%s is waiting for %s Input!"), *NPC->GetName(), *Player->GetName());
+	return EBTNodeResult::InProgress;
 }

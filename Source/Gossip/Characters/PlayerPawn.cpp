@@ -10,7 +10,11 @@
 #include "NonPlayerCharacter.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "PlayerOrdersComponent.h"
 
+#include "Gossip/Save/SaveableEntity.h"
+#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Core/GS_GameInstance.h"
 
 
@@ -30,6 +34,10 @@ APlayerPawn::APlayerPawn()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	MovementComp = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComp"));
+
+	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComp"));
+	SaveComponent->Id = Id;
+	PlayerOrdersComponent = CreateDefaultSubobject<UPlayerOrdersComponent>(TEXT("PlayerOrdersComp"));
 }
 
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -161,8 +169,10 @@ void APlayerPawn::RightClickPressed()
  
 	for (ANonPlayerCharacter* Selected : CurrentSelections)
 	{
+		uint8 AIStatus = Selected->GetAIController()->BlackboardComponent->GetValueAsEnum("AIStatus");
+		if (AIStatus == (uint8)EAIStatus::Follow || AIStatus == (uint8)EAIStatus::LeadHome) continue;
 		UNavigationPath* Path = NavigationSystem->FindPathToLocationSynchronously(GetWorld(), Selected->GetActorLocation(), Location);
-		if (!Path->IsValid()) break;
+		if (!Path->IsValid()) continue;
 		Selected->OrderMove(Location);
 	}
 }
