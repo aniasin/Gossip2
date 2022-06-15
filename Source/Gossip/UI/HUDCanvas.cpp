@@ -6,6 +6,7 @@
 
 #include "Gossip/Characters/PlayerPawn.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
+#include "Gossip/Characters/PlayerOrdersComponent.h"
 
 
 
@@ -19,16 +20,16 @@ void AHUDCanvas::DrawHUD()
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
 		UIScale = ViewportSize.X / 2048.f;
 	}
-	if (GetPlayer() && GetPlayer()->GetSelectionActive())
+	if (GetPlayerOrders() && GetPlayerOrders()->GetSelectionActive())
 	{
-		const FVector2D SelectionStartPosition = GetPlayer()->GetMousePositionAtStart();
+		const FVector2D SelectionStartPosition = GetPlayerOrders()->GetMousePositionAtStart();
 		DrawSelectionGrid(SelectionStartPosition);
 	}
 }
 
 void AHUDCanvas::DrawSelectionGrid(FVector2D GridStartPos)
 {
-	FVector2D MousePosition = GetPlayer()->GetMousePosition();
+	FVector2D MousePosition = GetPlayerOrders()->GetMousePosition();
 	FVector2D EndPosition = MousePosition - GridStartPos;
 
 // 	DrawRect(FLinearColor(1, 1, 1, 0.1), GridStartPos.X, GridStartPos.Y, EndPosition.X, EndPosition.Y);
@@ -58,10 +59,11 @@ void AHUDCanvas::DrawSelectionGrid(FVector2D GridStartPos)
 
 	TArray<ANonPlayerCharacter*> SelectedActors;
 	GetActorsInSelectionRectangle<ANonPlayerCharacter>(GridStartPos, MousePosition, SelectedActors, true, true);
-	GetPlayer()->SetCurrentSelections(SelectedActors);
+	GetPlayerOrders()->SetCurrentSelections(SelectedActors);
 }
 
-APlayerPawn* AHUDCanvas::GetPlayer() const
-{
-	return Cast<APlayerPawn>(PlayerOwner->GetPawn());
+UPlayerOrdersComponent* AHUDCanvas::GetPlayerOrders() const
+{	
+	return Cast<UPlayerOrdersComponent>(PlayerOwner->GetPawn()->GetComponentByClass(UPlayerOrdersComponent::StaticClass()));
+
 }

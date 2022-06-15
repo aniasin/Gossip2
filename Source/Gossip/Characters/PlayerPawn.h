@@ -35,13 +35,6 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
-	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
-	bool GetSelectionActive() { return bSelectionActive; }
-	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
-	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
-	FVector2D GetMousePosition();
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -59,14 +52,5 @@ protected:
 
 private:
 	class APlayerController* PC;
-
-	TArray<ANonPlayerCharacter*>CurrentSelections;
-	FVector SelectionBoxStartPosition;
-	FVector SelectionBoxEndPosition;
-	FVector2D MousePositionAtStart;
-	bool bSelectionActive;
-
-	void StartBoxSelection();
-	void EndBoxSelection();
 
 };

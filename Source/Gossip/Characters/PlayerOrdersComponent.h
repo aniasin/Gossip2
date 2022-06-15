@@ -23,11 +23,28 @@ public:
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;
 
+	class APlayerController* PlayerController;
+
+	void StartBoxSelection();
+	void EndBoxSelection();
+	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
+	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
+	bool GetSelectionActive() { return bSelectionActive; }
+	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
+	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
+	FVector2D GetMousePosition();
+
+	void OrderMoveUnderCursor();
+
 protected:
 	virtual void BeginPlay() override;
 
 private:	
-	
+	TArray<ANonPlayerCharacter*>CurrentSelections;
+	FVector SelectionBoxStartPosition;
+	FVector SelectionBoxEndPosition;
+	FVector2D MousePositionAtStart;
+	bool bSelectionActive;
 
-		
+	
 };

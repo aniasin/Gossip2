@@ -17,7 +17,7 @@ class GOSSIP_API AHUDCanvas : public AHUD
 private:
 	// Main drawing function
 	virtual void DrawHUD() override;
-	class APlayerPawn* GetPlayer() const;
+	class UPlayerOrdersComponent* GetPlayerOrders() const;
 
 	void DrawSelectionGrid(FVector2D GridStartPos);
 

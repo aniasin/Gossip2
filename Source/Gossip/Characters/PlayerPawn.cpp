@@ -7,14 +7,9 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "NonPlayerCharacter.h"
-#include "NavigationSystem.h"
-#include "NavigationPath.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "PlayerOrdersComponent.h"
 
 #include "Gossip/Save/SaveableEntity.h"
-#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Core/GS_GameInstance.h"
 
 
@@ -68,6 +63,7 @@ void APlayerPawn::BeginPlay()
 		FInputModeGameAndUI InputMode;
 		InputMode.SetHideCursorDuringCapture(false);
 		PC->SetInputMode(InputMode);
+		PlayerOrdersComponent->PlayerController = PC;
 	}
 }
 
@@ -75,37 +71,6 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrentSelections.Num() > 0)
-	{
-
-	}
-
-}
-
-void APlayerPawn::StartBoxSelection()
-{
-	for (ANonPlayerCharacter* Selected : CurrentSelections)
-	{
-		Selected->SetSelected(false);
-	}
-	MousePositionAtStart = GetMousePosition();
-	bSelectionActive = true;
-}
-
-void APlayerPawn::EndBoxSelection()
-{
-	bSelectionActive = false;
-	for (ANonPlayerCharacter* Selected : CurrentSelections)
-	{
-		Selected->SetSelected(true);
-	}
-}
-
-FVector2D APlayerPawn::GetMousePosition()
-{
-	FVector2D MousePosition;
-	PC->GetMousePosition(MousePosition.X, MousePosition.Y);
-	return MousePosition;
 }
 
 // Input
@@ -150,31 +115,17 @@ void APlayerPawn::InputPitch(float Value)
 
 void APlayerPawn::LeftClickPressed()
 {
-	StartBoxSelection();
+	PlayerOrdersComponent->StartBoxSelection();
 }
 
 void APlayerPawn::LeftClickReleased()
 {
-	EndBoxSelection();
+	PlayerOrdersComponent->EndBoxSelection();
 }
 
 void APlayerPawn::RightClickPressed()
 {
-	FHitResult Hit;
-	PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-	FVector Location = Hit.Location;
-
-	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-	if (!NavigationSystem) return;
- 
-	for (ANonPlayerCharacter* Selected : CurrentSelections)
-	{
-		uint8 AIStatus = Selected->GetAIController()->BlackboardComponent->GetValueAsEnum("AIStatus");
-		if (AIStatus == (uint8)EAIStatus::Follow || AIStatus == (uint8)EAIStatus::LeadHome) continue;
-		UNavigationPath* Path = NavigationSystem->FindPathToLocationSynchronously(GetWorld(), Selected->GetActorLocation(), Location);
-		if (!Path->IsValid()) continue;
-		Selected->OrderMove(Location);
-	}
+	PlayerOrdersComponent->OrderMoveUnderCursor();
 }
 
 void APlayerPawn::RightClickReleased()
