@@ -139,7 +139,7 @@ EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 AActor* USocialComponent::FindSocialPartner()
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
-	if (!AIController) return nullptr;
+	if (!AIController) return nullptr;	
 
 	TArray<AActor*>KnownOthersInVincinity;
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
@@ -148,8 +148,10 @@ AActor* USocialComponent::FindSocialPartner()
 		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
 		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= -2) continue;
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
-		if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) continue;
 
+		EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");
+		EAIGoal AIGoal = (EAIGoal)OtherController->BlackboardComponent->GetValueAsEnum("Goal");
+		if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep) continue;
 		KnownOthersInVincinity.Add(Actor);
 	}
 
@@ -159,8 +161,9 @@ AActor* USocialComponent::FindSocialPartner()
 		{
 			if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
 			AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
-			if (OtherController->BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize
-				|| OtherController->BlackboardComponent->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sleep) continue;
+			EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");
+			EAIGoal AIGoal = (EAIGoal)OtherController->BlackboardComponent->GetValueAsEnum("Goal");
+			if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep) continue;
 			return Actor;
 		}
 	}
