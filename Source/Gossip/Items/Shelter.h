@@ -20,7 +20,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
 
 	UPROPERTY(VisibleAnywhere)
@@ -41,6 +41,8 @@ public:
 	UStaticMeshComponent* PillarC;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* PillarD;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* ConstructionMesh;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInventory* Inventory;
@@ -68,6 +70,7 @@ public:
 	UPROPERTY()
 	float CurrentConstructionStep;
 
+	void BeginConstruct();
 	void ConstructShelter();
 
 
@@ -80,15 +83,15 @@ protected:
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
+#endif WITH_EDITOR
 
 	void InitializeShelter();
-
-#endif WITH_EDITOR
 
 private:	
 	void UpgradeShelter();
 
 	void OnAsyncLoadComplete();
+	void OnAsyncLoadConstructionComplete();
 
 	FShelterData ShelterData;
 

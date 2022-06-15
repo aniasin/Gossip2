@@ -41,6 +41,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			BlackboardComp->SetValueAsFloat("WaitTime", GM->GameHourDurationSeconds);
 			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
+			ShelterActor->BeginConstruct();
 			if (ShelterActor->ConstructMontage)
 			{
 				NPC->PlayAnimMontage(ShelterActor->ConstructMontage);

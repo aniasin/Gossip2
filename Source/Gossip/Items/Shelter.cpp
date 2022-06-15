@@ -29,22 +29,25 @@ AShelter::AShelter()
 	CollisionBox->SetBoxExtent(FVector(300, 300, 300));
 
 	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
-	WallA->SetupAttachment(RootComponent);
+	WallA->SetupAttachment(CollisionBox);
 	WallB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
-	WallB->SetupAttachment(RootComponent);
+	WallB->SetupAttachment(CollisionBox);
 	WallC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallC"));
-	WallC->SetupAttachment(RootComponent);
+	WallC->SetupAttachment(CollisionBox);
 	WallD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallD"));
-	WallD->SetupAttachment(RootComponent);
+	WallD->SetupAttachment(CollisionBox);
 
 	PillarA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarA"));
-	PillarA->SetupAttachment(RootComponent);
+	PillarA->SetupAttachment(CollisionBox);
 	PillarB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarB"));
-	PillarB->SetupAttachment(RootComponent);
+	PillarB->SetupAttachment(CollisionBox);
 	PillarC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarC"));
-	PillarC->SetupAttachment(RootComponent);
+	PillarC->SetupAttachment(CollisionBox);
 	PillarD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarD"));
-	PillarD->SetupAttachment(RootComponent);
+	PillarD->SetupAttachment(CollisionBox);
+
+	ConstructionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Construction"));
+	ConstructionMesh->SetupAttachment(CollisionBox);
 
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
@@ -83,16 +86,6 @@ void AShelter::SpawnNPC()
 
 void AShelter::InitializeShelter()
 {
-	WallA->SetStaticMesh(nullptr);
-	WallB->SetStaticMesh(nullptr);
-	WallC->SetStaticMesh(nullptr);
-	WallD->SetStaticMesh(nullptr);
-
-	PillarA->SetStaticMesh(nullptr);
-	PillarB->SetStaticMesh(nullptr);
-	PillarC->SetStaticMesh(nullptr);
-	PillarD->SetStaticMesh(nullptr);
-
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
 	TArray<FSoftObjectPath> ItemsPath;
@@ -119,10 +112,21 @@ void AShelter::InitializeShelter()
 }
 
 
+void AShelter::BeginConstruct()
+{
+	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
+
+	TArray<FSoftObjectPath> ItemsPath;
+	ItemsPath.AddUnique(ShelterData.ConstructionMeshPath.ToSoftObjectPath());
+	for (FSoftObjectPath& Item : ItemsPath)
+	{
+		Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &AShelter::OnAsyncLoadConstructionComplete));
+	}
+}
+
 void AShelter::ConstructShelter()
 {
 	CurrentConstructionStep += 1;
-
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ShelterData.ConstructionTime));
 	if (CurrentConstructionStep >= ShelterData.ConstructionTime)
 	{
@@ -132,6 +136,7 @@ void AShelter::ConstructShelter()
 
 void AShelter::UpgradeShelter()
 {
+	ConstructionMesh->SetStaticMesh(nullptr);
 	CurrentLevel++;
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been Upgraded! New level: %i"), CurrentLevel);
 	InitializeShelter();
@@ -173,6 +178,13 @@ void AShelter::OnAsyncLoadComplete()
 
 
 	SetShelterSize();
+}
+
+void AShelter::OnAsyncLoadConstructionComplete()
+{
+	UStaticMesh* Mesh = nullptr;
+	Mesh = ShelterData.ConstructionMeshPath.Get();
+	if (Mesh) ConstructionMesh->SetStaticMesh(Mesh);
 }
 
 void AShelter::SetShelterSize()
