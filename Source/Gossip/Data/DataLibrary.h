@@ -201,9 +201,7 @@ struct FRessourceData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EAIGoal RessourceType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FSoftObjectPath MeshPath;
+	TArray<FSoftObjectPath> MeshesPtr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bRaw;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

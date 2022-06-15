@@ -40,25 +40,26 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
 	if (!RessourceInfos) return;
 
-	for (FRessourceData Ressource : RessourceInfos->RessourceDataArray)
+	for (auto& Ressource : RessourceInfos->RessourceDataMap)
 	{
 		if (RessourceType == EAIGoal::None) return;
-		if (Ressource.RessourceType == RessourceType)
+		if (Ressource.Key == RessourceType)
 		{
 			UStaticMesh* MeshPtr;
-			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.MeshPath.ToString());
+			if (!Ressource.Value.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
+			MeshPtr = LoadObject<UStaticMesh>(nullptr, *Ressource.Value.MeshesPtr[DiversityIndex].ToString());
 			if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); } 
 			else { Mesh->SetStaticMesh(nullptr); }
 			UAnimMontage* MontagePtr;
-			MontagePtr = LoadObject<UAnimMontage>(nullptr, *Ressource.MontagePath.ToString());
+			MontagePtr = LoadObject<UAnimMontage>(nullptr, *Ressource.Value.MontagePath.ToString());
 			if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
 			else { AnimMontage = nullptr; }
-			bRaw = Ressource.bRaw;
-			WaitTime = Ressource.WaitTime;
-			ContentCount = Ressource.ContentCount;
-			LivingColor = Ressource.LivingColor;
-			DeadColor = Ressource.DeadColor;
-			RespawnTime = Ressource.RespawnTimeInGameHour;
+			bRaw = Ressource.Value.bRaw;
+			WaitTime = Ressource.Value.WaitTime;
+			ContentCount = Ressource.Value.ContentCount;
+			LivingColor = Ressource.Value.LivingColor;
+			DeadColor = Ressource.Value.DeadColor;
+			RespawnTime = Ressource.Value.RespawnTimeInGameHour;
 			break;
 		}
 	}
@@ -106,11 +107,11 @@ void ARessource::RessourceRespawn()
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceData);
 	if (!RessourceInfos) return;
 
-	for (FRessourceData Ressource : RessourceInfos->RessourceDataArray)
+	for (auto& Ressource : RessourceInfos->RessourceDataMap)
 	{
-		if (Ressource.RessourceType == RessourceType)
+		if (Ressource.Key == RessourceType)
 		{
-			ContentCount = Ressource.ContentCount;
+			ContentCount = Ressource.Value.ContentCount;
 			break;
 		}
 	}

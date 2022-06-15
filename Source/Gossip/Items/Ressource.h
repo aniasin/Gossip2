@@ -37,6 +37,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 DiversityIndex;
+	UPROPERTY()
 	TArray<AActor*>Owners;
 
 	UPROPERTY()
