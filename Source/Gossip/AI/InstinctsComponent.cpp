@@ -20,7 +20,7 @@ void UInstinctsComponent::PostEditChangeProperty(FPropertyChangedEvent& Property
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	InstinctsInfo = InstinctDataAsset->InstinctsInfo;
+
 }
 #endif WITH_EDITOR
 
@@ -29,7 +29,7 @@ void UInstinctsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	InstinctsInfo = InstinctDataAsset->InstinctsInfo;
 
 	AGossipGameMode* GM = Cast<AGossipGameMode>(UGameplayStatics::GetGameMode(GetOwner()->GetWorld()));
 	if (!GM) return;

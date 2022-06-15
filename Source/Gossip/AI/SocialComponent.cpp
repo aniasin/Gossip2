@@ -21,15 +21,17 @@ void USocialComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	SocialChangeTable = SocialChangeChartDataAsset->SocialChangeTable;
-	EmotionalChangeTable = EmotionalChangeChartDataAsset->EmotionalChangeTable;
-	EmotionalUpdateTable = EmotionalUpdtateChartDataAsset->EmotionalUpdateTable;
+
 }
 #endif WITH_EDITOR
 
 void USocialComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SocialChangeTable = SocialChangeChartDataAsset->SocialChangeTable;
+	EmotionalChangeTable = EmotionalChangeChartDataAsset->EmotionalChangeTable;
+	EmotionalUpdateTable = EmotionalUpdtateChartDataAsset->EmotionalUpdateTable;
 }
 
 EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)

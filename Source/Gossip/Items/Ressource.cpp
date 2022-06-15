@@ -29,7 +29,6 @@ ARessource::ARessource()
 	Mesh->SetupAttachment(RootComponent);
 
 	SaveGameComp = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveGameComp"));
-
 }
 
 #if WITH_EDITOR
@@ -41,6 +40,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	if (!RessourceInfos) return;
 	RessourceData = RessourceInfos->RessourceDataMap[RessourceType];
 
+	if (RessourceType == EAIGoal::None) return;
 	
 	UStaticMesh* MeshPtr;
 	if (!RessourceData.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
@@ -59,9 +59,14 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	RespawnTime = RessourceData.RespawnTimeInGameHour;
 }
 #endif WITH_EDITOR
+
 void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
+
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
+	if (!RessourceInfos) return;
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceType];
 
 	if (IsValid(Mesh->GetStaticMesh()))
 	{
