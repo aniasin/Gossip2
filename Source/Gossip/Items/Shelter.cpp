@@ -71,10 +71,11 @@ void AShelter::SpawnNPC()
 {
 	if (IsValid(NpcToSpawnClass))
 	{
-		if (!NpcToSpawnClass) return;
 		ANonPlayerCharacter* NPC = GetWorld()->SpawnActor<ANonPlayerCharacter>(NpcToSpawnClass, GetActorTransform());
 		if (!IsValid(NPC)) return;
+		NPC->Id = Id;
 		NPC->SetCharacterProfile(this);
+		if (!SleepCollector || !FoodProcessor) { UE_LOG(LogTemp, Warning, TEXT("No Ressource has been set in %s"), *GetName()) return; }
 		SleepCollector->Owners.AddUnique(NPC);
 		FoodProcessor->Owners.AddUnique(NPC);
 	}

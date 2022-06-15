@@ -16,6 +16,10 @@ class GOSSIP_API AShelter : public AActor
 public:	
 	AShelter();
 
+	// Warning! This must be regenerated when Alt-Moving (duplicating) actors!
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGuid Id;
+
 	UPROPERTY()
 	class USceneComponent* SceneRoot;
 

@@ -20,7 +20,6 @@ class GOSSIP_API ANonPlayerCharacter : public ACharacter, public ISaveGameInterf
 public:
 	ANonPlayerCharacter();
 
-	// Warning! This must be regenerated when Alt-Moving (duplicating) actors!
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

@@ -65,6 +65,8 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 
 void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 {
+	SaveComponent->Id = Id;
+
 	ECharacterProfile ProfileToSet = ECharacterProfile::None;
 	float RandomFloat = FMath::RandRange(0, 1);
 	RandomFloat > 0.51 ? ProfileToSet = ECharacterProfile::Female : ProfileToSet = ECharacterProfile::Male;

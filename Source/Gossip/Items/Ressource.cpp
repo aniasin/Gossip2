@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimMontage.h"
 
+#include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Data/RessourceDataAsset.h"
 
@@ -129,13 +130,35 @@ UAnimMontage* ARessource::GetAnimMontageMontage()
 FSaveValues ARessource::CaptureState()
 {
 	FSaveValues SaveValues;
+	TArray<FGuid> OwnersToSave;
+
+	for (AActor* OwnerNpc : Owners)
+	{
+		ANonPlayerCharacter* Npc = Cast<ANonPlayerCharacter>(OwnerNpc);
+		if (!Npc) continue;
+		OwnersToSave.AddUnique(Npc->Id);
+	}
 	SaveValues.ContentCount = ContentCount;
+	SaveValues.OwnersIds = OwnersToSave;
 
 	return SaveValues;
 }
 
 void ARessource::RestoreState(FSaveValues SaveData)
 {
+	TArray<AActor*> Npcs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANonPlayerCharacter::StaticClass(), Npcs);
+	for (FGuid SavedId : SaveData.OwnersIds)
+	{
+		for (AActor* Npc : Npcs)
+		{
+			ANonPlayerCharacter* NonPlayerCharacter = Cast<ANonPlayerCharacter>(Npc);
+			if (!NonPlayerCharacter) continue;
+			if (NonPlayerCharacter->Id != Id) continue;
+			Owners.AddUnique(Npc);
+		}
+	}
+
 	ContentCount = SaveData.ContentCount;
 	if (ContentCount <= 0) RessourceEmpty();
 }

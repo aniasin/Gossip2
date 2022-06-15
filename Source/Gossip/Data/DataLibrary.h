@@ -259,11 +259,14 @@ struct FSaveValues
 	UPROPERTY()
 	ECharacterProfile CharacterProfile;
 	UPROPERTY()
+	// TODO Refactor to TMap<FGuid, FAlignment>
 	TMap<FString, FAlignment> KnownOthers;
 	UPROPERTY()
 	TArray<FInstinctValues> InstinctsValues;
 	UPROPERTY()
 	EAIGoal RessourceType;
+	UPROPERTY()
+	TArray<FGuid>OwnersIds;
 	UPROPERTY()
 	int32 ContentCount;
 	UPROPERTY()
