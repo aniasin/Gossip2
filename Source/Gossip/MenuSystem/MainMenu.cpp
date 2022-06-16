@@ -11,37 +11,7 @@
 
 UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> ServerResultBPClass(TEXT("/Game/MenuSystem/BP_ServerResult"));
-	if (ServerResultBPClass.Class != NULL)
-	{
-		ServerResultClass = ServerResultBPClass.Class;
-		if (!ServerResultClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find ServerResultWidget in MainMenu!"));
-	}
-}
 
-void UMainMenu::FoundSessions(TArray<FString> Sessions)
-{
-	uint32 i = 0;
-	for (const FString Session : Sessions)
-	{
-		UServerResult* ServerResult = CreateWidget<UServerResult>(this, ServerResultClass);
-		ScrollBox_ServerList->AddChild(ServerResult);
-		ServerResult->SetUp(this, i, Session);
-		i++;
-	}
-}
-
-void UMainMenu::SetSelectedSession(uint32 Index)
-{
-	SelectedSession = Index;
-	for (UWidget* ResultWidget : ScrollBox_ServerList->GetAllChildren())
-	{
-		UServerResult* ServerResult = Cast<UServerResult>(ResultWidget);
-		if (ServerResult && ServerResult != ScrollBox_ServerList->GetAllChildren()[Index])
-		{
-			ServerResult->SetColorAndOpacity(FLinearColor::White);
-		}
-	}
 }
 
 bool UMainMenu::Initialize()
@@ -59,7 +29,6 @@ bool UMainMenu::Initialize()
 	BTN_Quit->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
 
 	if (!BTN_ConfirmJoinGame) return false;
-	BTN_ConfirmJoinGame->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
 	if (!BTN_CancelJoinGame) return false;
 	BTN_CancelJoinGame->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
@@ -84,24 +53,9 @@ void UMainMenu::OpenMainMenu()
 	Switcher->SetActiveWidget(MainMenu);
 }
 
-void UMainMenu::HostServer()
-{
-	if (!MenuInterface) return;
-	MenuInterface->Host();
-}
-
 void UMainMenu::OpenJoinMenu()
 {
-	if (!Switcher || !JoinMenu) return;
-	Switcher->SetActiveWidget(JoinMenu);
-	SelectedSession = -1;
-	MenuInterface->SearchSession();
-}
 
-void UMainMenu::JoinServer()
-{
-	if (!MenuInterface) return;
-	MenuInterface->Join(SelectedSession);
 }
 
 void UMainMenu::QuitGame()

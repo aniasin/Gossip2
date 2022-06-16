@@ -32,12 +32,6 @@ public:
 	UFUNCTION()
 		void LoadGame() override;
 	UFUNCTION()
-		void Host() override;
-	UFUNCTION()
-		void Join(const int32& SessionIndex) override;
-	UFUNCTION()
-		void SearchSession() override;
-	UFUNCTION()
 		void LoadMainMenu() override;
 	UFUNCTION()
 		void QuitGame() override;
@@ -55,17 +49,7 @@ private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 
-	IOnlineSessionPtr SessionInterface;
-	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
-
-	void CreateSession();
-	void DestroySession();
 	void Travel(FName MapName);
-
-	void SessionCreated(FName SessionName, bool bSuccess);
-	void SessionDestroyed(FName SessionName, bool bSuccess);
-	void FoundSession(bool bSuccess);
-	void JoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 

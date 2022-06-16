@@ -23,10 +23,7 @@ class GOSSIP_API IMenuInterface
 public:
 	virtual void NewGame() = 0;
 	virtual void LoadGame() = 0;
-	virtual void Host() = 0;
-	virtual void Join(const int32& Index) = 0;
 	virtual void LoadMainMenu() = 0;
-	virtual void SearchSession() = 0;
 	virtual void QuitGame() = 0;
 
 };

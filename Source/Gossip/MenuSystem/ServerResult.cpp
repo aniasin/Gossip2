@@ -20,5 +20,4 @@ void UServerResult::Clicked()
 {
 	if (!MainMenu) return;
 	Text_ServerName->SetColorAndOpacity(FLinearColor::Green);
-	MainMenu->SetSelectedSession(ButtonIndex);
 }
