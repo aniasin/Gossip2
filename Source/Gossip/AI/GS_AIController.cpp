@@ -97,14 +97,14 @@ void AGS_AIController::ResetAI()
 
 void AGS_AIController::SetTimeSearching()
 {
-	TimeSearching = GetWorld()->GetTimeSeconds();
+	TimeSearching = GetWorld()->GetUnpausedTimeSeconds();
 }
 
 bool AGS_AIController::HasTimeSearchingElapsed()
 {
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
-	return GetWorld()->GetTimeSeconds() - TimeSearching >= GM->GameHourDurationSeconds;
+	return GetWorld()->GetUnpausedTimeSeconds() - TimeSearching >= GM->GameHourDurationSeconds;
 }
 
 void AGS_AIController::StartAi()

@@ -193,6 +193,7 @@ void UGS_GameInstance::QuitGame()
 	GetFirstLocalPlayerController()->ConsoleCommand("quit");
 }
 
+// SaveGame ****************************************************************
 void UGS_GameInstance::SaveGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
@@ -245,8 +246,23 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 
 void UGS_GameInstance::RestoreGameState()
 {
+	AsyncLoadGame();
+}
+
+void UGS_GameInstance::AsyncLoadGame()
+{
+	FAsyncLoadGameFromSlotDelegate LoadedDelegate;
+	LoadedDelegate.BindUObject(this, &UGS_GameInstance::OnFinishedLoadGameData);
+	UGameplayStatics::AsyncLoadGameFromSlot("SaveGame", 0, LoadedDelegate);
+}
+
+void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int32 Index, USaveGame* GameObject)
+{
+	UGS_SaveGame_Object* SaveGameObject = Cast<UGS_SaveGame_Object>(GameObject);
+	if (!SaveGameObject) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Loading Game..."))
-	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
+	TMap<FGuid, FSaveStruct>SaveData = SaveGameObject->SaveData;
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
@@ -261,5 +277,7 @@ void UGS_GameInstance::RestoreGameState()
 			SaveableEntity->RestoreState(SaveData[SaveableEntity->Id]);
 		}
 	}
+	
 }
+
 

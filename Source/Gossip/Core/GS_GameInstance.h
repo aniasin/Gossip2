@@ -62,4 +62,6 @@ private:
 
 	bool CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData);
 	TMap<FGuid, FSaveStruct> LoadGameDataBinary();
+	void AsyncLoadGame();
+	void OnFinishedLoadGameData(const FString& SaveName, const int32 Index, class USaveGame* GameObject);
 };
