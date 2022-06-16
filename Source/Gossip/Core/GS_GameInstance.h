@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Gossip/MenuSystem/MenuInterface.h"
+
 #include "GS_GameInstance.generated.h"
 
 /**
@@ -41,6 +42,8 @@ public:
 	UFUNCTION()
 	void RestoreGameState();
 
+	UFUNCTION()
+	void OnMapLoaded();
 
 private:
 	class UMenuBase* Menu;
@@ -52,6 +55,7 @@ private:
 
 	void CreateSession();
 	void DestroySession();
+	void Travel(FName MapName);
 
 	void SessionCreated(FName SessionName, bool bSuccess);
 	void SessionDestroyed(FName SessionName, bool bSuccess);
@@ -64,4 +68,6 @@ private:
 	TMap<FGuid, FSaveStruct> LoadGameDataBinary();
 	void AsyncLoadGame();
 	void OnFinishedLoadGameData(const FString& SaveName, const int32 Index, class USaveGame* GameObject);
+
+
 };

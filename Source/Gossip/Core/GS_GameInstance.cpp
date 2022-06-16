@@ -125,14 +125,23 @@ void UGS_GameInstance::DestroySession()
 	SessionInterface->DestroySession(SESSION_NAME);
 }
 
+void UGS_GameInstance::Travel(FName MapName)
+{
+	if (Menu) Menu->TearDown();
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	LatentInfo.ExecutionFunction = FName("OnMapLoaded");
+	LatentInfo.Linkage = 0;
+	LatentInfo.UUID = 0;
+	UGameplayStatics::LoadStreamLevel(this, MapName, true, true, LatentInfo);
+
+}
+
 void UGS_GameInstance::SessionCreated(FName SessionName, bool bSuccess)
 {
 	if (!bSuccess) { UE_LOG(LogTemp, Warning, TEXT("Failed to create Session!"), *SessionName.ToString()) return; }
+	Travel(TEXT("Map_01"));
 
-	if (Menu) Menu->TearDown();
-	UWorld* World = GetWorld();
-	if (!World) return;
-	World->ServerTravel("Map_01?listen");
 }
 
 void UGS_GameInstance::SessionDestroyed(FName SessionName, bool bSuccess)
@@ -262,6 +271,7 @@ void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int
 	if (!SaveGameObject) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Loading Game..."))
+
 	TMap<FGuid, FSaveStruct>SaveData = SaveGameObject->SaveData;
 
 	TArray<AActor*> Actors;
@@ -280,4 +290,7 @@ void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int
 	
 }
 
-
+void UGS_GameInstance::OnMapLoaded()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Map Loaded!"))
+}
