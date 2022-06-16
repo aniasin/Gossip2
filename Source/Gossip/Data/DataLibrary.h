@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/DataTable.h"
 #include "DataLibrary.generated.h"
 
 UENUM(BlueprintType)
@@ -230,6 +231,17 @@ struct FCharactersData
 	UAnimBlueprintGeneratedClass* AnimBPClass;
 };
 
+USTRUCT(BlueprintType)
+struct FCharacterName : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString FirstName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString LastName;
+};
+
 // Inventory
 USTRUCT(BlueprintType)
 struct FInventoryItem
@@ -256,6 +268,8 @@ struct FSaveValues
 	FTransform Transform;
 	UPROPERTY()
 	ECharacterProfile CharacterProfile;
+	UPROPERTY()
+	FCharacterName CharacterName;
 	UPROPERTY()
 	// TODO Refactor to TMap<FGuid, FAlignment>
 	TMap<FString, FAlignment> KnownOthers;

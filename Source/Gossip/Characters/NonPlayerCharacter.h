@@ -34,6 +34,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TMap<ECharacterProfile, FCharactersData>CharactersData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UDataTable* NamesDatatable;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FCharacterName CharacterName;
+
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 200;
 	UPROPERTY(EditAnywhere)
@@ -63,6 +69,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	void InitializeCharacterProfile();
+
+	void InitializeCharacterName();
 
 private:
 	AGS_AIController* AIController;

@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h" 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Engine/DataTable.h"
 
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/AI/GS_AIController.h"
@@ -59,7 +60,9 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 			PosZ += 30;
 		}
-		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), "KNOWN OTHERS", this, FColor::Cyan, DeltaTime);
+		FString Message = FString::Printf(TEXT("==== %s %s ===="), *CharacterName.FirstName, *CharacterName.LastName);
+		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+
 	}	
 }
 
@@ -95,6 +98,46 @@ void ANonPlayerCharacter::InitializeCharacterProfile()
 	for (FSoftObjectPath& Item : ItemsPath)
 	{
 		Streamable.RequestAsyncLoad(Item, FStreamableDelegate::CreateUObject(this, &ANonPlayerCharacter::OnAsyncLoadComplete));
+	}
+
+	InitializeCharacterName();
+
+}
+
+void ANonPlayerCharacter::InitializeCharacterName()
+{
+	if (CharacterName.FirstName != "") return;
+	ECharacterProfile CharacterProfile = SocialComp->CharacterProfile;
+	if (NamesDatatable)
+	{
+		int32 Min = 0;
+		int32 Max = 0;
+
+		switch (CharacterProfile)
+		{
+		case ECharacterProfile::None:
+			break;
+		case ECharacterProfile::Male:
+			Min = 0;
+			Max = 999;
+			break;
+		case ECharacterProfile::Female:
+			Min = 1000;
+			Max = 1999;
+			break;
+		default:
+			break;
+		}
+		int32 RandomInt = FMath::RandRange(Min, Max);
+
+		const FName RowName = FName(FString::FromInt(RandomInt));
+		FCharacterName* Row = NamesDatatable->FindRow<FCharacterName>(RowName, "FirstName");
+		if (Row)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s %s"), *Row->FirstName, *Row->LastName);
+			CharacterName.FirstName = *Row->FirstName;
+			CharacterName.LastName = *Row->LastName;
+		}
 	}
 }
 
@@ -139,6 +182,7 @@ FSaveValues ANonPlayerCharacter::CaptureState()
 
 	SaveValues.Transform = GetActorTransform();
 	SaveValues.CharacterProfile = SocialComp->CharacterProfile;
+	SaveValues.CharacterName = CharacterName;
 	return SaveValues;
 }
 
@@ -146,6 +190,7 @@ void ANonPlayerCharacter::RestoreState(FSaveValues SaveValues)
 {
 	SetActorTransform(SaveValues.Transform);
 	SocialComp->CharacterProfile = SaveValues.CharacterProfile;
+	CharacterName = SaveValues.CharacterName;
 	InitializeCharacterProfile();
 	AIController->ResetAI();
 }
