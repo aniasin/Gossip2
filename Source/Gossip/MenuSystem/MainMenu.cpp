@@ -50,10 +50,10 @@ bool UMainMenu::Initialize()
 	if (!bsuccess) return false;
 
 	if (!BTN_Host) return false;
-	BTN_Host->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	BTN_Host->OnClicked.AddDynamic(this, &UMainMenu::NewGame);
 
 	if (!BTN_Join) return false;
-	BTN_Join->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+	BTN_Join->OnClicked.AddDynamic(this, &UMainMenu::LoadGame);
 
 	if (!BTN_Quit) return false;
 	BTN_Quit->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
@@ -65,6 +65,18 @@ bool UMainMenu::Initialize()
 	BTN_CancelJoinGame->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 
 	return true;
+}
+
+void UMainMenu::NewGame()
+{
+	if (!MenuInterface) return;
+	MenuInterface->NewGame();
+}
+
+void UMainMenu::LoadGame()
+{
+	if (!MenuInterface) return;
+	MenuInterface->LoadGame();
 }
 
 void UMainMenu::OpenMainMenu()

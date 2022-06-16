@@ -72,6 +72,18 @@ void UGS_GameInstance::LoadGameMenu()
 	GameMenu->SetUp();
 }
 
+void UGS_GameInstance::NewGame()
+{
+	if (Menu) Menu->TearDown();
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::LoadStreamLevel(this, FName("Map_01"), true, true, LatentInfo);
+}
+
+void UGS_GameInstance::LoadGame()
+{
+	RestoreGameState();
+}
+
 void UGS_GameInstance::Host()
 {
 	if (SessionInterface)
@@ -140,7 +152,10 @@ void UGS_GameInstance::Travel(FName MapName)
 void UGS_GameInstance::SessionCreated(FName SessionName, bool bSuccess)
 {
 	if (!bSuccess) { UE_LOG(LogTemp, Warning, TEXT("Failed to create Session!"), *SessionName.ToString()) return; }
-	Travel(TEXT("Map_01"));
+	if (Menu) Menu->TearDown();
+	UWorld* World = GetWorld();
+	if (!World) return;
+	World->ServerTravel("Map_01?listen");
 
 }
 
@@ -255,7 +270,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 
 void UGS_GameInstance::RestoreGameState()
 {
-	AsyncLoadGame();
+	Travel("Map_01");
 }
 
 void UGS_GameInstance::AsyncLoadGame()
@@ -292,5 +307,5 @@ void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int
 
 void UGS_GameInstance::OnMapLoaded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Map Loaded!"))
+	AsyncLoadGame();
 }

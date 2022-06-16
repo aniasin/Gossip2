@@ -54,6 +54,10 @@ private:
 	uint32 SelectedSession;
 
 	UFUNCTION()
+		void NewGame();
+	UFUNCTION()
+		void LoadGame();
+	UFUNCTION()
 		void OpenMainMenu();
 	UFUNCTION()
 		void HostServer();
