@@ -138,13 +138,15 @@ FSaveValues ANonPlayerCharacter::CaptureState()
 	FSaveValues SaveValues;
 
 	SaveValues.Transform = GetActorTransform();
-
+	SaveValues.CharacterProfile = SocialComp->CharacterProfile;
 	return SaveValues;
 }
 
 void ANonPlayerCharacter::RestoreState(FSaveValues SaveValues)
 {
 	SetActorTransform(SaveValues.Transform);
+	SocialComp->CharacterProfile = SaveValues.CharacterProfile;
+	InitializeCharacterProfile();
 	AIController->ResetAI();
 }
 

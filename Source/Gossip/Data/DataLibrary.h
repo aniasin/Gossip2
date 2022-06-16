@@ -269,6 +269,10 @@ struct FSaveValues
 	int32 ContentCount;
 	UPROPERTY()
 	TArray<FInventoryItem>Inventory;
+	UPROPERTY()
+	int32 ShelterLevel;
+	UPROPERTY()
+	float ShelterConstructionStep;
 };
 
 USTRUCT(BlueprintType)

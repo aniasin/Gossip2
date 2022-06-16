@@ -12,6 +12,7 @@
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Data/ShelterDataAsset.h"
+#include "Gossip/Save/SaveableEntity.h"
 
 #include "Engine/StaticMesh.h"
 
@@ -49,6 +50,7 @@ AShelter::AShelter()
 	ConstructionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Construction"));
 	ConstructionMesh->SetupAttachment(CollisionBox);
 
+	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComp"));
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
 #if WITH_EDITOR
@@ -76,7 +78,7 @@ void AShelter::SpawnNPC()
 	{
 		ANonPlayerCharacter* NPC = GetWorld()->SpawnActor<ANonPlayerCharacter>(NpcToSpawnClass, GetActorTransform());
 		if (!IsValid(NPC)) return;
-		NPC->Id = Id;
+		NPC->Id = SpawnedNpcId;
 		NPC->SetCharacterProfile(this);
 		if (!SleepCollector || !FoodProcessor) { UE_LOG(LogTemp, Warning, TEXT("No Ressource has been set in %s"), *GetName()) return; }
 		SleepCollector->Owners.AddUnique(NPC);
@@ -203,3 +205,24 @@ void AShelter::SetShelterSize()
 	PillarC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, 0));
 	PillarD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
 }
+
+// ISaveGameInterface
+FSaveValues AShelter::CaptureState()
+{
+	FSaveValues SaveValues;
+	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
+	SaveValues.ShelterLevel = CurrentLevel;
+
+	return SaveValues;
+}
+
+void AShelter::RestoreState(FSaveValues SaveValues)
+{
+	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
+	CurrentLevel = SaveValues.ShelterLevel;
+
+	if (CurrentConstructionStep > 0) BeginConstruct();
+
+	InitializeShelter();
+}
+

@@ -5,20 +5,26 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "Gossip/Save/SaveGameInterface.h"
 #include "Gossip/Data/DataLibrary.h"
 #include "Shelter.generated.h"
 
 UCLASS()
-class GOSSIP_API AShelter : public AActor
+class GOSSIP_API AShelter : public AActor, public ISaveGameInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	AShelter();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USaveableEntity* SaveComponent;
+
 	// Warning! This must be regenerated when Alt-Moving (duplicating) actors!
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGuid Id;
+		FGuid OwnId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGuid SpawnedNpcId;
 
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
@@ -73,6 +79,9 @@ public:
 	void BeginConstruct();
 	void ConstructShelter();
 
+	// ISaveGameInterface
+	virtual FSaveValues CaptureState()override;
+	virtual void RestoreState(FSaveValues SaveValues)override;
 
 protected:
 	virtual void BeginPlay() override;

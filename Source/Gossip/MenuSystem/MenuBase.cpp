@@ -2,6 +2,7 @@
 
 
 #include "MenuBase.h"
+#include "Kismet/GameplayStatics.h"
 
 void UMenuBase::SetMenuInterface(IMenuInterface* MenuInterfaceRef)
 {
@@ -16,7 +17,7 @@ void UMenuBase::SetUp()
 	if (!World) return;
 	APlayerController* PC = World->GetFirstPlayerController();
 	if (!PC) return;
-
+	UGameplayStatics::SetGamePaused(World, true);
 	FInputModeUIOnly InputMode;
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
@@ -30,7 +31,7 @@ void UMenuBase::TearDown()
 	if (!World) return;
 	APlayerController* PC = World->GetFirstPlayerController();
 	if (!PC) return;
-
+	UGameplayStatics::SetGamePaused(World, false);
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(InputMode);

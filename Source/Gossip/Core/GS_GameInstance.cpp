@@ -4,7 +4,6 @@
 #include "GS_GameInstance.h"
 #include "OnlineSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "OnlineSessionSettings.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
@@ -12,8 +11,6 @@
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/MenuSystem/MenuBase.h"
-
-const static FName SESSION_NAME = TEXT("My Session");
 
 UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 {

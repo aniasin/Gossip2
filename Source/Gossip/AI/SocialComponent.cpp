@@ -240,5 +240,6 @@ FSaveValues USocialComponent::CaptureState()
 void USocialComponent::RestoreState(FSaveValues SaveValues)
 {
 	KnownOthers = SaveValues.KnownOthers;
+
 }
 
