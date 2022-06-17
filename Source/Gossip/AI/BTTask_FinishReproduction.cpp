@@ -31,18 +31,16 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 	UActorComponent* Component = PlayerActor->GetComponentByClass(USocialRulesComponent::StaticClass());
 	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(Component);
 
+	AActor* Other = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
+	TMap<AActor*, AActor*>Couple;
+	if (!BlackboardComp->GetValueAsObject("TargetActor") || !Other)
+	{
+		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+		return EBTNodeResult::Failed;
+	}
+
 	if (bLeader)
 	{
-		AActor* Other = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
-		TMap<AActor*, AActor*>Couple;
-		if (!BlackboardComp->GetValueAsObject("TargetActor") || !Other)
-		{
-			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-			AAIController* OtherController = Cast<AAIController>(Other->GetInstigatorController());
-			OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-			return EBTNodeResult::Failed;
-		}
-
 		Couple.Add(NPC, Other);
 		SocialRulesComp->NewWeddingCandidates(Couple);
 	}
