@@ -50,20 +50,17 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//TODO make UI
-	if (bSelected)
-	{
-		DrawDebugString(GetWorld(), FVector(0, 0, 100), "Selected", this, FColor::Green, DeltaTime);
-		float PosZ = 200;
-		for (auto& KnownOther : SocialComp->GetKnownOthers())
-		{
-			FString Message = FString::Printf(TEXT("%s : %i"), *KnownOther.Key, KnownOther.Value.Proximity);
-			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
-			PosZ += 30;
-		}
-		FString Message = FString::Printf(TEXT("==== %s %s ===="), *CharacterName.FirstName, *CharacterName.LastName);
-		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
-
-	}	
+// 	if (bSelected)
+// 	{
+// 		for (auto& KnownOther : SocialComp->GetKnownOthers())
+// 		{
+// 			FString Message = FString::Printf(TEXT("%s : %i"), *KnownOther.Key, KnownOther.Value.Proximity);
+// 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+// 			PosZ += 30;
+// 		}
+// 		FString Message = FString::Printf(TEXT("==== %s %s ===="), *CharacterName.FirstName, *CharacterName.LastName);
+// 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+// 	}	
 }
 
 void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)

@@ -47,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 500;
 
+	UFUNCTION(BlueprintCallable)
+	bool GetSelected() const { return bSelected; }
+
 	virtual void Tick(float DeltaTime) override;
 
 	void SetCharacterProfile(AActor* ShelterActor);
@@ -56,7 +59,6 @@ public:
 	void OrderMove(FVector Location);
 	void SetMoveSpeed(int32 SpeedLevel);
 	void SetSelected(bool Value) { bSelected = Value; }
-
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
