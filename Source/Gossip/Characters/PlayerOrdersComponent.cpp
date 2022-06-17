@@ -76,10 +76,11 @@ FSaveValues UPlayerOrdersComponent::CaptureState()
 {
 	FSaveValues SaveValues;
 
+	SaveValues.Transform = GetOwner()->GetTransform();
 	return SaveValues;
 }
 
 void UPlayerOrdersComponent::RestoreState(FSaveValues SaveData)
 {
-
+	GetOwner()->SetActorTransform(SaveData.Transform);
 }

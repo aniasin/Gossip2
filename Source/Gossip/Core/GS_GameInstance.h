@@ -25,8 +25,9 @@ public:
 	void LoadMenu();
 	UFUNCTION(BlueprintCallable)
 	void LoadGameMenu();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LoadSocialRulesMenu();
+	void OpenSocialRuleMenu();
 
 	// IMenuInterface
 	UFUNCTION()
@@ -38,6 +39,7 @@ public:
 	UFUNCTION()
 	void QuitGame() override;
 
+
 	UFUNCTION()
 	void SaveGame();
 	UFUNCTION()
@@ -48,6 +50,7 @@ public:
 
 private:
 	class UMenuBase* Menu;
+	class UMenuBase* SocialRulesMenu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;

@@ -14,7 +14,7 @@ bool UMenuSocialRules::Initialize()
 	if (!bsuccess) return false;
 
 	if (!BTN_Back) return false;
-	BTN_Back->OnClicked.AddDynamic(this, &UMenuSocialRules::ResponseNo);
+	BTN_Back->OnClicked.AddDynamic(this, &UMenuSocialRules::ResponseBack);
 
 	if (GetOwningPlayer())
 	{
@@ -23,48 +23,106 @@ bool UMenuSocialRules::Initialize()
 		ESlateVisibility ButtonVisibility;
 		GM->GetWeddingSeenOnce() ? ButtonVisibility = ESlateVisibility::Visible : ButtonVisibility = ESlateVisibility::Hidden;
 		BTN_Back->SetVisibility(ButtonVisibility);
+		WeddingRule = GM->GetWeddingRule();
+
+		FString FamilySystemStr = "None";
+		switch (WeddingRule.FamilySystem)
+		{
+		case EFamilySystem::None:
+			FamilySystemStr = "None";
+			break;
+		case EFamilySystem::Free:
+			FamilySystemStr = "Free";
+			break;
+		case EFamilySystem::Patriarcal:
+			FamilySystemStr = "Patriarcal";
+			break;
+		case EFamilySystem::Matriarcal:
+			FamilySystemStr = "Matriarcal";
+			break;
+		}
+		FString WeddingSystemStr = "None";
+		switch (WeddingRule.WeddingSystem)
+		{
+		case EWeddingSystem::None:
+			WeddingSystemStr = "None";
+			break;
+		case EWeddingSystem::Polygamy:
+			WeddingSystemStr = "Polygamy";
+			break;
+		case EWeddingSystem::Monogamy:
+			WeddingSystemStr = "Monogamy";
+			break;
+		case EWeddingSystem::Free:
+			WeddingSystemStr = "Free";
+			break;
+		}
+		FamilySystem.Add(FamilySystemStr, WeddingRule.FamilySystem);
+		WeddingSystem.Add(WeddingSystemStr, WeddingRule.WeddingSystem);
+
+
+		if (!BTN_Confirm) return false;
+		BTN_Confirm->OnClicked.AddDynamic(this, &UMenuSocialRules::ResponseConfirm);
+
+		TArray<FString>SelectedValueFamily;
+		FamilySystem.GetKeys(SelectedValueFamily);
+		if (!ComboBox_Family) return false;
+		ComboBox_Family->AddOption("None");
+		FamilySystem.Add("None", EFamilySystem::None);
+		ComboBox_Family->AddOption("Patriarcal");
+		FamilySystem.Add("Patriarcal", EFamilySystem::Patriarcal);
+		ComboBox_Family->AddOption("Matriarcal");
+		FamilySystem.Add("Matriarcal", EFamilySystem::Matriarcal);
+		ComboBox_Family->AddOption("Free");
+		FamilySystem.Add("Free", EFamilySystem::Free);
+		ComboBox_Family->SetSelectedOption(SelectedValueFamily[0]);
+		ComboBox_Family->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyFamilyChanged);
+
+		TArray<FString>SelectedValueWedding;
+		FamilySystem.GetKeys(SelectedValueWedding);
+		if (!ComboBox_Wedding) return false;
+		ComboBox_Wedding->AddOption("None");
+		WeddingSystem.Add("None", EWeddingSystem::None);
+		ComboBox_Wedding->AddOption("Monogamy");
+		WeddingSystem.Add("Monogamy", EWeddingSystem::Monogamy);
+		ComboBox_Wedding->AddOption("Polygamy");
+		WeddingSystem.Add("Polygamy", EWeddingSystem::Polygamy);
+		ComboBox_Wedding->AddOption("Free");
+		WeddingSystem.Add("Free", EWeddingSystem::Free);
+		ComboBox_Wedding->SetSelectedOption(SelectedValueWedding[0]);
+		ComboBox_Wedding->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyWeddingChanged);
 	}
-
-	if (!BTN_Confirm) return false;
-	BTN_Confirm->OnClicked.AddDynamic(this, &UMenuSocialRules::ResponseYes);
-
-	if (!ComboBox_Family) return false;
-	ComboBox_Family->AddOption("None");
-	ComboBox_Family->SetSelectedOption("None");
-	FamilySystem.Add("None", EFamilySystem::None);
-	ComboBox_Family->AddOption("Patriarcal");
-	FamilySystem.Add("Patriarcal", EFamilySystem::Patriarcal);
-	ComboBox_Family->AddOption("Matriarcal");
-	FamilySystem.Add("Matriarcal", EFamilySystem::Matriarcal);
-	ComboBox_Family->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyFamilyChanged);
-
-	
-	if (!ComboBox_Wedding) return false;
-	ComboBox_Wedding->AddOption("None");
-	ComboBox_Wedding->SetSelectedOption("None");
-	WeddingSystem.Add("None", EWeddingSystem::None);
-	ComboBox_Wedding->AddOption("Monogamy");
-	WeddingSystem.Add("Monogamy", EWeddingSystem::Monogamy);
-	ComboBox_Wedding->AddOption("Polygamy");
-	WeddingSystem.Add("Polygamy", EWeddingSystem::Polygamy);
-	ComboBox_Wedding->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyWeddingChanged);
-
-	
 
 	return true;
 }
 
-void UMenuSocialRules::ResponseNo()
+void UMenuSocialRules::OpenMenu()
 {
-	TearDown();
+	Super::OpenMenu();
+
+	if (!bOpen) ButtonBack_Event();
 }
 
-void UMenuSocialRules::ResponseYes()
+void UMenuSocialRules::ResponseBack()
 {
-	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(GetOwningPlayer()->GetPawn()->GetComponentByClass(USocialRulesComponent::StaticClass()));
-	SocialRulesComp->SetNewWeddingRule(WeddingRule);
+	ButtonBack_Event();
+}
 
-	TearDown();
+void UMenuSocialRules::ResponseConfirm()
+{
+	if (WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None)
+	{
+		//TODO message player that a value must be set
+	}
+	else
+	{
+		USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(GetOwningPlayer()->GetPawn()->GetComponentByClass(USocialRulesComponent::StaticClass()));
+		SocialRulesComp->SetNewWeddingRule(WeddingRule);
+
+		if (!BTN_Back->IsVisible()) BTN_Back->SetVisibility(ESlateVisibility::Visible);
+		ResponseBack();
+	}
+
 }
 
 void UMenuSocialRules::ComboKeyFamilyChanged(FString SelectedItem, ESelectInfo::Type SelectionType)

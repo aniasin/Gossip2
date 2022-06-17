@@ -28,15 +28,25 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UComboBoxString* ComboBox_Wedding;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ButtonBack_Event();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ButtonConfirm_Event();
+
+	virtual void OpenMenu()override;
+
 protected:
 	virtual bool Initialize();
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bOpen;
 
 
 private:
 	UFUNCTION()
-	void ResponseNo();
+	void ResponseBack();
 	UFUNCTION()
-	void ResponseYes();
+	void ResponseConfirm();
 	UFUNCTION()
 	void ComboKeyFamilyChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 	UFUNCTION()

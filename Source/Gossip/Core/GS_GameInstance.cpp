@@ -50,7 +50,7 @@ void UGS_GameInstance::LoadMenu()
 	Menu = CreateWidget<UMenuBase>(this, MenuClass);
 	if (!Menu) return;
 	Menu->SetMenuInterface(this);
-	Menu->SetUp();
+	Menu->SetUp(false);
 }
 
 void UGS_GameInstance::LoadGameMenu()
@@ -60,15 +60,21 @@ void UGS_GameInstance::LoadGameMenu()
 	UMenuBase* GameMenu = CreateWidget<UMenuBase>(this, GameMenuClass);
 	if (!GameMenu) return;
 	GameMenu->SetMenuInterface(this);
-	GameMenu->SetUp();
+	GameMenu->SetUp(true);
 }
 
 void UGS_GameInstance::LoadSocialRulesMenu()
 {
 	if (!SocialRulesMenuClass) return;
-	UMenuBase* SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
+	SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
 	SocialRulesMenu->SetMenuInterface(this);
-	SocialRulesMenu->SetUp();
+	SocialRulesMenu->SetUp(false);
+}
+
+void UGS_GameInstance::OpenSocialRuleMenu()
+{
+	if (!SocialRulesMenu) return;
+	SocialRulesMenu->OpenMenu();
 }
 
 void UGS_GameInstance::NewGame()

@@ -18,8 +18,9 @@ class GOSSIP_API UMenuBase : public UUserWidget
 public:
 	void SetMenuInterface(IMenuInterface* MenuInterfaceRef);
 
-	void SetUp();
+	void SetUp(bool bStartPaused);
 	void TearDown();
+	virtual void OpenMenu();
 
 	virtual void FoundSessions(TArray<FString> Sessions);
 

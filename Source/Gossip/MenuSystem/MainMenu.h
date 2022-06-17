@@ -58,5 +58,4 @@ private:
 	void OpenJoinMenu();
 	UFUNCTION()
 		void QuitGame();
-
 };

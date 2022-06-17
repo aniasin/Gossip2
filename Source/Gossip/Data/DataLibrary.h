@@ -263,6 +263,7 @@ enum class EFamilySystem : uint8
 	None			UMETA(DisplayName = "None"),
 	Patriarcal		UMETA(DisplayName = "Patriarcal"),
 	Matriarcal		UMETA(DisplayName = "Matriarcal"),
+	Free			UMETA(DisplayName = "Free"),
 };
 
 UENUM(BlueprintType)
@@ -271,6 +272,7 @@ enum class EWeddingSystem : uint8
 	None			UMETA(DisplayName = "None"),
 	Monogamy		UMETA(DisplayName = "Monogamy"),
 	Polygamy		UMETA(DisplayName = "Polygamy"),
+	Free			UMETA(DisplayName = "Free"),
 };
 
 USTRUCT(BlueprintType)
@@ -315,6 +317,8 @@ struct FSaveValues
 	int32 ShelterLevel;
 	UPROPERTY()
 	float ShelterConstructionStep;
+	UPROPERTY()
+	FWeddingRule WeddingRules;
 };
 
 USTRUCT(BlueprintType)

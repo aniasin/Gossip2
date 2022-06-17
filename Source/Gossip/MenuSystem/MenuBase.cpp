@@ -9,7 +9,7 @@ void UMenuBase::SetMenuInterface(IMenuInterface* MenuInterfaceRef)
 	MenuInterface = MenuInterfaceRef;
 }
 
-void UMenuBase::SetUp()
+void UMenuBase::SetUp(bool bStartPaused)
 {
 	this->AddToViewport();
 
@@ -17,8 +17,8 @@ void UMenuBase::SetUp()
 	if (!World) return;
 	APlayerController* PC = World->GetFirstPlayerController();
 	if (!PC) return;
-	UGameplayStatics::SetGamePaused(World, true);
-	FInputModeUIOnly InputMode;
+	UGameplayStatics::SetGamePaused(World, bStartPaused);
+	FInputModeGameAndUI InputMode;
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
 }
@@ -36,6 +36,11 @@ void UMenuBase::TearDown()
 	InputMode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
+}
+
+void UMenuBase::OpenMenu()
+{
+
 }
 
 void UMenuBase::FoundSessions(TArray<FString> Sessions)

@@ -131,7 +131,6 @@ void ANonPlayerCharacter::InitializeCharacterName()
 		FCharacterName* Row = NamesDatatable->FindRow<FCharacterName>(RowName, "FirstName");
 		if (Row)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s %s"), *Row->FirstName, *Row->LastName);
 			CharacterName.FirstName = *Row->FirstName;
 			CharacterName.LastName = *Row->LastName;
 		}

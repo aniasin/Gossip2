@@ -31,20 +31,16 @@ void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple)
 		if (!GM) return;
 		if (!GM->GetWeddingSeenOnce())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s and %s are ready to marry!"), *WeddingCandidates[0]->GetName(), *WeddingCandidates[1]->GetName())
-				UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
+			UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
 			if (!GI) return;
-			GI->LoadSocialRulesMenu();
+			GI->OpenSocialRuleMenu();
 			GM->SetWeddingSeenOnce();
 		}	
-		//TODO Actual Wedding here
-
 		for (AActor* Candidate : WeddingCandidates)
 		{
 			AGS_AIController* AIController = Cast<AGS_AIController>(Candidate->GetInstigatorController());
 			AIController->ResetAI();
 		}
-		
 	}
 }
 
@@ -56,19 +52,26 @@ void USocialRulesComponent::SetNewWeddingRule(FWeddingRule Rule)
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
 	if (!GM) return;
 	GM->SetWeddingRule(WeddingRule);
-
 }
 
 // ISaveGameInterface
 FSaveValues USocialRulesComponent::CaptureState()
 {
 	FSaveValues SaveValues;
-
+	SaveValues.WeddingRules = WeddingRule;
 	return SaveValues;
 }
 
 void USocialRulesComponent::RestoreState(FSaveValues SaveData)
 {
+	WeddingRule = SaveData.WeddingRules;
 
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
+	if (!GM) return;
+	GM->SetWeddingRule(WeddingRule);
+	if (WeddingRule.FamilySystem != EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None)
+	{
+		GM->SetWeddingSeenOnce();
+	}
 }
 

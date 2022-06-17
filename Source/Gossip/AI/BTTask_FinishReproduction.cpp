@@ -31,9 +31,14 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 	UActorComponent* Component = PlayerActor->GetComponentByClass(USocialRulesComponent::StaticClass());
 	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(Component);
 
+	if (!BlackboardComp->GetValueAsObject("TargetActor"))
+	{
+		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+		return EBTNodeResult::Failed;
+	}
 	AActor* Other = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
 	TMap<AActor*, AActor*>Couple;
-	if (!BlackboardComp->GetValueAsObject("TargetActor") || !Other)
+	if (!Other)
 	{
 		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 		return EBTNodeResult::Failed;
