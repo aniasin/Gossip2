@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 
+#include "Gossip/Characters/SocialRulesComponent.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 bool UMenuSocialRules::Initialize()
@@ -60,6 +61,9 @@ void UMenuSocialRules::ResponseNo()
 
 void UMenuSocialRules::ResponseYes()
 {
+	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(GetOwningPlayer()->GetPawn()->GetComponentByClass(USocialRulesComponent::StaticClass()));
+	SocialRulesComp->SetNewWeddingRule(WeddingRule);
+
 	TearDown();
 }
 

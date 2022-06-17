@@ -3,6 +3,7 @@
 
 #include "SocialRulesComponent.h"
 
+#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Core/GS_GameInstance.h"
 #include "Gossip/Core/GossipGameMode.h"
 
@@ -18,9 +19,11 @@ void USocialRulesComponent::BeginPlay()
 
 }
 
-void USocialRulesComponent::NewWeddingCandidate(AActor* Candidate)
+void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple)
 {
-	WeddingCandidates.AddUnique(Candidate);
+	TArray<AActor*>WeddingCandidates;
+	Couple.GetKeys(WeddingCandidates);
+	WeddingCandidates.Add(Couple[WeddingCandidates[0]]);
 	if (WeddingCandidates.Num() == 2)
 	{
 
@@ -33,8 +36,27 @@ void USocialRulesComponent::NewWeddingCandidate(AActor* Candidate)
 			if (!GI) return;
 			GI->LoadSocialRulesMenu();
 			GM->SetWeddingSeenOnce();
+		}	
+		//TODO Actual Wedding here
+
+		for (AActor* Candidate : WeddingCandidates)
+		{
+			AGS_AIController* AIController = Cast<AGS_AIController>(Candidate->GetInstigatorController());
+			AIController->ResetAI();
 		}
+		
 	}
+}
+
+// Called from MenuSocialRules
+void USocialRulesComponent::SetNewWeddingRule(FWeddingRule Rule)
+{
+	WeddingRule = Rule;
+
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
+	if (!GM) return;
+	GM->SetWeddingRule(WeddingRule);
+
 }
 
 // ISaveGameInterface

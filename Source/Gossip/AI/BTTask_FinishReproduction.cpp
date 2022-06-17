@@ -30,6 +30,15 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 	AActor* PlayerActor = UGameplayStatics::GetActorOfClass(NPC->GetWorld(), APlayerPawn::StaticClass());
 	UActorComponent* Component = PlayerActor->GetComponentByClass(USocialRulesComponent::StaticClass());
 	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(Component);
-	SocialRulesComp->NewWeddingCandidate(NPC);
+
+	if (bLeader)
+	{
+		TMap<AActor*, AActor*>Couple;
+		if(!BlackboardComp->GetValueAsObject("TargetActor")) return EBTNodeResult::Failed;
+		AActor* Other = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
+		Couple.Add(NPC, Other);
+		SocialRulesComp->NewWeddingCandidates(Couple);
+	}
+
 	return EBTNodeResult::InProgress;
 }

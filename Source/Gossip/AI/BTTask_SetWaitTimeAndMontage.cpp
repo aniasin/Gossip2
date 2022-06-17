@@ -48,6 +48,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			}
 			return EBTNodeResult::Succeeded;
 		}
+		return EBTNodeResult::Failed;
 	}
 
 	if (Ressource->ContentCount <= 0)

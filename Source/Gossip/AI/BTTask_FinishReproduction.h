@@ -14,4 +14,8 @@ class GOSSIP_API UBTTask_FinishReproduction : public UBTTaskNode
 {
 	GENERATED_BODY()
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bLeader;
 };

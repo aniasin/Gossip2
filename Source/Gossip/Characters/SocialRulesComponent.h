@@ -20,7 +20,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FWeddingRule WeddingRule;
 
-	void NewWeddingCandidate(AActor* Candidate);
+	void SetNewWeddingRule(FWeddingRule Rule);
+
+	void NewWeddingCandidates(TMap<AActor*, AActor*> Candidates);
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -31,6 +33,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	TArray<AActor*>WeddingCandidates;
+	
 		
 };
