@@ -9,6 +9,7 @@
 
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Characters/PlayerPawn.h"
+#include "Gossip/Characters/SocialRulesComponent.h"
 #include "Gossip/Data/DataLibrary.h"
 
 EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -27,7 +28,8 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 	InstinctComp->SatisfyInstinct(EAIGoal::Sex);
 
 	AActor* PlayerActor = UGameplayStatics::GetActorOfClass(NPC->GetWorld(), APlayerPawn::StaticClass());
-	APlayerPawn* Player = Cast<APlayerPawn>(PlayerActor);
-	UE_LOG(LogTemp, Warning, TEXT("%s is waiting for %s Input!"), *NPC->GetName(), *Player->GetName());
+	UActorComponent* Component = PlayerActor->GetComponentByClass(USocialRulesComponent::StaticClass());
+	USocialRulesComponent* SocialRulesComp = Cast<USocialRulesComponent>(Component);
+	SocialRulesComp->NewWeddingCandidate(NPC);
 	return EBTNodeResult::InProgress;
 }

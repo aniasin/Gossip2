@@ -24,6 +24,8 @@ class GOSSIP_API APlayerPawn : public APawn
 	class USaveableEntity* SaveComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UPlayerOrdersComponent* PlayerOrdersComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USocialRulesComponent* SocialRulesComponent;
 
 public:
 	APlayerPawn();

@@ -236,10 +236,10 @@ struct FCharacterName : public FTableRowBase
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FString FirstName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FString LastName;
+	FString FirstName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString LastName;
 };
 
 // Inventory
@@ -254,6 +254,34 @@ struct FInventoryItem
 		bool bRaw;
 	UPROPERTY()
 		float Time;
+};
+
+// Sociology
+UENUM(BlueprintType)
+enum class EFamilySystem : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Patriarcal		UMETA(DisplayName = "Patriarcal"),
+	Matriarcal		UMETA(DisplayName = "Matriarcal"),
+};
+
+UENUM(BlueprintType)
+enum class EWeddingSystem : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Monogamy		UMETA(DisplayName = "Monogamy"),
+	Polygamy		UMETA(DisplayName = "Polygamy"),
+};
+
+USTRUCT(BlueprintType)
+struct FWeddingRule
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	EFamilySystem FamilySystem;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	EWeddingSystem WeddingSystem;
 };
 
 // SaveGame

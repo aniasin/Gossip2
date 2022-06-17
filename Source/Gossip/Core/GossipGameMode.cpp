@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GossipGameMode.h"
+
+#include "Gossip/Data/DataLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 
 AGossipGameMode::AGossipGameMode()
@@ -12,4 +14,14 @@ AGossipGameMode::AGossipGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 
 	}
+}
+
+void AGossipGameMode::SetWeddingRule(FWeddingRule Value)
+{
+	WeddingRule = Value;
+}
+
+FWeddingRule AGossipGameMode::GetWeddingRule()
+{
+	return WeddingRule;
 }

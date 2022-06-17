@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PlayerOrdersComponent.h"
+#include "SocialRulesComponent.h"
 
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/Core/GS_GameInstance.h"
@@ -33,6 +34,7 @@ APlayerPawn::APlayerPawn()
 	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComp"));
 	SaveComponent->Id = Id;
 	PlayerOrdersComponent = CreateDefaultSubobject<UPlayerOrdersComponent>(TEXT("PlayerOrdersComp"));
+	SocialRulesComponent = CreateDefaultSubobject<USocialRulesComponent>(TEXT("SocialRulesComp"));
 }
 
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
