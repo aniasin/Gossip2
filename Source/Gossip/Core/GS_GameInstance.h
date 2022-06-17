@@ -22,19 +22,21 @@ public:
 	virtual void Init();
 
 	UFUNCTION(BlueprintCallable)
-		void LoadMenu();
+	void LoadMenu();
 	UFUNCTION(BlueprintCallable)
-		void LoadGameMenu();
+	void LoadGameMenu();
+	UFUNCTION()
+	void LoadSocialRulesMenu();
 
 	// IMenuInterface
 	UFUNCTION()
-		void NewGame() override;
+	void NewGame() override;
 	UFUNCTION()
-		void LoadGame() override;
+	void LoadGame() override;
 	UFUNCTION()
-		void LoadMainMenu() override;
+	void LoadMainMenu() override;
 	UFUNCTION()
-		void QuitGame() override;
+	void QuitGame() override;
 
 	UFUNCTION()
 	void SaveGame();
@@ -48,6 +50,7 @@ private:
 	class UMenuBase* Menu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
+	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
 
 	void Travel(FName MapName);
 

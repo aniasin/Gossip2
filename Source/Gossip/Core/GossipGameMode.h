@@ -21,11 +21,14 @@ public:
 	void SetWeddingRule(FWeddingRule Value);
 	FWeddingRule GetWeddingRule();
 
+	void SetWeddingSeenOnce() { bWeddingRuleHasbeenSeenOnce = true; }
+	bool GetWeddingSeenOnce() { return bWeddingRuleHasbeenSeenOnce; }
+
 protected:
 
 private:
 	FWeddingRule WeddingRule;
-	bool bWeddingRuleHasbeenSetOnce;
+	bool bWeddingRuleHasbeenSeenOnce;
 };
 
 

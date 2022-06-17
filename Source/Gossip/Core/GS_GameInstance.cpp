@@ -25,6 +25,12 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 		GameMenuClass = GameMenuBPClass.Class;
 		if (!GameMenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find GameMenuClass in GameInstance!"));
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> SocialRulesMenuBPClass(TEXT("/Game/MenuSystem/BP_SocialRules"));
+	if (SocialRulesMenuBPClass.Class != NULL)
+	{
+		SocialRulesMenuClass = SocialRulesMenuBPClass.Class;
+		if (!SocialRulesMenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find SocialRulesMenuClass in GameInstance!"));
+	}
 }
 
 void UGS_GameInstance::Init()
@@ -55,6 +61,14 @@ void UGS_GameInstance::LoadGameMenu()
 	if (!GameMenu) return;
 	GameMenu->SetMenuInterface(this);
 	GameMenu->SetUp();
+}
+
+void UGS_GameInstance::LoadSocialRulesMenu()
+{
+	if (!SocialRulesMenuClass) return;
+	UMenuBase* SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
+	SocialRulesMenu->SetMenuInterface(this);
+	SocialRulesMenu->SetUp();
 }
 
 void UGS_GameInstance::NewGame()
