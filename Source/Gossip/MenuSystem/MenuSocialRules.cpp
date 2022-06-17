@@ -60,6 +60,7 @@ bool UMenuSocialRules::Initialize()
 		FamilySystem.Add(FamilySystemStr, WeddingRule.FamilySystem);
 		WeddingSystem.Add(WeddingSystemStr, WeddingRule.WeddingSystem);
 
+		UE_LOG(LogTemp, Warning, TEXT("SocialMenu set Rules: %s %s"), *FamilySystemStr, *WeddingSystemStr)
 
 		if (!BTN_Confirm) return false;
 		BTN_Confirm->OnClicked.AddDynamic(this, &UMenuSocialRules::ResponseConfirm);
@@ -79,7 +80,7 @@ bool UMenuSocialRules::Initialize()
 		ComboBox_Family->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyFamilyChanged);
 
 		TArray<FString>SelectedValueWedding;
-		FamilySystem.GetKeys(SelectedValueWedding);
+		WeddingSystem.GetKeys(SelectedValueWedding);
 		if (!ComboBox_Wedding) return false;
 		ComboBox_Wedding->AddOption("None");
 		WeddingSystem.Add("None", EWeddingSystem::None);
