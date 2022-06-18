@@ -22,6 +22,10 @@ bool UMenuSocialRules::Initialize()
 		if (!GM) return false;
 		WeddingRule = GM->GetWeddingRule();
 
+		ESlateVisibility ButtonVisibility;
+		WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None ? ButtonVisibility = ESlateVisibility::Hidden : ButtonVisibility = ESlateVisibility::Visible;
+		BTN_Back->SetVisibility(ButtonVisibility);
+
 		FString FamilySystemStr = "None";
 		switch (WeddingRule.FamilySystem)
 		{

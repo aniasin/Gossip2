@@ -53,12 +53,11 @@ bool USocialRulesComponent::TutorialFirstTime()
 {
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
-	if (!GM->GetWeddingSeenOnce())
+	if (WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None)
 	{
 		UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
 		if (!GI) return false;
 		GI->LoadSocialRulesMenu();
-		GM->SetWeddingSeenOnce();
 		return false;
 	}
 	return true;
@@ -89,9 +88,5 @@ void USocialRulesComponent::RestoreState(FSaveValues SaveData)
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
 	if (!GM) return;
 	GM->SetWeddingRule(WeddingRule);
-	if (WeddingRule.FamilySystem != EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None)
-	{
-		GM->SetWeddingSeenOnce();
-	}
 }
 

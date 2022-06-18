@@ -19,6 +19,7 @@ void UMenuBase::SetUp(bool bStartPaused)
 	if (!PC) return;
 	UGameplayStatics::SetGamePaused(World, bStartPaused);
 	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
 }
