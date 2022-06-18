@@ -2,11 +2,29 @@
 
 
 #include "FamilyComponent.h"
+#include "SocialComponent.h"
 
 UFamilyComponent::UFamilyComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+}
+
+void UFamilyComponent::RequestWedding(TArray<AActor*>Couple, FWeddingRule WeddingRule)
+{
+	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0) return;
+	
+	ConfirmWedding(Couple[1]);
+	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Couple[1]->GetComponentByClass(UFamilyComponent::StaticClass()));
+	if (OtherFamilyComp)
+	{
+		OtherFamilyComp->ConfirmWedding(Couple[0]);
+	}
+}
+
+void UFamilyComponent::ConfirmWedding(AActor* Spouse)
+{
+	UE_LOG(LogTemp, Warning, TEXT(" %s is now married with %s!"), *GetOwner()->GetName(), *Spouse->GetName());
 }
 
 void UFamilyComponent::BeginPlay()

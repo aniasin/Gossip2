@@ -55,6 +55,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetCharacterProfile(AActor* ShelterActor);
+	ECharacterProfile GetCharacterGender();
 
 	AGS_AIController* GetAIController() { return AIController; }
 

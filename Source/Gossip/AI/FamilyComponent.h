@@ -18,6 +18,9 @@ public:
 
 	UFamilyComponent();
 
+	void RequestWedding(TArray<AActor*>Couple, FWeddingRule WeddingRule);
+	void ConfirmWedding(AActor* Spouse);
+
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -28,6 +31,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
+	TArray<AActor*>Spouses;
 		
 };

@@ -78,6 +78,7 @@ void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 
 	CharactersData = CharactersDataAsset->CharactersData;
 
+
 	AIController = Cast<AGS_AIController>(Controller);
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
@@ -146,6 +147,11 @@ void ANonPlayerCharacter::OnAsyncLoadComplete()
 
 	GetMesh()->SetSkeletalMesh(SkeletalMesh);
 	GetMesh()->SetAnimInstanceClass(CharactersData[SocialComp->CharacterProfile].AnimBPClass);
+}
+
+ECharacterProfile ANonPlayerCharacter::GetCharacterGender()
+{
+	return SocialComp->CharacterProfile;
 }
 
 void ANonPlayerCharacter::OrderMove(FVector Location)

@@ -22,7 +22,7 @@ public:
 
 	void SetNewWeddingRule(FWeddingRule Rule);
 
-	void NewWeddingCandidates(TMap<AActor*, AActor*> Candidates);
+	void NewWeddingCandidates(TMap<AActor*, AActor*> Candidates, ECharacterProfile PretenderGender);
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;

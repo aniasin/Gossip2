@@ -3,9 +3,9 @@
 
 #include "SocialRulesComponent.h"
 
-#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Core/GS_GameInstance.h"
 #include "Gossip/Core/GossipGameMode.h"
+#include "Gossip/AI/FamilyComponent.h"
 
 USocialRulesComponent::USocialRulesComponent()
 {
@@ -19,7 +19,8 @@ void USocialRulesComponent::BeginPlay()
 
 }
 
-void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple)
+// Only the Pretender (Couple.Key) call that
+void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple, ECharacterProfile PretenderGender)
 {
 	TArray<AActor*>WeddingCandidates;
 	Couple.GetKeys(WeddingCandidates);
@@ -36,10 +37,10 @@ void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple)
 			GI->OpenSocialRuleMenu();
 			GM->SetWeddingSeenOnce();
 		}	
-		for (AActor* Candidate : WeddingCandidates)
+		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(WeddingCandidates[0]->GetComponentByClass(UFamilyComponent::StaticClass()));
+		if (FamilyComp)
 		{
-			AGS_AIController* AIController = Cast<AGS_AIController>(Candidate->GetInstigatorController());
-			AIController->ResetAI();
+			FamilyComp->RequestWedding(WeddingCandidates, WeddingRule);
 		}
 	}
 }

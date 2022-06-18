@@ -46,8 +46,8 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 
 	if (bLeader)
 	{
-		Couple.Add(NPC, Other);
-		SocialRulesComp->NewWeddingCandidates(Couple);
+		Couple.Add(NPC, Other);		
+		SocialRulesComp->NewWeddingCandidates(Couple, NPC->GetCharacterGender());
 	}
 
 	return EBTNodeResult::InProgress;
