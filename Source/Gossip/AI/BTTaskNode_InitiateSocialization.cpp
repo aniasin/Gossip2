@@ -65,6 +65,8 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 			OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
 			OtherController->GetBlackboardComponent()->SetValueAsVector("TargetLocation", BlackboardComp->GetValueAsVector("HomeLocation"));
 			OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Follow);
+			OtherController->GetBlackboardComponent()->SetValueAsEnum("Action", (uint8)EAIAction::None);
+			OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::Sex);
 			UE_LOG(LogTemp, Log, TEXT("%s Should follow"), *OtherActor->GetName())
 			return EBTNodeResult::Succeeded;
 		}

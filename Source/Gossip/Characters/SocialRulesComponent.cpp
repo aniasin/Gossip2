@@ -58,9 +58,9 @@ bool USocialRulesComponent::TutorialFirstTime()
 		UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
 		if (!GI) return false;
 		GI->LoadSocialRulesMenu();
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 // Called from MenuSocialRules

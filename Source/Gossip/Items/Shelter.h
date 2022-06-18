@@ -58,6 +58,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class ANonPlayerCharacter> NpcToSpawnClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class ACityHall* CityHall;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class ARessource* SleepCollector;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class ARessource* FoodProcessor;
@@ -88,6 +90,8 @@ protected:
 
 	void SpawnNPC();
 
+	void RegisterNpcToCityHall(ANonPlayerCharacter* NPC);
+
 	void SetShelterSize();
 
 #if WITH_EDITOR
@@ -98,6 +102,8 @@ protected:
 
 private:	
 	void UpgradeShelter();
+
+	void AddToOwners(AActor* Actor);
 
 	void OnAsyncLoadComplete();
 	void OnAsyncLoadConstructionComplete();

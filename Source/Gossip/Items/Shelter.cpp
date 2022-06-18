@@ -8,6 +8,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Inventory.h"
 #include "Ressource.h"
+#include "CityHall.h"
 
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
@@ -93,6 +94,17 @@ void AShelter::SpawnNPC()
 		}
 
 		NPC->SetCharacterProfile(this);
+		AddToOwners(NPC);
+
+		RegisterNpcToCityHall(NPC);
+	}
+}
+
+void AShelter::RegisterNpcToCityHall(ANonPlayerCharacter* NPC)
+{
+	if (CityHall)
+	{
+		CityHall->AddInhabitants(NPC);
 	}
 }
 
@@ -152,6 +164,11 @@ void AShelter::UpgradeShelter()
 	CurrentLevel++;
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been Upgraded! New level: %i"), CurrentLevel);
 	InitializeShelter();
+}
+
+void AShelter::AddToOwners(AActor* Actor)
+{
+	Owners.AddUnique(Actor);
 }
 
 void AShelter::OnAsyncLoadComplete()

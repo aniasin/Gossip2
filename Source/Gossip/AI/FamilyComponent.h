@@ -8,6 +8,7 @@
 #include "Gossip/Save/SaveGameInterface.h"
 #include "FamilyComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNewCityHallEvent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UFamilyComponent : public UActorComponent, public ISaveGameInterface
@@ -27,9 +28,13 @@ public:
 	void ScheduleWedding(AActor* Fiancee);
 	void StartWedding();
 
+	void ResetOwnerAI();
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;
+
+	FOnNewCityHallEvent OnNewCityHallEvent;
 
 protected:
 
@@ -39,6 +44,5 @@ private:
 	FTimerHandle ScheduledWeddingTimerHandle;
 	FWeddingRule CurrentWeddingRules;
 	TArray<AActor* > Spouses;
-	AActor* CurrentFiancee;
-		
+	AActor* CurrentFiancee;		
 };
