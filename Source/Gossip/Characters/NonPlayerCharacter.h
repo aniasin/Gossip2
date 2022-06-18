@@ -28,6 +28,8 @@ public:
 	class UInventoryComponent* InventoryComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInstinctsComponent* InstinctsComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UFamilyComponent* FamilyComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USaveableEntity* SaveComponent;
 

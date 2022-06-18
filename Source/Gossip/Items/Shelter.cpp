@@ -11,6 +11,7 @@
 
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
+#include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Data/ShelterDataAsset.h"
 #include "Gossip/Save/SaveableEntity.h"
 
@@ -83,6 +84,13 @@ void AShelter::SpawnNPC()
 		if (!SleepCollector || !FoodProcessor) { UE_LOG(LogTemp, Warning, TEXT("No Ressource has been set in %s"), *GetName()) return; }
 		SleepCollector->Owners.AddUnique(NPC);
 		FoodProcessor->Owners.AddUnique(NPC);
+
+		UInventoryComponent* NpcInventory = Cast<UInventoryComponent>(NPC->GetComponentByClass(UInventoryComponent::StaticClass()));
+		if (NpcInventory)
+		{
+			NpcInventory->AddKnownRessourceCollector(SleepCollector);
+			NpcInventory->AddKnownRessourceProcessor(FoodProcessor);
+		}
 
 		NPC->SetCharacterProfile(this);
 	}

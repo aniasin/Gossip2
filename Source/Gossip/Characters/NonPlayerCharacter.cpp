@@ -11,6 +11,7 @@
 #include "Gossip/AI/GS_AIController.h"
 #include "Gossip/AI/SocialComponent.h"
 #include "Gossip/AI/InstinctsComponent.h"
+#include "Gossip/AI/FamilyComponent.h"
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Data/CharactersDataAsset.h"
 #include "Gossip/Save/SaveableEntity.h"
@@ -37,6 +38,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
+	FamilyComp = CreateDefaultSubobject<UFamilyComponent>(TEXT("FamilyComp"));
 	SaveComponent = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveComponent"));
 }
 
