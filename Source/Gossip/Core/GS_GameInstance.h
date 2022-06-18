@@ -27,7 +27,6 @@ public:
 	void LoadGameMenu();
 	UFUNCTION(BlueprintCallable)
 	void LoadSocialRulesMenu();
-	void OpenSocialRuleMenu();
 
 	// IMenuInterface
 	UFUNCTION()
@@ -50,7 +49,6 @@ public:
 
 private:
 	class UMenuBase* Menu;
-	class UMenuBase* SocialRulesMenu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;

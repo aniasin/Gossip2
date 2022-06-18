@@ -20,9 +20,6 @@ bool UMenuSocialRules::Initialize()
 	{
 		AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwningPlayer()->GetWorld()->GetAuthGameMode());
 		if (!GM) return false;
-		ESlateVisibility ButtonVisibility;
-		GM->GetWeddingSeenOnce() ? ButtonVisibility = ESlateVisibility::Visible : ButtonVisibility = ESlateVisibility::Hidden;
-		BTN_Back->SetVisibility(ButtonVisibility);
 		WeddingRule = GM->GetWeddingRule();
 
 		FString FamilySystemStr = "None";
@@ -100,7 +97,7 @@ bool UMenuSocialRules::Initialize()
 		}
 			
 	}
-
+	OpenMenu();
 	return true;
 }
 

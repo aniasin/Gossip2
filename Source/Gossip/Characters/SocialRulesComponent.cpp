@@ -59,7 +59,7 @@ bool USocialRulesComponent::TutorialFirstTime()
 		bFirstTime = true;
 		UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
 		if (!GI) return false;
-		GI->OpenSocialRuleMenu();
+		GI->LoadSocialRulesMenu();
 		GM->SetWeddingSeenOnce();
 	}
 	return bFirstTime;

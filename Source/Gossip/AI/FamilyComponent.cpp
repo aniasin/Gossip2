@@ -14,10 +14,9 @@ UFamilyComponent::UFamilyComponent()
 
 void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 {
-	UE_LOG(LogTemp, Warning, TEXT("RequestWedding has been called!"))
 	CurrentWeddingRules = WeddingRule;
 	if (WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None) return; //TODO ResetAI()
-	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0) return;
+	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0) return; //TODO ResetAI()
 	if (IsValid(CurrentFiancee)) return;
 	
 	ScheduleWedding(Other);
@@ -37,7 +36,7 @@ void UFamilyComponent::ScheduleWedding(AActor* Fiancee)
 	GetOwner()->GetWorldTimerManager().SetTimer(ScheduledWeddingTimerHandle, this, &UFamilyComponent::StartWedding, GameHoursCoolDownBetweenWeddings * GM->GameHourDurationSeconds);
 
 	UE_LOG(LogTemp, Warning, TEXT("Wedding between %s and %s is now scheduled in %s GameHours!"), 
-	*GetOwner()->GetName(), *CurrentFiancee->GetName(), *FString::SanitizeFloat(GameHoursCoolDownBetweenWeddings/GM->GameHourDurationSeconds));
+	*GetOwner()->GetName(), *CurrentFiancee->GetName(), *FString::SanitizeFloat(GameHoursCoolDownBetweenWeddings));
 }
 
 void UFamilyComponent::StartWedding()

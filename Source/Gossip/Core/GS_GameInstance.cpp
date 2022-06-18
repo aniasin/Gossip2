@@ -66,15 +66,11 @@ void UGS_GameInstance::LoadGameMenu()
 void UGS_GameInstance::LoadSocialRulesMenu()
 {
 	if (!SocialRulesMenuClass) return;
-	SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
+
+	UMenuBase* SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
+	if (!SocialRulesMenu) return;
 	SocialRulesMenu->SetMenuInterface(this);
 	SocialRulesMenu->SetUp(false);
-}
-
-void UGS_GameInstance::OpenSocialRuleMenu()
-{
-	if (!SocialRulesMenu) return;
-	SocialRulesMenu->OpenMenu();
 }
 
 void UGS_GameInstance::NewGame()
