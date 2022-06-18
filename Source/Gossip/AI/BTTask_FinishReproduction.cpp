@@ -37,7 +37,6 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 		return EBTNodeResult::Failed;
 	}
 	AActor* Other = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
-	TMap<AActor*, AActor*>Couple;
 	if (!Other)
 	{
 		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
@@ -46,8 +45,7 @@ EBTNodeResult::Type UBTTask_FinishReproduction::ExecuteTask(UBehaviorTreeCompone
 
 	if (bLeader)
 	{
-		Couple.Add(NPC, Other);		
-		SocialRulesComp->NewWeddingCandidates(Couple, NPC->GetCharacterGender());
+		SocialRulesComp->NewWeddingCandidate(NPC, Other, NPC->GetCharacterGender());
 	}
 
 	return EBTNodeResult::InProgress;

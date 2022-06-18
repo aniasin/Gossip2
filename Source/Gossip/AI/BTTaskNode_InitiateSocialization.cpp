@@ -57,7 +57,7 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 
 	if (BlackboardComp->GetValueAsEnum("Goal") == (uint8)EAIGoal::Sex)
 	{
-		if (Proximity >= 5 && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
+		if (Proximity >= SocialComp->ProximityScoreForFiancee && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
 		{
 			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
 			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())

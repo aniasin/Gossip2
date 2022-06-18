@@ -8,7 +8,6 @@
 #include "Gossip/Save/SaveGameInterface.h"
 #include "SocialRulesComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API USocialRulesComponent : public UActorComponent, public ISaveGameInterface
 {
@@ -22,7 +21,12 @@ public:
 
 	void SetNewWeddingRule(FWeddingRule Rule);
 
-	void NewWeddingCandidates(TMap<AActor*, AActor*> Candidates, ECharacterProfile PretenderGender);
+	void NewWeddingCandidate(AActor* Pretender, AActor* Other, ECharacterProfile PretenderGender);
+
+	UFUNCTION()
+	void RequestWedding();
+
+	bool TutorialFirstTime();
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -33,6 +37,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	
-		
+	TMap<AActor*, AActor*> WeddingQueue;
 };

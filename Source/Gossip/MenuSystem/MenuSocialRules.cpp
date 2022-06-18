@@ -92,6 +92,13 @@ bool UMenuSocialRules::Initialize()
 		WeddingSystem.Add("Free", EWeddingSystem::Free);
 		ComboBox_Wedding->SetSelectedOption(SelectedValueWedding[0]);
 		ComboBox_Wedding->OnSelectionChanged.AddDynamic(this, &UMenuSocialRules::ComboKeyWeddingChanged);
+
+		USocialRulesComponent* SocialRulesComponent = Cast <USocialRulesComponent>(GetOwningPlayerPawn()->GetComponentByClass(USocialRulesComponent::StaticClass()));
+		if (SocialRulesComponent)
+		{
+			OnPlayerAnswered.AddDynamic(SocialRulesComponent, &USocialRulesComponent::RequestWedding);
+		}
+			
 	}
 
 	return true;
@@ -106,6 +113,7 @@ void UMenuSocialRules::OpenMenu()
 
 void UMenuSocialRules::ResponseBack()
 {
+	OnPlayerAnswered.Broadcast();
 	ButtonBack_Event();
 }
 

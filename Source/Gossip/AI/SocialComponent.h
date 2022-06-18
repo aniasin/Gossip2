@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<FEmotionalUpdateTable> EmotionalUpdateTable;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 ProximityScoreForFiancee = 10;
+
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	int32 InitiateInteraction(AActor* Other);
 	int32 RespondToInteraction(AActor* Other);

@@ -18,9 +18,14 @@ public:
 
 	UFamilyComponent();
 
-	void RequestWedding(TArray<AActor*>Couple, FWeddingRule WeddingRule);
-	void ConfirmWedding(AActor* Spouse);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float GameHoursCoolDownBetweenWeddings = 12;
 
+	ECharacterProfile CharacterGender;
+
+	void RequestWedding(AActor* Other, FWeddingRule WeddingRule);
+	void ScheduleWedding(AActor* Fiancee);
+	void StartWedding();
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -31,6 +36,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	TArray<AActor*>Spouses;
+	FTimerHandle ScheduledWeddingTimerHandle;
+	FWeddingRule CurrentWeddingRules;
+	TArray<AActor* > Spouses;
+	AActor* CurrentFiancee;
 		
 };

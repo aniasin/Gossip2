@@ -19,30 +19,50 @@ void USocialRulesComponent::BeginPlay()
 
 }
 
-// Only the Pretender (Couple.Key) call that
-void USocialRulesComponent::NewWeddingCandidates(TMap<AActor*, AActor*> Couple, ECharacterProfile PretenderGender)
-{
-	TArray<AActor*>WeddingCandidates;
-	Couple.GetKeys(WeddingCandidates);
-	WeddingCandidates.Add(Couple[WeddingCandidates[0]]);
-	if (WeddingCandidates.Num() == 2)
-	{
+// Only the Pretender call that
+void USocialRulesComponent::NewWeddingCandidate(AActor* Pretender, AActor* Other, ECharacterProfile PretenderGender)
+{	
+	if (!IsValid(Other) || !IsValid(Pretender)) return;	
 
-		AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
-		if (!GM) return;
-		if (!GM->GetWeddingSeenOnce())
-		{
-			UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
-			if (!GI) return;
-			GI->OpenSocialRuleMenu();
-			GM->SetWeddingSeenOnce();
-		}	
-		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(WeddingCandidates[0]->GetComponentByClass(UFamilyComponent::StaticClass()));
+	WeddingQueue.Add(Pretender, Other);
+
+	if (!TutorialFirstTime())
+	{
+		// If it's the first time, we're waiting a Broadcast from MenuSocialRules
+		RequestWedding();
+	}	
+}
+
+void USocialRulesComponent::RequestWedding()
+{
+	TArray<AActor*>PretendersWaiting;
+	WeddingQueue.GenerateKeyArray(PretendersWaiting);
+
+	for (AActor* Pretender : PretendersWaiting)
+	{
+		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Pretender->GetComponentByClass(UFamilyComponent::StaticClass()));
 		if (FamilyComp)
 		{
-			FamilyComp->RequestWedding(WeddingCandidates, WeddingRule);
+			FamilyComp->RequestWedding(WeddingQueue[Pretender], WeddingRule);
 		}
 	}
+	WeddingQueue.Empty();
+}
+
+bool USocialRulesComponent::TutorialFirstTime()
+{
+	bool bFirstTime = false;
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
+	if (!GM) return false;
+	if (!GM->GetWeddingSeenOnce())
+	{
+		bFirstTime = true;
+		UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
+		if (!GI) return false;
+		GI->OpenSocialRuleMenu();
+		GM->SetWeddingSeenOnce();
+	}
+	return bFirstTime;
 }
 
 // Called from MenuSocialRules

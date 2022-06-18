@@ -4,27 +4,46 @@
 #include "FamilyComponent.h"
 #include "SocialComponent.h"
 
+#include "Gossip/Core/GossipGameMode.h"
+
 UFamilyComponent::UFamilyComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
 }
 
-void UFamilyComponent::RequestWedding(TArray<AActor*>Couple, FWeddingRule WeddingRule)
+void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 {
+	UE_LOG(LogTemp, Warning, TEXT("RequestWedding has been called!"))
+	CurrentWeddingRules = WeddingRule;
+	if (WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None) return; //TODO ResetAI()
 	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0) return;
+	if (IsValid(CurrentFiancee)) return;
 	
-	ConfirmWedding(Couple[1]);
-	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Couple[1]->GetComponentByClass(UFamilyComponent::StaticClass()));
+	ScheduleWedding(Other);
+	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Other->GetComponentByClass(UFamilyComponent::StaticClass()));
 	if (OtherFamilyComp)
 	{
-		OtherFamilyComp->ConfirmWedding(Couple[0]);
+		OtherFamilyComp->ScheduleWedding(GetOwner());
 	}
 }
 
-void UFamilyComponent::ConfirmWedding(AActor* Spouse)
+void UFamilyComponent::ScheduleWedding(AActor* Fiancee)
 {
-	UE_LOG(LogTemp, Warning, TEXT(" %s is now married with %s!"), *GetOwner()->GetName(), *Spouse->GetName());
+	CurrentFiancee = Fiancee;
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
+	if (!GM || !CurrentFiancee) return;	
+
+	GetOwner()->GetWorldTimerManager().SetTimer(ScheduledWeddingTimerHandle, this, &UFamilyComponent::StartWedding, GameHoursCoolDownBetweenWeddings * GM->GameHourDurationSeconds);
+
+	UE_LOG(LogTemp, Warning, TEXT("Wedding between %s and %s is now scheduled in %s GameHours!"), 
+	*GetOwner()->GetName(), *CurrentFiancee->GetName(), *FString::SanitizeFloat(GameHoursCoolDownBetweenWeddings/GM->GameHourDurationSeconds));
+}
+
+void UFamilyComponent::StartWedding()
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("It's time for %s and %s to marry!"), *GetOwner()->GetName(), *CurrentFiancee->GetName())
 }
 
 void UFamilyComponent::BeginPlay()

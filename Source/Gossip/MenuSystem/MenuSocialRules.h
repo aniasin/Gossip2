@@ -8,9 +8,8 @@
 #include "Gossip/Data/DataLibrary.h"
 #include "MenuSocialRules.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerAnswered);
+
 UCLASS()
 class GOSSIP_API UMenuSocialRules : public UMenuBase
 {
@@ -55,5 +54,7 @@ private:
 	FWeddingRule WeddingRule;
 	TMap<FString, EFamilySystem>FamilySystem;
 	TMap<FString, EWeddingSystem>WeddingSystem;
+
+	FOnPlayerAnswered OnPlayerAnswered;
 
 };
