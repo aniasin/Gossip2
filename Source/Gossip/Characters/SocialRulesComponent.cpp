@@ -51,18 +51,17 @@ void USocialRulesComponent::RequestWedding()
 
 bool USocialRulesComponent::TutorialFirstTime()
 {
-	bool bFirstTime = false;
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
 	if (!GM) return false;
 	if (!GM->GetWeddingSeenOnce())
 	{
-		bFirstTime = true;
 		UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetOwner()->GetWorld()->GetGameInstance());
 		if (!GI) return false;
 		GI->LoadSocialRulesMenu();
 		GM->SetWeddingSeenOnce();
+		return false;
 	}
-	return bFirstTime;
+	return true;
 }
 
 // Called from MenuSocialRules

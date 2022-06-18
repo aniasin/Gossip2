@@ -49,6 +49,7 @@ public:
 
 private:
 	class UMenuBase* Menu;
+	UMenuBase* SocialRulesMenu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
