@@ -191,7 +191,7 @@ struct FCityHallEvent
 		UPROPERTY()
 		ECityHallEvents CityEvent;
 	UPROPERTY()
-		TArray<AActor*>Guests;
+		TArray<FGuid>GuestsGuid;
 };
 
 // Shelter
@@ -322,8 +322,7 @@ struct FSaveValues
 	UPROPERTY()
 	FCharacterName CharacterName;
 	UPROPERTY()
-	// TODO Refactor to TMap<FGuid, FAlignment>
-	TMap<FString, FAlignment> KnownOthers;
+	TMap<FGuid, FAlignment> KnownOthers;
 	UPROPERTY()
 	TArray<FInstinctValues> InstinctsValues;
 	UPROPERTY()
@@ -340,6 +339,8 @@ struct FSaveValues
 	float ShelterConstructionStep;
 	UPROPERTY()
 	FWeddingRule WeddingRules;
+	UPROPERTY()
+	FGuid FianceeGuid;
 	UPROPERTY()
 	TMap<float, FCityHallEvent> CityHallEvents;
 };

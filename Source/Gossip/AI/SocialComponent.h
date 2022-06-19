@@ -32,6 +32,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<FEmotionalUpdateTable> EmotionalUpdateTable;
 
+	FGuid Id;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int32 ProximityScoreForFiancee = 10;
 
@@ -46,7 +48,8 @@ public:
 
 	AActor* FindSocialPartner();
 
-	TMap<FString, FAlignment> GetKnownOthers() { return KnownOthers; }
+	TMap<FGuid, FAlignment> GetKnownOthers() { return KnownOthers; }
+	TArray<AActor*>GetFriends() { return Friends; }
 	UFUNCTION(BlueprintCallable)
 	EAlignmentState GetAlignmentState() {return CurrentAlignmentState;}
 	UFUNCTION(BlueprintCallable)
@@ -81,11 +84,14 @@ protected:
 	EEmotionalState EmotionalStateHate;
 
 private:
-	TMap<FString, FAlignment> KnownOthers;
+	TMap<FGuid, FAlignment> KnownOthers;
 	EAlignmentState CurrentAlignmentState;
+
+	TArray<AActor*>Friends;
 
 	void UpdateAlignment(AActor* Other);
 	FAlignment CalculateAlignmentChange(AActor* Other);
+	void UpdateFriendList(AActor* Other, int32 Proximity);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

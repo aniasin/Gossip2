@@ -4,6 +4,8 @@
 #include "SocialComponent.h"
 #include "GS_AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
 #include "Gossip/Data/EmotionalDataAsset.h"
 #include "Gossip/Data/EmotionalUpdateDataAsset.h"
@@ -38,17 +40,19 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 {
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
 
-	FString Name = Other->GetName();
-	if (!KnownOthers.Contains(Name))
+	FGuid Guid = OtherSocialComp->Id;
+	if (!KnownOthers.Contains(Guid))
 	{
 		FAlignment NewAlignment;
 		NewAlignment.Love = 0;
 		NewAlignment.Respect = 0;
 		NewAlignment.Proximity = 0;
 		NewAlignment.Gender = OtherSocialComp->CharacterProfile;
-		KnownOthers.Add(Name, NewAlignment);
+		KnownOthers.Add(Guid, NewAlignment);
+
+		UpdateFriendList(Other, NewAlignment.Proximity);
 	}
-	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Name].Respect, KnownOthers[Name].Love);
+	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Guid].Respect, KnownOthers[Guid].Love);
 
 	return AlignmentState;
 }
@@ -63,7 +67,7 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	UpdateAlignment(Other);
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
-	return KnownOthers[Other->GetName()].Proximity;
+	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
 int32 USocialComponent::RespondToInteraction(AActor* Other)
@@ -71,8 +75,8 @@ int32 USocialComponent::RespondToInteraction(AActor* Other)
 	if (!IsValid(Other)) return 0;
 
 	UpdateAlignment(Other);
-
-	return KnownOthers[Other->GetName()].Proximity;
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
+	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
@@ -86,17 +90,17 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return;
 
-	FString OtherName = Other->GetName();
+	FGuid OtherGuid = OtherSocialComp->Id;
 
 	FAlignment NewAlignment;
 	NewAlignment = CalculateAlignmentChange(Other);
-	NewAlignment.Respect += KnownOthers[OtherName].Respect;
-	NewAlignment.Love += KnownOthers[OtherName].Love;
-	int32 ProximityChanged = NewAlignment.Proximity + KnownOthers[OtherName].Proximity;
+	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
+	NewAlignment.Love += KnownOthers[OtherGuid].Love;
+	int32 ProximityChanged = NewAlignment.Proximity + KnownOthers[OtherGuid].Proximity;
 	NewAlignment.Proximity = FMath::Clamp(ProximityChanged, -10, 10);
-	KnownOthers.Add(OtherName, NewAlignment);
+	KnownOthers.Add(OtherGuid, NewAlignment);
 
-	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherName].Respect, KnownOthers[OtherName].Love);
+	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherGuid].Respect, KnownOthers[OtherGuid].Love);
 	CurrentAlignmentState = AlignmentState;
 }
 
@@ -145,8 +149,9 @@ AActor* USocialComponent::FindSocialPartner()
 	TArray<AActor*> CurrentlyPerceivedActors = AIController->GetCurrentlyPerceivedActors();
 	for (AActor* Actor : CurrentlyPerceivedActors)	
 	{
-		if (!Actor->FindComponentByClass(USocialComponent::StaticClass())) continue;
-		if (!KnownOthers.Contains(Actor->GetName()) || KnownOthers[Actor->GetName()].Proximity <= -2) continue;
+		USocialComponent* OtherSocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
+		if (!OtherSocialComp) continue;
+		if (!KnownOthers.Contains(OtherSocialComp->Id) || KnownOthers[OtherSocialComp->Id].Proximity <= -2) continue;
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 
 		EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");
@@ -173,7 +178,9 @@ AActor* USocialComponent::FindSocialPartner()
 		TMap<AActor*, int32>OthersToSort;
 		for (AActor* Other : KnownOthersInVincinity)
 		{
-			OthersToSort.Add(Other, KnownOthers[Other->GetName()].Proximity);
+			USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
+			if (!OtherSocialComp) continue;
+			OthersToSort.Add(Other, KnownOthers[OtherSocialComp->Id].Proximity);
 		}
 		OthersToSort.ValueSort([](const int32& A, const int32& B) {	return A > B; });
 		TArray<AActor*>SortedKeys;
@@ -229,6 +236,19 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	return AlignmentChange;
 }
 
+void USocialComponent::UpdateFriendList(AActor* Other, int32 Proximity)
+{
+
+	if (Proximity >= 5)
+	{
+		Friends.AddUnique(Other);
+	}
+	else if (Friends.Contains(Other))
+	{
+		Friends.Remove(Other);
+	}
+}
+
 // ISavegameInterface override
 FSaveValues USocialComponent::CaptureState()
 {
@@ -241,5 +261,19 @@ void USocialComponent::RestoreState(FSaveValues SaveValues)
 {
 	KnownOthers = SaveValues.KnownOthers;
 
+// 	TArray<AActor*> NPCs;
+// 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), NPCs);
+// 
+// 	for (auto& KnownOther : KnownOthers)
+// 	{
+// 		for (AActor* NPC : NPCs)
+// 		{
+// 			USocialComponent* OtherSocialComp = Cast<USocialComponent>(NPC->GetComponentByClass(USocialComponent::StaticClass()));
+// 			if (!OtherSocialComp) continue;
+// 			if (KnownOther.Key != OtherSocialComp->Id) continue;
+// 			if (KnownOther.Value.Proximity < 5) continue;
+// 			Friends.Add(NPC);
+// 		}
+// 	}
 }
 

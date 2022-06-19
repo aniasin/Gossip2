@@ -8,7 +8,7 @@
 #include "Gossip/Save/SaveGameInterface.h"
 #include "FamilyComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<AActor*>, Guests);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<FGuid>, GuestsGuid);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UFamilyComponent : public UActorComponent, public ISaveGameInterface

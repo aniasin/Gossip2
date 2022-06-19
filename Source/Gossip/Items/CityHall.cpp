@@ -7,6 +7,7 @@
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Save/SaveableEntity.h"
+#include "Gossip/AI/SocialComponent.h"
 
 ACityHall::ACityHall()
 {
@@ -39,8 +40,8 @@ void ACityHall::Tick(float DeltaTime)
 			TimeRemaining = FString::SanitizeFloat(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle));
 		}
 		Index++;
-
-		FString Message = FString::Printf(TEXT(" Wedding : Time remaining : %s"), *TimeRemaining);
+		FGuid PretenderGuid = Event.GuestsGuid[0];
+		FString Message = FString::Printf(TEXT("%s's Wedding : Time remaining : %s"), *PretenderGuid.ToString(), *TimeRemaining);
 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 		PosZ += 30;
 	}
@@ -48,11 +49,11 @@ void ACityHall::Tick(float DeltaTime)
 	DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 }
 
-void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
+void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<FGuid>GuestsGuid)
 {
 	FCityHallEvent CityEvent;
 	CityEvent.CityEvent = Event;
-	CityEvent.Guests = Guests;
+	CityEvent.GuestsGuid = GuestsGuid;
 	EventsQueued.Add(CityEvent);	
 	BeginCityHallEvent(-1);
 }

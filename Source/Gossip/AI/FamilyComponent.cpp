@@ -30,10 +30,13 @@ void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 	return; 
 	}
 
-	TArray<AActor*>Guests;
-	Guests.AddUnique(GetOwner());
-	Guests.AddUnique(Other);
-	OnNewCityHallEvent.Broadcast(ECityHallEvents::Wedding, Guests);
+	TArray<FGuid>GuestsGuid;
+	USocialComponent* SocialComp = Cast<USocialComponent>(GetOwner()->GetComponentByClass(USocialComponent::StaticClass()));
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
+	GuestsGuid.AddUnique(SocialComp->Id);
+	GuestsGuid.AddUnique(OtherSocialComp->Id);
+
+	OnNewCityHallEvent.Broadcast(ECityHallEvents::Wedding, GuestsGuid);
 	SetCurrentFiancee(Other);
 	OtherFamilyComp->SetCurrentFiancee(GetOwner());
 	ResetOwnersAI(Other);

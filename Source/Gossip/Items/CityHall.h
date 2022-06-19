@@ -45,7 +45,7 @@ private:
 	TArray<FCityHallEvent>EventsQueued;
 
 	UFUNCTION()
-	void NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests);
+	void NewCityEvent(ECityHallEvents Event, TArray<FGuid>Guests);
 	// OverrideTime -1: no Override / 0 = Immediate / +1: Override
 	void BeginCityHallEvent(float OverrideTime);
 	UFUNCTION()
