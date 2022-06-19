@@ -9,7 +9,7 @@
 
 ACityHall::ACityHall()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	RootComponent = SceneRoot;
@@ -24,54 +24,56 @@ void ACityHall::BeginPlay()
 
 }
 
+void ACityHall::Tick(float DeltaTime)
+{
+	float PosZ = 0;
+	int32 Index = 0;
+	for (FCityHallEvent Event : EventsQueued)
+	{
+		FString TimeRemaining = "Waiting";
+		if (Index == 0)
+		{
+			TimeRemaining = FString::SanitizeFloat(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle));
+		}
+		Index++;
+
+		FString Message = FString::Printf(TEXT(" Wedding : Time remaining : %s"), *TimeRemaining);
+		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+		PosZ += 30;
+	}
+	FString Message = FString::Printf(TEXT("==== EVENTS ===="));
+	DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+}
+
 void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
 {
-	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
-	if (!GM) return;
-
-	FTimerHandle TimerHandle;
-	float WaitTime = 1;
-	switch (Event)
-	{
-	case ECityHallEvents::None:
-		break;
-	case ECityHallEvents::Alarm:
-		WaitTime = 0.2;
-		break;
-	case ECityHallEvents::Wedding:
-		WaitTime = GameHoursWaitForWeddings;
-		break;
-	case ECityHallEvents::Banquet:
-		WaitTime = GameHoursWaitForWeddings;
-		break;
-	}
 	FCityHallEvent CityEvent;
 	CityEvent.CityEvent = Event;
 	CityEvent.Guests = Guests;
-	EventsQueue.Add(TimerHandle, CityEvent);
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACityHall::BeginCityHallEvent, WaitTime * GM->GameHourDurationSeconds);
+	EventsQueued.Add(CityEvent);	
+	BeginCityHallEvent();
 }
 
 void ACityHall::BeginCityHallEvent()
 {
-	TArray<FTimerHandle>Timers;
-	EventsQueue.GenerateKeyArray(Timers);
-
-	for (FTimerHandle Timer : Timers)
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GM) return;
+	if (GetWorldTimerManager().IsTimerActive(CityEventTimerHandle)) return;
+	for (FCityHallEvent Event : EventsQueued)
 	{
-		if(GetWorldTimerManager().IsTimerActive(Timer)) continue;
-
-		ConvokeCityHallEvent(EventsQueue[Timer].CityEvent, EventsQueue[Timer].Guests);
-
-		GetWorldTimerManager().ClearTimer(Timer);
-		EventsQueue.Remove(Timer);
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "ConvokeCityHallEvent", Event);
+		GetWorldTimerManager().SetTimer(CityEventTimerHandle, Delegate, GameHoursWaitForWeddings* GM->GameHourDurationSeconds, false);
 		break;
 	}	
 }
 
-void ACityHall::ConvokeCityHallEvent(ECityHallEvents Event, TArray<AActor*>Guests)
+void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event)
 {
 	UE_LOG(LogTemp, Warning, TEXT("City Event!"))
+	GetWorldTimerManager().ClearTimer(CityEventTimerHandle);
+	EventsQueued.RemoveAt(0);
+	BeginCityHallEvent();
 }
 
 void ACityHall::AddInhabitants(ANonPlayerCharacter* NPC)

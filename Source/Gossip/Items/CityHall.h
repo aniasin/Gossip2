@@ -37,14 +37,16 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime)override;
 
 private:
 	TArray<ANonPlayerCharacter*>Inhabitants;
-
-	TMap<FTimerHandle, FCityHallEvent>EventsQueue;
+	FTimerHandle CityEventTimerHandle;
+	TArray<FCityHallEvent>EventsQueued;
 
 	UFUNCTION()
 	void NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests);
 	void BeginCityHallEvent();
-	void ConvokeCityHallEvent(ECityHallEvents Event, TArray<AActor*>Guests);
+	UFUNCTION()
+	void ConvokeCityHallEvent(FCityHallEvent Event);
 };
