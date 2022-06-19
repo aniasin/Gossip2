@@ -143,10 +143,15 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 			CityHallEvent.Guests.AddUnique(Actor);
 			CityHallEvent.CityEvent = Event.Value.CityEvent;
 			USocialComponent* PretenderSocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
-			CityHallEvent.Guests.Append(PretenderSocialComp->GetFriends());
+			TArray<AActor*>FriendsToAdd;
+			FriendsToAdd.Append(PretenderSocialComp->GetFriends());
 			AActor* CurrentFiancee = FamilyComp->GetCurrentFiancee();
 			USocialComponent* FianceeSocialComp = Cast<USocialComponent>(CurrentFiancee->GetComponentByClass(USocialComponent::StaticClass()));
-			CityHallEvent.Guests.Append(FianceeSocialComp->GetFriends());
+			FriendsToAdd.Append(FianceeSocialComp->GetFriends());
+			for (AActor* Friend : FriendsToAdd)
+			{
+				CityHallEvent.Guests.AddUnique(Friend);
+			}
 			break;
 		}		
 		CurrentCityHallEvents.Add(CityHallEvent);
