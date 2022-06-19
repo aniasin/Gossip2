@@ -55,31 +55,32 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 	//TODO make UI
 	if (bSelected)
 	{
-		for (auto& KnownOther : SocialComp->GetKnownOthers())
-		{
-			FString Message = FString::Printf(TEXT("%s : %i"), *KnownOther.Key.ToString(), KnownOther.Value.Proximity);
-			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
-			PosZ += 30;
-		}
-		FString Message = FString::Printf(TEXT("==== %s %s ===="), *CharacterName.FirstName, *CharacterName.LastName);
-		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
-	}
-// 
-// 		for (AActor* Friend : SocialComp->GetFriends())
+// 		for (auto& KnownOther : SocialComp->GetKnownOthers())
 // 		{
-// 			FString Message = FString::Printf(TEXT("%s"), *Friend->GetName());
+// 			FString Message = FString::Printf(TEXT("%s : %i"), *KnownOther.Key.ToString(), KnownOther.Value.Proximity);
 // 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 // 			PosZ += 30;
 // 		}
-// 		FString Message = FString::Printf(TEXT("==== FRIENDS ===="), *CharacterName.FirstName, *CharacterName.LastName);
+// 		FString Message = FString::Printf(TEXT("==== %s %s ===="), *CharacterName.FirstName, *CharacterName.LastName);
 // 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
-/*	}	*/
+// 	}
+// 
+		for (AActor* Friend : SocialComp->GetFriends())
+		{
+			FString Message = FString::Printf(TEXT("%s"), *Friend->GetName());
+			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+			PosZ += 30;
+		}
+		FString Message = FString::Printf(TEXT("==== FRIENDS ===="), *CharacterName.FirstName, *CharacterName.LastName);
+		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
+	}	
 }
 
 void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 {
 	SaveComponent->Id = Id;
 	SocialComp->Id = Id;
+	FamilyComp->Id = Id;
 
 	ECharacterProfile ProfileToSet = ECharacterProfile::None;
 	float RandomFloat = FMath::RandRange(0, 1);

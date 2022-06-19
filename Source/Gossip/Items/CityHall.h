@@ -5,7 +5,19 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Gossip/Save/SaveGameInterface.h"
+#include "Gossip/Data/DataLibrary.h"
 #include "CityHall.generated.h"
+
+USTRUCT(BlueprintType)
+struct FCityHallEvent
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	ECityHallEvents CityEvent;
+	UPROPERTY()
+	TArray<AActor*>Guests;
+};
 
 UCLASS()
 class GOSSIP_API ACityHall : public AActor, public ISaveGameInterface
@@ -45,7 +57,7 @@ private:
 	TArray<FCityHallEvent>EventsQueued;
 
 	UFUNCTION()
-	void NewCityEvent(ECityHallEvents Event, TArray<FGuid>Guests);
+	void NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests);
 	// OverrideTime -1: no Override / 0 = Immediate / +1: Override
 	void BeginCityHallEvent(float OverrideTime);
 	UFUNCTION()

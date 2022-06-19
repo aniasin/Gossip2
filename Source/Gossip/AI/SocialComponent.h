@@ -50,6 +50,7 @@ public:
 
 	TMap<FGuid, FAlignment> GetKnownOthers() { return KnownOthers; }
 	TArray<AActor*>GetFriends() { return Friends; }
+	TArray<FGuid>GetFriendsGuid() { return FriendsGuid; }
 	UFUNCTION(BlueprintCallable)
 	EAlignmentState GetAlignmentState() {return CurrentAlignmentState;}
 	UFUNCTION(BlueprintCallable)
@@ -88,10 +89,11 @@ private:
 	EAlignmentState CurrentAlignmentState;
 
 	TArray<AActor*>Friends;
+	TArray<FGuid>FriendsGuid;
 
 	void UpdateAlignment(AActor* Other);
 	FAlignment CalculateAlignmentChange(AActor* Other);
-	void UpdateFriendList(AActor* Other, int32 Proximity);
+	void UpdateFriendList(FGuid Guid, AActor* Other, int32 Proximity);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

@@ -2,6 +2,7 @@
 
 
 #include "CityHall.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Gossip/AI/FamilyComponent.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
@@ -40,8 +41,8 @@ void ACityHall::Tick(float DeltaTime)
 			TimeRemaining = FString::SanitizeFloat(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle));
 		}
 		Index++;
-		FGuid PretenderGuid = Event.GuestsGuid[0];
-		FString Message = FString::Printf(TEXT("%s's Wedding : Time remaining : %s"), *PretenderGuid.ToString(), *TimeRemaining);
+		AActor* Pretender = Event.Guests[0];
+		FString Message = FString::Printf(TEXT("%s's Wedding : Time remaining : %s"), *Pretender->GetName(), *TimeRemaining);
 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 		PosZ += 30;
 	}
@@ -49,12 +50,12 @@ void ACityHall::Tick(float DeltaTime)
 	DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 }
 
-void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<FGuid>GuestsGuid)
+void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
 {
 	FCityHallEvent CityEvent;
 	CityEvent.CityEvent = Event;
-	CityEvent.GuestsGuid = GuestsGuid;
-	EventsQueued.Add(CityEvent);	
+	CityEvent.Guests = Guests;
+	EventsQueued.Add(CityEvent);
 	BeginCityHallEvent(-1);
 }
 
@@ -103,15 +104,22 @@ FSaveValues ACityHall::CaptureState()
 {
 	FSaveValues SaveValues;
 
-	TMap<float, FCityHallEvent>CurrentEvents;
 	int32 Index = 0;
-	for (FCityHallEvent Event : EventsQueued)
+	TMap<float, FSavedCityHallEvent>CurrentEvents;
+	for (auto& Event : EventsQueued)
 	{
+		FSavedCityHallEvent GuidEvent;
+		AActor* Pretender = Event.Guests[0];				
+		USocialComponent* SocialComp = Cast<USocialComponent>(Pretender->GetComponentByClass(USocialComponent::StaticClass()));
+		GuidEvent.PretenderGuid = SocialComp->Id;		
+		GuidEvent.CityEvent = Event.CityEvent;
 		if (Index == 0)
 		{
-			CurrentEvents.Add(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle), Event);
+			CurrentEvents.Add(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle), GuidEvent);
+			Index++;
+			continue;
 		}
-		CurrentEvents.Add(GameHoursWaitForEvent, Event);
+		CurrentEvents.Add(GameHoursWaitForEvent, GuidEvent);
 	}
 
 	SaveValues.CityHallEvents = CurrentEvents;
@@ -120,10 +128,34 @@ FSaveValues ACityHall::CaptureState()
 
 void ACityHall::RestoreState(FSaveValues SaveValues)
 {
+	TArray<AActor*>AllActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), AllActors);
+
+	TArray<FCityHallEvent>CurrentCityHallEvents;
 	for (auto& Event : SaveValues.CityHallEvents)
 	{
-		EventsQueued.Add(Event.Value);
+		FCityHallEvent CityHallEvent;
+		for (AActor* Actor : AllActors)
+		{
+			UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+			if (!FamilyComp) continue;
+			if (Event.Value.PretenderGuid != FamilyComp->Id) continue;
+			CityHallEvent.Guests.AddUnique(Actor);
+			CityHallEvent.CityEvent = Event.Value.CityEvent;
+			USocialComponent* PretenderSocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
+			CityHallEvent.Guests.Append(PretenderSocialComp->GetFriends());
+			AActor* CurrentFiancee = FamilyComp->GetCurrentFiancee();
+			USocialComponent* FianceeSocialComp = Cast<USocialComponent>(CurrentFiancee->GetComponentByClass(USocialComponent::StaticClass()));
+			CityHallEvent.Guests.Append(FianceeSocialComp->GetFriends());
+			break;
+		}		
+		CurrentCityHallEvents.Add(CityHallEvent);
 	}
+	for (auto& Event : CurrentCityHallEvents)
+	{
+		EventsQueued.Add(Event);
+	}
+
 	TArray<float>TimeRemaining;
 	SaveValues.CityHallEvents.GenerateKeyArray(TimeRemaining);
 	if (TimeRemaining.Num() > 0)

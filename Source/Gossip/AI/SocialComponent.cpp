@@ -50,7 +50,7 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 		NewAlignment.Gender = OtherSocialComp->CharacterProfile;
 		KnownOthers.Add(Guid, NewAlignment);
 
-		UpdateFriendList(Other, NewAlignment.Proximity);
+		UpdateFriendList(Guid, Other, NewAlignment.Proximity);
 	}
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Guid].Respect, KnownOthers[Guid].Love);
 
@@ -236,15 +236,17 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	return AlignmentChange;
 }
 
-void USocialComponent::UpdateFriendList(AActor* Other, int32 Proximity)
+void USocialComponent::UpdateFriendList(FGuid Guid, AActor* Other, int32 Proximity)
 {
 
 	if (Proximity >= 5)
 	{
+		FriendsGuid.AddUnique(Guid);
 		Friends.AddUnique(Other);
 	}
-	else if (Friends.Contains(Other))
+	else if (Friends.Contains(Other) && FriendsGuid.Contains(Guid))
 	{
+		FriendsGuid.Remove(Guid);
 		Friends.Remove(Other);
 	}
 }
@@ -261,19 +263,20 @@ void USocialComponent::RestoreState(FSaveValues SaveValues)
 {
 	KnownOthers = SaveValues.KnownOthers;
 
-// 	TArray<AActor*> NPCs;
-// 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), NPCs);
-// 
-// 	for (auto& KnownOther : KnownOthers)
-// 	{
-// 		for (AActor* NPC : NPCs)
-// 		{
-// 			USocialComponent* OtherSocialComp = Cast<USocialComponent>(NPC->GetComponentByClass(USocialComponent::StaticClass()));
-// 			if (!OtherSocialComp) continue;
-// 			if (KnownOther.Key != OtherSocialComp->Id) continue;
-// 			if (KnownOther.Value.Proximity < 5) continue;
-// 			Friends.Add(NPC);
-// 		}
-// 	}
+	TArray<AActor*> NPCs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), NPCs);
+
+	for (auto& KnownOther : KnownOthers)
+	{
+		for (AActor* NPC : NPCs)
+		{
+			USocialComponent* OtherSocialComp = Cast<USocialComponent>(NPC->GetComponentByClass(USocialComponent::StaticClass()));
+			if (!OtherSocialComp) continue;
+			if (KnownOther.Key != OtherSocialComp->Id) continue;
+			if (KnownOther.Value.Proximity < 0) continue;
+			Friends.Add(NPC);
+			FriendsGuid.Add(KnownOther.Key);
+		}
+	}
 }
 

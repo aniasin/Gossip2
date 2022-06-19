@@ -8,7 +8,7 @@
 #include "Gossip/Save/SaveGameInterface.h"
 #include "FamilyComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<FGuid>, GuestsGuid);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<AActor*>, GuestsGuid);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UFamilyComponent : public UActorComponent, public ISaveGameInterface
@@ -19,9 +19,13 @@ public:
 
 	UFamilyComponent();
 
+	FGuid Id;
+
 	ECharacterProfile CharacterGender;
 
 	void RequestWedding(AActor* Other, FWeddingRule WeddingRule);
+
+	AActor* GetCurrentFiancee() { return CurrentFiancee; }
 
 	void SetCurrentFiancee(AActor* Fiancee) { CurrentFiancee = Fiancee; }
 	void ResetOwnersAI(AActor* Other);
@@ -41,4 +45,6 @@ private:
 	FWeddingRule CurrentWeddingRules;
 	TArray<AActor* > Spouses;
 	AActor* CurrentFiancee;		
+
+	TArray<AActor*> GetGuests(AActor* Other);
 };

@@ -180,18 +180,18 @@ enum class ECityHallEvents : uint8
 	None			UMETA(DisplayName = "None"),
 	Alarm			UMETA(DisplayName = "Alarm"),
 	Wedding			UMETA(DisplayName = "Wedding"),
-	Banquet		UMETA(DisplayName = "Wedding"),
+	Banquet			UMETA(DisplayName = "Wedding"),
 };
 
 USTRUCT(BlueprintType)
-struct FCityHallEvent
+struct FSavedCityHallEvent
 {
 	GENERATED_BODY()
 
-		UPROPERTY()
-		ECityHallEvents CityEvent;
 	UPROPERTY()
-		TArray<FGuid>GuestsGuid;
+	ECityHallEvents CityEvent;
+	UPROPERTY()
+	FGuid PretenderGuid;
 };
 
 // Shelter
@@ -342,7 +342,7 @@ struct FSaveValues
 	UPROPERTY()
 	FGuid FianceeGuid;
 	UPROPERTY()
-	TMap<float, FCityHallEvent> CityHallEvents;
+	TMap<float, FSavedCityHallEvent> CityHallEvents;
 };
 
 USTRUCT(BlueprintType)
