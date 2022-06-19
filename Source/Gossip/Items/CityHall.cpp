@@ -50,8 +50,6 @@ void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
 	CityEvent.Guests = Guests;
 	EventsQueue.Add(TimerHandle, CityEvent);
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACityHall::BeginCityHallEvent, WaitTime * GM->GameHourDurationSeconds);
-	UE_LOG(LogTemp, Warning, TEXT("Event Received!"));
-
 }
 
 void ACityHall::BeginCityHallEvent()
@@ -62,12 +60,13 @@ void ACityHall::BeginCityHallEvent()
 	for (FTimerHandle Timer : Timers)
 	{
 		if(GetWorldTimerManager().IsTimerActive(Timer)) continue;
+
 		ConvokeCityHallEvent(EventsQueue[Timer].CityEvent, EventsQueue[Timer].Guests);
+
 		GetWorldTimerManager().ClearTimer(Timer);
 		EventsQueue.Remove(Timer);
 		break;
-	}
-	
+	}	
 }
 
 void ACityHall::ConvokeCityHallEvent(ECityHallEvents Event, TArray<AActor*>Guests)

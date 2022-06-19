@@ -78,6 +78,7 @@ void APlayerPawn::Tick(float DeltaTime)
 // Input
 void APlayerPawn::MoveForward(float Value)
 {
+	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -92,6 +93,7 @@ void APlayerPawn::MoveForward(float Value)
 
 void APlayerPawn::MoveRight(float Value)
 {
+	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is right
@@ -107,12 +109,13 @@ void APlayerPawn::MoveRight(float Value)
 
 void APlayerPawn::InputYaw(float Value)
 {
+	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
 	AddControllerYawInput(Value);
 }
 
 void APlayerPawn::InputPitch(float Value)
 {
-
+	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
 }
 
 void APlayerPawn::LeftClickPressed()

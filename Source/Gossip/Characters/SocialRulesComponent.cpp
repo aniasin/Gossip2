@@ -2,10 +2,12 @@
 
 
 #include "SocialRulesComponent.h"
+#include "PlayerOrdersComponent.h"
 
 #include "Gossip/Core/GS_GameInstance.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/AI/FamilyComponent.h"
+
 
 USocialRulesComponent::USocialRulesComponent()
 {
@@ -31,6 +33,11 @@ void USocialRulesComponent::NewWeddingCandidate(AActor* Pretender, AActor* Other
 		// If it's the first time, we're waiting a Broadcast from MenuSocialRules
 		RequestWedding();
 	}	
+	else
+	{
+		UPlayerOrdersComponent* PlayerOrdersComp = Cast<UPlayerOrdersComponent>(GetOwner()->GetComponentByClass(UPlayerOrdersComponent::StaticClass()));
+		PlayerOrdersComp->PlayerMoveToTarget(Pretender);
+	}
 }
 
 void USocialRulesComponent::RequestWedding()

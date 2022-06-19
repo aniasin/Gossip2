@@ -33,13 +33,17 @@ public:
 	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
 	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
 	FVector2D GetMousePosition();
+	bool GetPlayerIsMoved() { return bMovingPlayer; }
 
 	void OrderMoveUnderCursor();
+	void PlayerMoveToTarget(AActor* Target);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:	
+	AActor* Target;
+	bool bMovingPlayer;
 	TArray<ANonPlayerCharacter*>CurrentSelections;
 	FVector SelectionBoxStartPosition;
 	FVector SelectionBoxEndPosition;

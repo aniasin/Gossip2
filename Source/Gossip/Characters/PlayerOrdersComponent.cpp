@@ -24,6 +24,12 @@ void UPlayerOrdersComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bMovingPlayer)
+	{
+		FVector NewLocation = FMath::Lerp(GetOwner()->GetActorLocation(), Target->GetActorLocation(), 0.025);
+		GetOwner()->SetActorLocation(NewLocation);
+		if (FVector::Distance(Target->GetActorLocation(), GetOwner()->GetActorLocation()) <= 300) bMovingPlayer = false;
+	}
 }
 
 void UPlayerOrdersComponent::StartBoxSelection()
@@ -62,6 +68,12 @@ void UPlayerOrdersComponent::OrderMoveUnderCursor()
 		if (!Path->IsValid()) continue;
 		Selected->OrderMove(Location);
 	}
+}
+
+void UPlayerOrdersComponent::PlayerMoveToTarget(AActor* TargetActor)
+{
+	bMovingPlayer = true;
+	Target = TargetActor;
 }
 
 FVector2D UPlayerOrdersComponent::GetMousePosition()
