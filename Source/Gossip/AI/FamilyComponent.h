@@ -8,7 +8,7 @@
 #include "Gossip/Save/SaveGameInterface.h"
 #include "FamilyComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNewCityHallEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<AActor*>, Guests);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UFamilyComponent : public UActorComponent, public ISaveGameInterface
@@ -19,16 +19,12 @@ public:
 
 	UFamilyComponent();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float GameHoursCoolDownBetweenWeddings = 12;
-
 	ECharacterProfile CharacterGender;
 
 	void RequestWedding(AActor* Other, FWeddingRule WeddingRule);
-	void ScheduleWedding(AActor* Fiancee);
-	void StartWedding();
 
-	void ResetOwnerAI();
+	void SetCurrentFiancee(AActor* Fiancee) { CurrentFiancee = Fiancee; }
+	void ResetOwnersAI(AActor* Other);
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;

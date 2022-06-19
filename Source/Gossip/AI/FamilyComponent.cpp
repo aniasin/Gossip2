@@ -4,8 +4,7 @@
 #include "FamilyComponent.h"
 #include "SocialComponent.h"
 
-#include "Gossip/AI/GS_AIController.h" // Don't like this one to sit here
-#include "Gossip/Core/GossipGameMode.h"
+#include "Gossip/AI/GS_AIController.h" 
 
 UFamilyComponent::UFamilyComponent()
 {
@@ -27,43 +26,26 @@ void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 	CurrentWeddingRules = WeddingRule;
 	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 || IsValid(CurrentFiancee)) 
 	{ 
-	ResetOwnerAI();
-	OtherFamilyComp->ResetOwnerAI();
+	ResetOwnersAI(Other);
 	return; 
 	}
-	
-	ScheduleWedding(Other);
-	if (OtherFamilyComp)
-	{
-		OtherFamilyComp->ScheduleWedding(GetOwner());
-	}
-	OnNewCityHallEvent.Broadcast();
+
+	TArray<AActor*>Guests;
+	Guests.AddUnique(GetOwner());
+	Guests.AddUnique(Other);
+	OnNewCityHallEvent.Broadcast(ECityHallEvents::Wedding, Guests);
+	SetCurrentFiancee(Other);
+	OtherFamilyComp->SetCurrentFiancee(GetOwner());
+	ResetOwnersAI(Other);
 }
 
-void UFamilyComponent::ScheduleWedding(AActor* Fiancee)
-{
-	CurrentFiancee = Fiancee;
-	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
-	if (!GM || !CurrentFiancee) { ResetOwnerAI(); return; }
-
-	GetOwner()->GetWorldTimerManager().SetTimer(ScheduledWeddingTimerHandle, this, &UFamilyComponent::StartWedding, GameHoursCoolDownBetweenWeddings * GM->GameHourDurationSeconds);
-
-	UE_LOG(LogTemp, Warning, TEXT("Wedding between %s and %s is now scheduled in %s GameHours!"), 
-	*GetOwner()->GetName(), *CurrentFiancee->GetName(), *FString::SanitizeFloat(GameHoursCoolDownBetweenWeddings));
-	ResetOwnerAI();
-}
-
-void UFamilyComponent::StartWedding()
-{
-	UE_LOG(LogTemp, Warning, TEXT("It's time for %s and %s to marry!"), *GetOwner()->GetName(), *CurrentFiancee->GetName())
-}
-
-
-void UFamilyComponent::ResetOwnerAI()
+void UFamilyComponent::ResetOwnersAI(AActor* Other)
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
-	if (!AIController) return;
+	AGS_AIController* OtherAIController = Cast<AGS_AIController>(Other->GetInstigatorController());
+	if (!AIController || !OtherAIController) return;
 	AIController->ResetAI();
+	OtherAIController->ResetAI();
 }
 
 // ISaveGameInterface

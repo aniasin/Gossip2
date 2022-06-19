@@ -173,6 +173,16 @@ struct FEmotionalUpdateTable
 	TMap<EEmotionalState, float>EmotionalEffect;
 };
 
+//CityHall
+UENUM(BlueprintType)
+enum class ECityHallEvents : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Alarm			UMETA(DisplayName = "Alarm"),
+	Wedding			UMETA(DisplayName = "Wedding"),
+	Banquet		UMETA(DisplayName = "Wedding"),
+};
+
 // Shelter
 USTRUCT(BlueprintType)
 struct FShelterData

@@ -4,6 +4,8 @@
 #include "CityHall.h"
 
 #include "Gossip/AI/FamilyComponent.h"
+#include "Gossip/Characters/NonPlayerCharacter.h"
+#include "Gossip/Core/GossipGameMode.h"
 
 ACityHall::ACityHall()
 {
@@ -22,9 +24,55 @@ void ACityHall::BeginPlay()
 
 }
 
-void ACityHall::NewCityEvent()
+void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GM) return;
+
+	FTimerHandle TimerHandle;
+	float WaitTime = 1;
+	switch (Event)
+	{
+	case ECityHallEvents::None:
+		break;
+	case ECityHallEvents::Alarm:
+		WaitTime = 0.2;
+		break;
+	case ECityHallEvents::Wedding:
+		WaitTime = GameHoursWaitForWeddings;
+		break;
+	case ECityHallEvents::Banquet:
+		WaitTime = GameHoursWaitForWeddings;
+		break;
+	}
+	FCityHallEvent CityEvent;
+	CityEvent.CityEvent = Event;
+	CityEvent.Guests = Guests;
+	EventsQueue.Add(TimerHandle, CityEvent);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACityHall::BeginCityHallEvent, WaitTime * GM->GameHourDurationSeconds);
 	UE_LOG(LogTemp, Warning, TEXT("Event Received!"));
+
+}
+
+void ACityHall::BeginCityHallEvent()
+{
+	TArray<FTimerHandle>Timers;
+	EventsQueue.GenerateKeyArray(Timers);
+
+	for (FTimerHandle Timer : Timers)
+	{
+		if(GetWorldTimerManager().IsTimerActive(Timer)) continue;
+		ConvokeCityHallEvent(EventsQueue[Timer].CityEvent, EventsQueue[Timer].Guests);
+		GetWorldTimerManager().ClearTimer(Timer);
+		EventsQueue.Remove(Timer);
+		break;
+	}
+	
+}
+
+void ACityHall::ConvokeCityHallEvent(ECityHallEvents Event, TArray<AActor*>Guests)
+{
+	UE_LOG(LogTemp, Warning, TEXT("City Event!"))
 }
 
 void ACityHall::AddInhabitants(ANonPlayerCharacter* NPC)
