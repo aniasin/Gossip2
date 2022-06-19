@@ -183,6 +183,17 @@ enum class ECityHallEvents : uint8
 	Banquet		UMETA(DisplayName = "Wedding"),
 };
 
+USTRUCT(BlueprintType)
+struct FCityHallEvent
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+		ECityHallEvents CityEvent;
+	UPROPERTY()
+		TArray<AActor*>Guests;
+};
+
 // Shelter
 USTRUCT(BlueprintType)
 struct FShelterData
@@ -329,6 +340,8 @@ struct FSaveValues
 	float ShelterConstructionStep;
 	UPROPERTY()
 	FWeddingRule WeddingRules;
+	UPROPERTY()
+	TMap<float, FCityHallEvent> CityHallEvents;
 };
 
 USTRUCT(BlueprintType)
