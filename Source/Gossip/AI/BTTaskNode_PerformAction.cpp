@@ -51,6 +51,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::Improve)
 	{
 		InstinctsComp->SatisfyInstinct(Goal);
+		InventoryComp->RemoveOwnedItem(Goal, false);
 		AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!ShelterActor) return EBTNodeResult::Failed;
 		ShelterActor->ConstructShelter();

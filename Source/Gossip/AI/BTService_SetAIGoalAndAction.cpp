@@ -105,7 +105,7 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		float InstinctValue = FMath::Abs(Instinct.CurrentValue);
-		if (InstinctValue > .8)
+		if (InstinctValue >= 1)
 		{
 			NewGoal = (uint8)Instinct.Goal;
 			break;
@@ -155,8 +155,14 @@ void UBTService_SetAIGoalAndAction::SetAction()
 			return;
 		case  EAIGoal::Shelter:
 			if (!InventoryComp->ShelterActor) return;
-			AIController->BlackboardComponent->SetValueAsObject("TargetActor", InventoryComp->ShelterActor);
-			NewAction = (uint8)EAIAction::Improve;
+			OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+			if (OwnedRessourceRaw > 0) 
+			{
+				AIController->BlackboardComponent->SetValueAsObject("TargetActor", InventoryComp->ShelterActor);
+				NewAction = (uint8)EAIAction::Improve;
+				return;
+			}
+			(uint8)EAIAction::TravelProcessor; 
 			return;
 		}
 

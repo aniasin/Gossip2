@@ -156,7 +156,7 @@ AActor* USocialComponent::FindSocialPartner()
 
 		EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");
 		EAIGoal AIGoal = (EAIGoal)OtherController->BlackboardComponent->GetValueAsEnum("Goal");
-		if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep) continue;
+		if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep || AIStatus == EAIStatus::Follow || AIStatus == EAIStatus::LeadHome) continue;
 		KnownOthersInVincinity.Add(Actor);
 	}
 
@@ -168,7 +168,8 @@ AActor* USocialComponent::FindSocialPartner()
 			AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 			EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");
 			EAIGoal AIGoal = (EAIGoal)OtherController->BlackboardComponent->GetValueAsEnum("Goal");
-			if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep) continue;
+			if (AIStatus == EAIStatus::Socialize || AIGoal == EAIGoal::Sleep || AIStatus == EAIStatus::Follow || AIStatus == EAIStatus::LeadHome) continue;
+
 			return Actor;
 		}
 	}
@@ -185,6 +186,7 @@ AActor* USocialComponent::FindSocialPartner()
 		OthersToSort.ValueSort([](const int32& A, const int32& B) {	return A > B; });
 		TArray<AActor*>SortedKeys;
 		OthersToSort.GenerateKeyArray(SortedKeys);
+
 		return SortedKeys[0];
 	}
 	return nullptr;
