@@ -128,6 +128,7 @@ FSaveValues ARessource::CaptureState()
 		if (!Npc) continue;
 		OwnersToSave.AddUnique(Npc->Id);
 	}
+	
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
 

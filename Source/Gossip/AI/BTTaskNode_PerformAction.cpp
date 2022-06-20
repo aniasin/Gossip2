@@ -82,9 +82,17 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			break;
 
 		case EAIInstinct::Conservation:
-			InstinctsComp->SatisfyInstinct(Goal);
-			BlackboardComp->ClearValue("TargetActor");
-			break;
+			switch (Goal)
+			{
+			case EAIGoal::Sleep:
+				InstinctsComp->SatisfyInstinct(Goal);
+				BlackboardComp->ClearValue("TargetActor");
+				break;
+			case EAIGoal::Shelter:
+				Ressource->CollectRessource(InventoryComp);
+				BlackboardComp->ClearValue("TargetActor");
+				break;
+			}
 
 		case EAIInstinct::Reproduction:	
 			// Directly set in SetAIGoalAndAction

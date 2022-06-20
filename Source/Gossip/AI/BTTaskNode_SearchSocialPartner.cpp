@@ -22,8 +22,12 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 	if (!SocialComp) return EBTNodeResult::Failed;
 
 	AActor* TargetActor = SocialComp->FindSocialPartner();
-	if (!TargetActor) return EBTNodeResult::Failed;
-
+	if (!TargetActor)
+	{
+		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
+		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
+		return EBTNodeResult::Failed;
+	}
 	NPC->SetMoveSpeed(1);
 	BlackboardComp->SetValueAsObject("TargetActor", TargetActor);
 	return EBTNodeResult::Succeeded;

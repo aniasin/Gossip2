@@ -47,6 +47,7 @@ public:
 	EAlignmentState GetAlignment(float Respect, float Love);
 
 	AActor* FindSocialPartner();
+	FVector FindFriendShelter();
 
 	TMap<FGuid, FAlignment> GetKnownOthers() { return KnownOthers; }
 	TArray<AActor*>GetFriends() { return Friends; }

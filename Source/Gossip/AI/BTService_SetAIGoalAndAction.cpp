@@ -74,6 +74,11 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	CheckStock();
 	SetTravelRoute();
 
+	if (NewAction == (uint8)EAIAction::None && NewGoal == (uint8)EAIGoal::None)
+	{
+		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
+	}
+
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
 	AIController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
 	AIController->BlackboardComponent->SetValueAsEnum("Action", NewAction);
@@ -108,9 +113,11 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 		if (InstinctValue >= 1)
 		{
 			NewGoal = (uint8)Instinct.Goal;
+			NewAction = (uint8)EAIAction::None;
 			break;
 		}
 		NewGoal = (uint8)EAIGoal::None;
+		NewAction = (uint8)EAIAction::None;
 	}
 	if (NewGoal != (uint8)EAIGoal::None)
 	{
@@ -162,7 +169,6 @@ void UBTService_SetAIGoalAndAction::SetAction()
 				NewAction = (uint8)EAIAction::Improve;
 				return;
 			}
-			(uint8)EAIAction::TravelProcessor; 
 			return;
 		}
 
@@ -180,7 +186,6 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 		TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchCollector; return;	}
 		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
-		NewAction = (uint8)EAIAction::TravelCollector;
 		return;
 	}
 	if (NewAction == (uint8)EAIAction::TravelProcessor)
@@ -188,7 +193,7 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 		TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
 		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
 		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
-		NewAction = (uint8)EAIAction::TravelProcessor;
+		return;
 	}
 }
 
@@ -198,9 +203,9 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
-		if (Instinct.bStockable == false) continue;
-		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && PreviousAction != (uint8)EAIAction::StockProcessed
-			|| InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= InventoryComp->StockingLimit)
+		if (!Instinct.bRawStockable && !Instinct.bProcessedStockable) continue;
+		if (Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && PreviousAction != (uint8)EAIAction::StockProcessed
+			|| Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= InventoryComp->StockingLimit)
 		{
 			NewAction = (uint8)EAIAction::StockRaw;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);
@@ -211,7 +216,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}
-		if (InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) >= 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 3)
+		if (Instinct.bProcessedStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) >= 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 3)
 		{
 			NewAction = (uint8)EAIAction::StockProcessed;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);

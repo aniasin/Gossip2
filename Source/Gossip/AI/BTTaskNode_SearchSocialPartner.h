@@ -15,4 +15,5 @@ class GOSSIP_API UBTTaskNode_SearchSocialPartner : public UBTTaskNode
 	GENERATED_BODY()
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)override;
+
 };

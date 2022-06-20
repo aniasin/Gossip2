@@ -24,6 +24,7 @@ enum class EAIStatus : uint8
 	Socialize			UMETA(DisplayName = "Socialize"),
 	Follow				UMETA(DisplayName = "Follow"),
 	LeadHome			UMETA(DisplayName = "LeadHome"),
+	Altruism			UMETA(DisplayName = "Altruism"),
 };
 
 // Instincts
@@ -85,7 +86,10 @@ struct FInstinctValues
 	UPROPERTY(EditAnywhere)
 	float ReportedValue;
 	UPROPERTY(EditAnywhere)
-	bool bStockable;
+	bool bRawStockable;
+	UPROPERTY(EditAnywhere)
+	bool bProcessedStockable;
+
 };
 
 // Social

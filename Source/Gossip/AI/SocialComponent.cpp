@@ -192,6 +192,16 @@ AActor* USocialComponent::FindSocialPartner()
 	return nullptr;
 }
 
+FVector USocialComponent::FindFriendShelter()
+{
+	if (GetFriends().IsEmpty()) return FVector::ZeroVector;
+	const TArray<AActor*> FriendsArray = GetFriends();
+	AActor* Friend = FriendsArray[FMath::RandRange(0, FriendsArray.Num() - 1)];
+	AGS_AIController* FriendController = Cast<AGS_AIController>(Friend->GetInstigatorController());
+	if (!FriendController) return FVector::ZeroVector;
+	return FriendController->BlackboardComponent->GetValueAsVector("HomeLocation");
+}
+
 FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 {
 	FAlignment AlignmentChange;
