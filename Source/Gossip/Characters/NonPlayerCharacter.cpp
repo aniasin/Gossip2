@@ -67,11 +67,12 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 // 
 		for (AActor* Friend : SocialComp->GetFriends())
 		{
-			FString Message = FString::Printf(TEXT("%s"), *Friend->GetName());
+			ANonPlayerCharacter* FriendCharacter = Cast<ANonPlayerCharacter>(Friend);
+			FString Message = FString::Printf(TEXT("%s %s"), *FriendCharacter->CharacterName.FirstName, * FriendCharacter->CharacterName.LastName);
 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 			PosZ += 30;
 		}
-		FString Message = FString::Printf(TEXT("==== FRIENDS ===="), *CharacterName.FirstName, *CharacterName.LastName);
+		FString Message = FString::Printf(TEXT("==== FRIENDS ===="));
 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 	}	
 }

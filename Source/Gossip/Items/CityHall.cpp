@@ -41,8 +41,16 @@ void ACityHall::Tick(float DeltaTime)
 			TimeRemaining = FString::SanitizeFloat(GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle));
 		}
 		Index++;
-		AActor* Pretender = Event.Guests[0];
-		FString Message = FString::Printf(TEXT("%s's Wedding : Time remaining : %s"), *Pretender->GetName(), *TimeRemaining);
+		ANonPlayerCharacter* PretenderCharacter = Cast<ANonPlayerCharacter>(Event.Guests[0]);
+		FString Message = FString::Printf(TEXT("%s %s's Wedding : Time remaining : %s"), *PretenderCharacter->CharacterName.FirstName, 
+			*PretenderCharacter->CharacterName.LastName, *TimeRemaining);
+		for (AActor* Friend : Event.Guests)
+		{
+			ANonPlayerCharacter* FriendCharacter = Cast<ANonPlayerCharacter>(Friend);
+			FString FriendName = FString::Printf(TEXT(" %s %s "), *FriendCharacter->CharacterName.FirstName, *FriendCharacter->CharacterName.LastName);
+			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), FriendName, this, FColor::Cyan, DeltaTime);
+			PosZ += 30;
+		}
 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 		PosZ += 30;
 	}

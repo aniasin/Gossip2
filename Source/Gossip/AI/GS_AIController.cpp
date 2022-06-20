@@ -37,6 +37,9 @@ AGS_AIController::AGS_AIController()
 	SightConfig->SightRadius = SightRange;
 	SightConfig->LoseSightRadius = LoseSightRange;
 	HearingConfig->HearingRange = HearingRange;
+	
+	PerceptionComponent->UpdatePerceptionAllowList(SightConfig->GetSenseID(), false);
+	PerceptionComponent->UpdatePerceptionAllowList(HearingConfig->GetSenseID(), false);
 }
 
 void AGS_AIController::OnPossess(APawn* InPawn)
@@ -83,9 +86,11 @@ void AGS_AIController::AIMoveToLocation(FVector Location)
 
 TArray<AActor*> AGS_AIController::GetCurrentlyPerceivedActors()
 {
+	PerceptionComponent->UpdatePerceptionAllowList(SightConfig->GetSenseID(), true);
 	TArray<AActor*> SeenActors;
 	PerceptionComponent->GetCurrentlyPerceivedActors(TSubclassOf<UAISense_Sight>(), SeenActors);
 
+	PerceptionComponent->UpdatePerceptionAllowList(SightConfig->GetSenseID(), false);
 	return SeenActors;
 }
 

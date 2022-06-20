@@ -93,7 +93,7 @@ private:
 
 	void UpdateAlignment(AActor* Other);
 	FAlignment CalculateAlignmentChange(AActor* Other);
-	void UpdateFriendList(FGuid Guid, AActor* Other, int32 Proximity);
+	void UpdateFriendList(AActor* Actor, AActor* Other, int32 Proximity);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
 	template<typename TEnum>

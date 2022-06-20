@@ -48,9 +48,7 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 		NewAlignment.Respect = 0;
 		NewAlignment.Proximity = 0;
 		NewAlignment.Gender = OtherSocialComp->CharacterProfile;
-		KnownOthers.Add(Guid, NewAlignment);
-
-		UpdateFriendList(Guid, Other, NewAlignment.Proximity);
+		KnownOthers.Add(Guid, NewAlignment);	
 	}
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[Guid].Respect, KnownOthers[Guid].Love);
 
@@ -67,6 +65,7 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	UpdateAlignment(Other);
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
+	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
 	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
@@ -76,6 +75,7 @@ int32 USocialComponent::RespondToInteraction(AActor* Other)
 
 	UpdateAlignment(Other);
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
+	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
 	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
@@ -236,17 +236,18 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	return AlignmentChange;
 }
 
-void USocialComponent::UpdateFriendList(FGuid Guid, AActor* Other, int32 Proximity)
+void USocialComponent::UpdateFriendList(AActor* Actor, AActor* Other, int32 Proximity)
 {
-
-	if (Proximity >= 5)
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->GetComponentByClass(USocialComponent::StaticClass()));
+	if (Proximity >= ProximityScoreForFiancee / 2)
 	{
-		FriendsGuid.AddUnique(Guid);
+		FriendsGuid.AddUnique(OtherSocialComp->Id);
 		Friends.AddUnique(Other);
+		return;
 	}
-	else if (Friends.Contains(Other) && FriendsGuid.Contains(Guid))
+	if (Friends.Contains(Other) && FriendsGuid.Contains(OtherSocialComp->Id))
 	{
-		FriendsGuid.Remove(Guid);
+		FriendsGuid.Remove(OtherSocialComp->Id);
 		Friends.Remove(Other);
 	}
 }
