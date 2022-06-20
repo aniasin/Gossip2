@@ -78,6 +78,5 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
 
-
 	return EBTNodeResult::Succeeded;
 }

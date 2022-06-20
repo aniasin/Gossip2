@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class URessourceDataAsset* RessourceDataAsset;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ERessourceSubType RessourceSubType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

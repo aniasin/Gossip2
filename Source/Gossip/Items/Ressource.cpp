@@ -36,11 +36,14 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
+	if (RessourceSubType == ERessourceSubType::None) {
+		UE_LOG(LogTemp, Error, TEXT("RessourceSubType is not set in %s"), *GetName()); return;
+	}
+
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
-	RessourceData = RessourceInfos->RessourceDataMap[RessourceType];
-
-	if (RessourceType == EAIGoal::None) return;
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
+	RessourceType = RessourceData.RessourceType;
 	
 	UStaticMesh* MeshPtr;
 	if (!RessourceData.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
@@ -64,9 +67,12 @@ void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (RessourceSubType == ERessourceSubType::None) {
+		UE_LOG(LogTemp, Error, TEXT("RessourceSubType is not set in %s"), *GetName()); return;
+	}
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
-	RessourceData = RessourceInfos->RessourceDataMap[RessourceType];
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
 
 	if (IsValid(Mesh->GetStaticMesh()))
 	{

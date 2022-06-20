@@ -17,5 +17,5 @@ class GOSSIP_API URessourceDataAsset : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<EAIGoal, FRessourceData> RessourceDataMap;
+	TMap<ERessourceSubType, FRessourceData> RessourceDataMap;
 };

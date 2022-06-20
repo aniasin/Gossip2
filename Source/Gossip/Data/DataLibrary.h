@@ -221,11 +221,26 @@ struct FShelterData
 };
 
 // Ressource
+UENUM(BlueprintType)
+enum class ERessourceSubType : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	Vegetable			UMETA(DisplayName = "Vegetable"),
+	Meat				UMETA(DisplayName = "Meat"),
+	Wood				UMETA(DisplayName = "Wood"),
+	Stone				UMETA(DisplayName = "Stone"),
+	Iron				UMETA(DisplayName = "Iron"),
+	SimpleBed			UMETA(DisplayName = "Simple Bed"),
+	SimpleFire			UMETA(DisplayName = "Simple Fire"),	
+};
+
 USTRUCT(BlueprintType)
 struct FRessourceData
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAIGoal RessourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSoftObjectPath> MeshesPtr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

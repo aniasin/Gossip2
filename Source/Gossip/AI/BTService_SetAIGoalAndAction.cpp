@@ -29,10 +29,6 @@ void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& Own
 	{
 		Interval = GM->GameHourDurationSeconds * 2;
 	}
-
-	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-	if (!BlackboardComp) { return; }
-	
 }
 
 //////////////////////////////////////////////////////////////
@@ -55,9 +51,10 @@ bool UBTService_SetAIGoalAndAction::InitializeService(UBehaviorTreeComponent& Ow
 
 	PreviousGoal = AIController->BlackboardComponent->GetValueAsEnum("Goal");
 	PreviousAction = AIController->BlackboardComponent->GetValueAsEnum("Action");
-	PreviousAISatus = AIController->BlackboardComponent->GetValueAsEnum("AIStatus");
+	PreviousAIStatus = AIController->BlackboardComponent->GetValueAsEnum("AIStatus");
 	NewGoal = (uint8)EAIGoal::None;
 	NewAction = (uint8)EAIAction::None;
+	NewAIStatus = (uint8)EAIStatus::None;
 
 	return true;
 }
@@ -68,26 +65,23 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	if (!InitializeService(OwnerComp)) return;
 
-	if (PreviousAISatus == (uint8)EAIStatus::LeadHome || PreviousAISatus == (uint8)EAIStatus::Follow) return;
+	if (PreviousAIStatus == (uint8)EAIStatus::LeadHome || PreviousAIStatus == (uint8)EAIStatus::Follow) return;
 	StopSearching();
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
 
-	if (NewAction == (uint8)EAIAction::None && NewGoal == (uint8)EAIGoal::None)
-	{
-		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
-	}
-
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
 	AIController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
 	AIController->BlackboardComponent->SetValueAsEnum("Action", NewAction);
+	AIController->BlackboardComponent->SetValueAsEnum("AIStatus", NewAIStatus);
 }
+
 
 void UBTService_SetAIGoalAndAction::StopSearching()
 {
 	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor
-		|| PreviousAISatus == (uint8)EAIStatus::SearchSocialize)
+		|| PreviousAIStatus == (uint8)EAIStatus::SearchSocialize)
 	{
 		if (!AIController->HasTimeSearchingElapsed()) return;
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
@@ -121,7 +115,7 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 	}
 	if (NewGoal != (uint8)EAIGoal::None)
 	{
-		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+		NewAIStatus = (uint8)EAIStatus::None;
 		SetAction();
 	}
 }
@@ -173,7 +167,7 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		}
 
 	case EAIInstinct::Reproduction:
-		AIController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::SearchSocialize);
+		NewAIStatus = (uint8)EAIStatus::SearchSocialize;
 		return;
 	}
 	NewAction = (uint8)EAIInstinct::None;

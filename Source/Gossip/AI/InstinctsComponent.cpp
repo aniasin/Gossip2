@@ -48,9 +48,9 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 		if (Instinct.Goal == Goal)
 		{
 			CurrentInstinct = (EAIInstinct)Instinct.Instinct;
-			Instinct.GrowCoeffient += 0.1;
+			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
 			float NewValue = FMath::Abs(Instinct.CurrentValue);
-			NewValue -= 1;
+			FMath::Clamp(NewValue -= 1, 0, 10);
 			Instinct.CurrentValue = NewValue;
 			break;
 		}
@@ -59,13 +59,13 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 	{
 		if (CurrentInstinct == (EAIInstinct)Instinct.Instinct && Instinct.Goal != Goal)
 		{
-			Instinct.GrowCoeffient += 0.1;
+			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
 		}
 		if (CurrentInstinct == EAIInstinct::Assimilation && Instinct.Instinct == EAIInstinct::Conservation
 			|| CurrentInstinct == EAIInstinct::Conservation && Instinct.Instinct == EAIInstinct::Reproduction
 			|| CurrentInstinct == EAIInstinct::Reproduction && Instinct.Instinct == EAIInstinct::Assimilation)
 		{
-			Instinct.GrowCoeffient -= 0.1;
+			FMath::Clamp(Instinct.GrowCoeffient -= 0.1, 0, 10);
 		}
 	}
 }

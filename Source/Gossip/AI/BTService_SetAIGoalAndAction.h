@@ -34,9 +34,10 @@ private:
 	class UInstinctsComponent* InstinctsComp;
 	uint8 PreviousGoal;
 	uint8 PreviousAction;
-	uint8 PreviousAISatus;
+	uint8 PreviousAIStatus;
 	uint8 NewGoal;
 	uint8 NewAction;
+	uint8 NewAIStatus;
 
 	void StopSearching();
 	void SetGoalAndAction();
