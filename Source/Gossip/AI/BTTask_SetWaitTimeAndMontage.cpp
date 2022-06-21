@@ -26,9 +26,12 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	if (!InventoryComp) return EBTNodeResult::Failed;
 
 	ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
+
+	// No Ressource
 	if (!Ressource)
 	{
 		EAIGoal CurrentGoal = (EAIGoal)BlackboardComp->GetValueAsEnum("Goal");
+		EAIAction CurrentAction = (EAIAction)BlackboardComp->GetValueAsEnum("Action");
 		switch (CurrentGoal)
 		{
 		case EAIGoal::Food:
@@ -51,6 +54,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 		return EBTNodeResult::Failed;
 	}
 
+	// Ressource
 	if (Ressource->ContentCount <= 0)
 	{
 		InventoryComp->RemoveKnownRessourceCollector(Ressource);

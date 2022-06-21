@@ -17,21 +17,23 @@ void UInventory::BeginPlay()
 }
 
 
-void UInventory::AddOwnedItem(EAIGoal RessourceType, bool bRaw)
+void UInventory::AddOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
 	FInventoryItem Item;
 	Item.Ressource = RessourceType;
+	Item.RessourceSubType = RessourceSubType;
 	Item.bRaw = bRaw;
 	Item.Time = 0;
 	InventoryItems.Add(Item);
 }
 
-void UInventory::RemoveOwnedItem(EAIGoal RessourceType, bool bRaw)
+// RessourceSubType None if it doesn't matter.
+void UInventory::RemoveOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
 	int32 Index = 0;
 	for (FInventoryItem Item : InventoryItems)
 	{
-		if (Item.Ressource == RessourceType && Item.bRaw == bRaw)
+		if (Item.Ressource == RessourceType && Item.bRaw == bRaw && (Item.RessourceSubType == RessourceSubType || RessourceSubType == ERessourceSubType::None))
 		{
 			InventoryItems.RemoveAt(Index);
 			return;
@@ -40,13 +42,13 @@ void UInventory::RemoveOwnedItem(EAIGoal RessourceType, bool bRaw)
 	}
 }
 
-int32 UInventory::GetOwnedItemsCount(EAIGoal RessourceType, bool bRaw)
+int32 UInventory::GetOwnedItemsCount(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
 	// TODO check for Time and remove if spoiled
 	int32 Count = 0;
 	for (FInventoryItem Item : InventoryItems)
 	{
-		if (Item.Ressource == RessourceType && Item.bRaw == bRaw) Count++;
+		if (Item.Ressource == RessourceType && Item.bRaw == bRaw && (Item.RessourceSubType == RessourceSubType || RessourceSubType == ERessourceSubType::None)) Count++;
 	}
 	return Count;
 }

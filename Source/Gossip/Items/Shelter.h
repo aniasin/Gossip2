@@ -81,6 +81,8 @@ public:
 	void BeginConstruct();
 	void ConstructShelter();
 
+	ERessourceSubType GetRessourceSubTypeForImprovement() { return RessourceForImprovement; }
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveValues)override;
@@ -109,5 +111,6 @@ private:
 	void OnAsyncLoadConstructionComplete();
 
 	FShelterData ShelterData;
+	ERessourceSubType RessourceForImprovement;
 
 };

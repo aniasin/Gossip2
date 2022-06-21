@@ -148,6 +148,7 @@ TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary()
 		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
 		{
 			SaveData = CurrentSaveGame->SaveData;
+			RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
 		}
 	}
 	return SaveData;
@@ -158,6 +159,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
 	if (!CurrentSaveGame) return false;
 	CurrentSaveGame->SaveData = SaveData;
+	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds()  + RealGameTimeSeconds;
 
 	TArray<uint8>OutSaveData;
 	if (!UGameplayStatics::SaveGameToMemory(CurrentSaveGame, OutSaveData)) return false;
@@ -170,22 +172,9 @@ void UGS_GameInstance::RestoreGameState()
 	Travel("Map_01");
 }
 
-void UGS_GameInstance::AsyncLoadGame()
+void UGS_GameInstance::OnMapLoaded()
 {
-	FAsyncLoadGameFromSlotDelegate LoadedDelegate;
-	LoadedDelegate.BindUObject(this, &UGS_GameInstance::OnFinishedLoadGameData);
-	UGameplayStatics::AsyncLoadGameFromSlot("SaveGame", 0, LoadedDelegate);
-}
-
-void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int32 Index, USaveGame* GameObject)
-{
-	UGS_SaveGame_Object* SaveGameObject = Cast<UGS_SaveGame_Object>(GameObject);
-	if (!SaveGameObject) return;
-
-	UE_LOG(LogTemp, Warning, TEXT("Loading Game..."))
-
-	TMap<FGuid, FSaveStruct>SaveData = SaveGameObject->SaveData;
-
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
@@ -199,10 +188,4 @@ void UGS_GameInstance::OnFinishedLoadGameData(const FString& SaveName, const int
 			SaveableEntity->RestoreState(SaveData[SaveableEntity->Id]);
 		}
 	}
-	
-}
-
-void UGS_GameInstance::OnMapLoaded()
-{
-	AsyncLoadGame();
 }

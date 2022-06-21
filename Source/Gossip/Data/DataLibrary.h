@@ -290,12 +290,14 @@ struct FInventoryItem
 {
 	GENERATED_BODY()
 
-		UPROPERTY()
-		EAIGoal Ressource;
 	UPROPERTY()
-		bool bRaw;
+	EAIGoal Ressource;
 	UPROPERTY()
-		float Time;
+	ERessourceSubType RessourceSubType;
+	UPROPERTY()
+	bool bRaw;
+	UPROPERTY()
+	float Time;
 };
 
 // Sociology

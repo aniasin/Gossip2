@@ -70,6 +70,19 @@ void AShelter::BeginPlay()
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
 	CurrentLevel = ShelterData.ShelterLevel;
 
+	switch (ShelterGrade)
+	{
+	case ESocialPosition::None:
+	case ESocialPosition::Noble:
+	case ESocialPosition::Bourgeois:
+		RessourceForImprovement = ERessourceSubType::Stone;
+		break;
+	case ESocialPosition::Worker:
+	case ESocialPosition::Tchandala:
+		RessourceForImprovement = ERessourceSubType::Wood;
+		break;
+	}
+
 	InitializeShelter();
 	SpawnNPC();
 }
@@ -91,6 +104,7 @@ void AShelter::SpawnNPC()
 		{
 			NpcInventory->AddKnownRessourceCollector(SleepCollector);
 			NpcInventory->AddKnownRessourceProcessor(FoodProcessor);
+			NpcInventory->RessourceForShelter = RessourceForImprovement;
 		}
 
 		NPC->SetCharacterProfile(this);

@@ -52,12 +52,9 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	else { Mesh->SetStaticMesh(nullptr); }
 
 	UAnimMontage* MontagePtr;
-	if (RessourceData.MontagePath != nullptr)
-	{
-		MontagePtr = LoadObject<UAnimMontage>(nullptr, *RessourceData.MontagePath.ToString());
-		if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
-		else { AnimMontage = nullptr; }
-	}
+	MontagePtr = LoadObject<UAnimMontage>(nullptr, *RessourceData.MontagePath.ToString());
+	if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
+	else { AnimMontage = nullptr; }
 
 	bRaw = RessourceData.bRaw;
 	WaitTime = RessourceData.WaitTime;

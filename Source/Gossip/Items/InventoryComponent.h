@@ -35,6 +35,8 @@ public:
 	// Warning can return nullptr
 	AActor* SearchNearestKnownRessourceProcessor(EAIGoal RessourceType);
 
+	ERessourceSubType RessourceForShelter;
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;

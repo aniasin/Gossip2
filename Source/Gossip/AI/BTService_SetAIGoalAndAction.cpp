@@ -139,10 +139,10 @@ void UBTService_SetAIGoalAndAction::SetAction()
 	case EAIInstinct::None:
 		break;
 	case EAIInstinct::Assimilation:
-		OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, false);
+		OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, false);
 		if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy;  return; }
 
-		OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+		OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, true);
 		if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::TravelProcessor;  return; }
 
 		NewAction = (uint8)EAIAction::TravelCollector;
@@ -156,7 +156,7 @@ void UBTService_SetAIGoalAndAction::SetAction()
 			return;
 		case  EAIGoal::Shelter:
 			if (!InventoryComp->ShelterActor) return;
-			OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, true);
+			OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, InventoryComp->RessourceForShelter, true);
 			if (OwnedRessourceRaw > 0) 
 			{
 				AIController->BlackboardComponent->SetValueAsObject("TargetActor", InventoryComp->ShelterActor);
@@ -197,11 +197,16 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 {
 	if (NewGoal != ((uint8)EAIGoal::None)) return;
 
+	ERessourceSubType RessourceSubType = ERessourceSubType::None;
+	NewGoal == (uint8)EAIGoal::Shelter ? RessourceSubType = InventoryComp->RessourceForShelter : ERessourceSubType::None;
+
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
 		if (!Instinct.bRawStockable && !Instinct.bProcessedStockable) continue;
-		if (Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && PreviousAction != (uint8)EAIAction::StockProcessed
-			|| Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) < InventoryComp->StockingLimit && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) >= InventoryComp->StockingLimit)
+		if (Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, true) < InventoryComp->StockingLimit 
+			&& PreviousAction != (uint8)EAIAction::StockProcessed
+			|| Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, true) < InventoryComp->StockingLimit 
+			&& InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, false) >= InventoryComp->StockingLimit)
 		{
 			NewAction = (uint8)EAIAction::StockRaw;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)Instinct.Goal);
@@ -212,7 +217,8 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}
-		if (Instinct.bProcessedStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, true) >= 0 && InventoryComp->GetOwnedItemsCount(Instinct.Goal, false) < 3)
+		if (Instinct.bProcessedStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, true) >= 0 
+			&& InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, false) < 3)
 		{
 			NewAction = (uint8)EAIAction::StockProcessed;
 			TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)Instinct.Goal);
@@ -223,7 +229,6 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 			NewGoal = (uint8)Instinct.Goal;
 			return;
 		}
-
 	}
 	NewAction = (uint8)EAIAction::None;
 	NewGoal = (uint8)EAIGoal::None;	

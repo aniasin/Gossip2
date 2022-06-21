@@ -23,8 +23,8 @@ void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
 
 	if (InventoryComp)
 	{
-		InventoryComp->RemoveOwnedItem(RessourceType, true);
-		InventoryComp->AddOwnedItem(RessourceType, false);
+		InventoryComp->RemoveOwnedItem(RessourceType, RessourceSubType, true);
+		InventoryComp->AddOwnedItem(RessourceType, RessourceSubType, false);
 	}
 }
 

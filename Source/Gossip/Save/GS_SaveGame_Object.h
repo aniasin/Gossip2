@@ -24,6 +24,8 @@ public:
 	UPROPERTY()
 	FDateTime CreationTime;
 	UPROPERTY()
+	float GameTimeSeconds;
+	UPROPERTY()
 	TMap<FGuid, FSaveStruct> SaveData;
 
 };

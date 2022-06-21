@@ -57,6 +57,7 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 		if (CurrentInstinct == (EAIInstinct)Instinct.Instinct)
 		{
 			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
+			continue;
 		}
 		if (CurrentInstinct == EAIInstinct::Assimilation && Instinct.Instinct == EAIInstinct::Conservation
 			|| CurrentInstinct == EAIInstinct::Conservation && Instinct.Instinct == EAIInstinct::Reproduction

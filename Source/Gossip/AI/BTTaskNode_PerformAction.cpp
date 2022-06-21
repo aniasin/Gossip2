@@ -42,7 +42,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::Satisfy)
 	{	
 		InstinctsComp->SatisfyInstinct(Goal);
-		InventoryComp->RemoveOwnedItem(Goal, false);
+		InventoryComp->RemoveOwnedItem(Goal, ERessourceSubType::None, false);
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
 		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
@@ -51,10 +51,13 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::Improve)
 	{
 		InstinctsComp->SatisfyInstinct(Goal);
-		InventoryComp->RemoveOwnedItem(Goal, false);
+		InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
 		AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 		if (!ShelterActor) return EBTNodeResult::Failed;
 		ShelterActor->ConstructShelter();
+		BlackboardComp->SetValueAsFloat("WaitTime", 1);
+		BlackboardComp->ClearValue("TargetActor");
+		return EBTNodeResult::Succeeded;
 	}
 
 	if (Action == EAIAction::SearchProcessor || Action == EAIAction::SearchCollector || Action == EAIAction::TravelCollector || Action == EAIAction::TravelProcessor
@@ -78,7 +81,6 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			break;
 		case EAIInstinct::Assimilation:
 			Ressource->CollectRessource(InventoryComp);
-			BlackboardComp->ClearValue("TargetActor");
 			break;
 
 		case EAIInstinct::Conservation:
@@ -87,11 +89,9 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			case EAIGoal::Sleep:
 			case EAIGoal::Rest:
 				InstinctsComp->SatisfyInstinct(Goal);
-				BlackboardComp->ClearValue("TargetActor");
 				break;
 			case EAIGoal::Shelter:
 				Ressource->CollectRessource(InventoryComp);
-				BlackboardComp->ClearValue("TargetActor");
 				break;
 			}
 
@@ -101,6 +101,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		}
 		NPC->StopAnimMontage();
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
+		BlackboardComp->ClearValue("TargetActor");
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;
