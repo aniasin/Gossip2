@@ -48,6 +48,7 @@ public:
 	TArray<AActor*> GetCurrentlyPerceivedActors();
 
 	void ResetAI();
+	void RequestMoveToLocation(FVector Location, EAIStatus Reason);
 
 	void SetTimeSearching();
 	bool HasTimeSearchingElapsed();

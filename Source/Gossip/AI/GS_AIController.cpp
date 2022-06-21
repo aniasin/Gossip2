@@ -101,6 +101,12 @@ void AGS_AIController::ResetAI()
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
 }
 
+void AGS_AIController::RequestMoveToLocation(FVector Location, EAIStatus Reason)
+{
+	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
+	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)Reason);
+}
+
 void AGS_AIController::SetTimeSearching()
 {
 	TimeSearching = GetWorld()->GetTimeSeconds();

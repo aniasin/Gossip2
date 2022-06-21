@@ -64,6 +64,12 @@ void UFamilyComponent::ResetOwnersAI(AActor* Other)
 	OtherAIController->ResetAI();
 }
 
+void UFamilyComponent::CityHallCalling(FVector Location)
+{
+	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
+	AIController->RequestMoveToLocation(Location, EAIStatus::CityHallCall);
+}
+
 // ISaveGameInterface
 FSaveValues UFamilyComponent::CaptureState()
 {

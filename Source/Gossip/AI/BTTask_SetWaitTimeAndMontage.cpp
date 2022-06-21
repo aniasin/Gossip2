@@ -25,6 +25,9 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(InventoryComponent);
 	if (!InventoryComp) return EBTNodeResult::Failed;
 
+	AGossipGameMode* GM = Cast<AGossipGameMode>(NPC->GetWorld()->GetAuthGameMode());
+	if (!GM) return EBTNodeResult::Failed;
+
 	ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
 
 	// No Ressource
@@ -39,8 +42,6 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			return EBTNodeResult::Succeeded;
 
 		case EAIGoal::Shelter:
-			AGossipGameMode* GM = Cast<AGossipGameMode>(NPC->GetWorld()->GetAuthGameMode());
-			if (!GM) return EBTNodeResult::Failed;
 			BlackboardComp->SetValueAsFloat("WaitTime", GM->GameHourDurationSeconds);
 			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
@@ -72,6 +73,6 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 		}
 	}
 
-	BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime);
+	BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime * GM->GameHourDurationSeconds);
 	return EBTNodeResult::Succeeded;
 }

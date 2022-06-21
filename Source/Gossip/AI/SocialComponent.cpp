@@ -66,7 +66,7 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return KnownOthers[OtherSocialComp->Id].Proximity;
+	return OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2;
 }
 
 int32 USocialComponent::RespondToInteraction(AActor* Other)
@@ -76,7 +76,7 @@ int32 USocialComponent::RespondToInteraction(AActor* Other)
 	UpdateAlignment(Other);
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return KnownOthers[OtherSocialComp->Id].Proximity;
+	return OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
@@ -96,8 +96,7 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 	NewAlignment = CalculateAlignmentChange(Other);
 	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
 	NewAlignment.Love += KnownOthers[OtherGuid].Love;
-	int32 ProximityChanged = NewAlignment.Proximity + KnownOthers[OtherGuid].Proximity;
-	NewAlignment.Proximity = FMath::Clamp(ProximityChanged, -10, 10);
+	NewAlignment.Proximity = FMath::Clamp(OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2, -10, 10);
 	KnownOthers.Add(OtherGuid, NewAlignment);
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherGuid].Respect, KnownOthers[OtherGuid].Love);

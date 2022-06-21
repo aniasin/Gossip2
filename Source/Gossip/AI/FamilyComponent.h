@@ -30,6 +30,8 @@ public:
 	void SetCurrentFiancee(AActor* Fiancee) { CurrentFiancee = Fiancee; }
 	void ResetOwnersAI(AActor* Other);
 
+	void CityHallCalling(FVector Location);
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;

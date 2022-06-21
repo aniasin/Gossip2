@@ -65,7 +65,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	if (!InitializeService(OwnerComp)) return;
 
-	if (PreviousAIStatus == (uint8)EAIStatus::LeadHome || PreviousAIStatus == (uint8)EAIStatus::Follow) return;
+	if (PreviousAIStatus == (uint8)EAIStatus::LeadHome || PreviousAIStatus == (uint8)EAIStatus::Follow || PreviousAIStatus == (uint8)EAIStatus::CityHallCall) return;
 	StopSearching();
 	SetGoalAndAction();	
 	CheckStock();

@@ -24,7 +24,7 @@ enum class EAIStatus : uint8
 	Socialize			UMETA(DisplayName = "Socialize"),
 	Follow				UMETA(DisplayName = "Follow"),
 	LeadHome			UMETA(DisplayName = "LeadHome"),
-	Altruism			UMETA(DisplayName = "Altruism"),
+	CityHallCall		UMETA(DisplayName = "CityHallCall"),
 };
 
 // Instincts

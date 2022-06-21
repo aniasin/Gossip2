@@ -39,6 +39,8 @@ public:
 	class USaveableEntity* SaveComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float CityEventGameHourDuration = 2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float GameHoursWaitForEvent = 12;
 
 	void AddInhabitants(class ANonPlayerCharacter* Actors);
@@ -59,6 +61,7 @@ private:
 	UFUNCTION()
 	void NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests);
 	// OverrideTime -1: no Override / 0 = Immediate / +1: Override
+	UFUNCTION()
 	void BeginCityHallEvent(float OverrideTime);
 	UFUNCTION()
 	void ConvokeCityHallEvent(FCityHallEvent Event);

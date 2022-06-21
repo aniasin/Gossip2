@@ -85,9 +85,9 @@ void ACityHall::BeginCityHallEvent(float OverrideTime)
 	if (GetWorldTimerManager().IsTimerActive(CityEventTimerHandle)) return;
 	for (FCityHallEvent Event : EventsQueued)
 	{
-		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "ConvokeCityHallEvent", Event);
-		GetWorldTimerManager().SetTimer(CityEventTimerHandle, Delegate, TimeToWait, false);
+		FTimerDelegate ConvokeDelegate;
+		ConvokeDelegate.BindUFunction(this, "ConvokeCityHallEvent", Event);
+		GetWorldTimerManager().SetTimer(CityEventTimerHandle, ConvokeDelegate, GameHoursWaitForEvent * GM->GameHourDurationSeconds, false);
 		break;
 	}	
 }
@@ -95,9 +95,22 @@ void ACityHall::BeginCityHallEvent(float OverrideTime)
 void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event)
 {
 	UE_LOG(LogTemp, Warning, TEXT("City Event!"))
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GM) return;
+
+	for (AActor* Actor : Event.Guests)
+	{
+		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+		FamilyComp->CityHallCalling(GetActorLocation());
+	}
+
 	GetWorldTimerManager().ClearTimer(CityEventTimerHandle);
 	EventsQueued.RemoveAt(0);
-	BeginCityHallEvent(-1);
+
+	FTimerDelegate BeginDelegate;
+	FTimerHandle TimerHandle;
+	BeginDelegate.BindUFunction(this, "BeginCityHallEvent", -1);
+	GetWorldTimerManager().SetTimer(TimerHandle, BeginDelegate, CityEventGameHourDuration * GM->GameHourDurationSeconds, false);
 }
 
 void ACityHall::AddInhabitants(ANonPlayerCharacter* NPC)
