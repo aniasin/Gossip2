@@ -37,6 +37,7 @@ enum class EAIGoal : uint8
 	Knowledge			UMETA(DisplayName = "Knowledge"),
 
 	Sleep				UMETA(DisplayName = "Sleep"),
+	Rest				UMETA(DisplayName = "Rest"),
 	Shelter				UMETA(DisplayName = "Shelter"),
 	Wealth				UMETA(DisplayName = "Wealth"),
 
@@ -231,7 +232,8 @@ enum class ERessourceSubType : uint8
 	Stone				UMETA(DisplayName = "Stone"),
 	Iron				UMETA(DisplayName = "Iron"),
 	SimpleBed			UMETA(DisplayName = "Simple Bed"),
-	SimpleFire			UMETA(DisplayName = "Simple Fire"),	
+	SimpleFire			UMETA(DisplayName = "Simple Fire"),
+	SimpleRest			UMETA(DisplayName = "Simple Rest"),
 };
 
 USTRUCT(BlueprintType)

@@ -43,21 +43,18 @@ void UInstinctsComponent::BeginPlay()
 void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 {
 	EAIInstinct CurrentInstinct = EAIInstinct::None;
+	// Must loop twice because we need to find the actual Instinct (CurrentInstinct).
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		if (Instinct.Goal == Goal)
-		{
-			CurrentInstinct = (EAIInstinct)Instinct.Instinct;
-			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
-			float NewValue = FMath::Abs(Instinct.CurrentValue);
-			FMath::Clamp(NewValue -= 1, 0, 10);
-			Instinct.CurrentValue = NewValue;
-			break;
-		}
+		if (Instinct.Goal != Goal) continue;		
+		CurrentInstinct = (EAIInstinct)Instinct.Instinct;
+		FMath::Clamp(Instinct.CurrentValue -= 1, 0, 10);
+		break;		
 	}
+
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		if (CurrentInstinct == (EAIInstinct)Instinct.Instinct && Instinct.Goal != Goal)
+		if (CurrentInstinct == (EAIInstinct)Instinct.Instinct)
 		{
 			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
 		}
@@ -75,7 +72,7 @@ void UInstinctsComponent::InstinctsUpdate()
 	TArray<EAIGoal> HungryInstincts;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier;
+		FMath::Clamp(Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier, 0, 10);
 		if (FMath::Abs(Instinct.CurrentValue) >= 1) HungryInstincts.AddUnique(Instinct.Goal);
 	}
 	OnInstinctsUpdated.Broadcast(HungryInstincts);

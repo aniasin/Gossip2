@@ -50,13 +50,19 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	MeshPtr = LoadObject<UStaticMesh>(nullptr, *RessourceData.MeshesPtr[DiversityIndex].ToString());
 	if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); } 
 	else { Mesh->SetStaticMesh(nullptr); }
+
 	UAnimMontage* MontagePtr;
-	MontagePtr = LoadObject<UAnimMontage>(nullptr, *RessourceData.MontagePath.ToString());
-	if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
-	else { AnimMontage = nullptr; }
+	if (RessourceData.MontagePath != nullptr)
+	{
+		MontagePtr = LoadObject<UAnimMontage>(nullptr, *RessourceData.MontagePath.ToString());
+		if (IsValid(MontagePtr)) { AnimMontage = MontagePtr; }
+		else { AnimMontage = nullptr; }
+	}
+
 	bRaw = RessourceData.bRaw;
 	WaitTime = RessourceData.WaitTime;
-	ContentCount = RessourceData.ContentCount;
+	MaxContentCount = RessourceData.ContentCount;
+	ContentCount = MaxContentCount;
 	LivingColor = RessourceData.LivingColor;
 	DeadColor = RessourceData.DeadColor;
 	RespawnTime = RessourceData.RespawnTimeInGameHour;
@@ -67,18 +73,12 @@ void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (RessourceSubType == ERessourceSubType::None) {
-		UE_LOG(LogTemp, Error, TEXT("RessourceSubType is not set in %s"), *GetName()); return;
-	}
-	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
-	if (!RessourceInfos) return;
-	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
-
 	if (IsValid(Mesh->GetStaticMesh()))
 	{
 		UMaterialInterface* Material = Mesh->GetMaterial(0);
 		MaterialInstance = Mesh->CreateDynamicMaterialInstance(0, Material);
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
+		Mesh->SetMaterial(0, MaterialInstance);
 	}
 }
 

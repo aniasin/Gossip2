@@ -84,4 +84,6 @@ private:
 	FRessourceData RessourceData;
 	class UMaterialInstanceDynamic* MaterialInstance;
 
+	int32 MaxContentCount;
+
 };

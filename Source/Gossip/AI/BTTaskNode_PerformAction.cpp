@@ -85,6 +85,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			switch (Goal)
 			{
 			case EAIGoal::Sleep:
+			case EAIGoal::Rest:
 				InstinctsComp->SatisfyInstinct(Goal);
 				BlackboardComp->ClearValue("TargetActor");
 				break;

@@ -163,6 +163,8 @@ void UBTService_SetAIGoalAndAction::SetAction()
 				NewAction = (uint8)EAIAction::Improve;
 				return;
 			}
+		case EAIGoal::Rest:
+			NewAction = (uint8)EAIAction::TravelCollector;
 			return;
 		}
 
