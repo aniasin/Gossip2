@@ -27,7 +27,8 @@ void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& Own
 	AGossipGameMode* GM = Cast<AGossipGameMode>(OwnerComp.GetAIOwner()->GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
-		Interval = GM->GameHourDurationSeconds * 2;
+		Interval = GM->GameHourDurationSeconds * 24;
+		
 	}
 }
 
@@ -65,7 +66,6 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	if (!InitializeService(OwnerComp)) return;
 
-	if (PreviousAIStatus == (uint8)EAIStatus::LeadHome || PreviousAIStatus == (uint8)EAIStatus::Follow || PreviousAIStatus == (uint8)EAIStatus::CityHallCall) return;
 	StopSearching();
 	SetGoalAndAction();	
 	CheckStock();

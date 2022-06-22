@@ -103,7 +103,8 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 	NewAlignment = CalculateAlignmentChange(Other);
 	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
 	NewAlignment.Love += KnownOthers[OtherGuid].Love;
-	NewAlignment.Proximity = KnownOthers[OtherGuid].Proximity;
+	int32 NewProximity = FMath::Clamp(NewAlignment.Proximity += KnownOthers[OtherGuid].Proximity, 0, 10);
+	KnownOthers[OtherGuid].Proximity = NewProximity;
 	KnownOthers.Add(OtherGuid, NewAlignment);
 
 	K2_Dialog(NewAlignment.Proximity - OldProximity);
@@ -228,8 +229,8 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	EEmotionalState OtherEmotionalState = OtherSocialComp->OwnEmotionalState;
 
 	float RespectChange = 0;
-	if (OtherSocialPosition == SocialPositionLike) RespectChange += 1;
-	if (OtherSocialPosition == SocialPositionHate)	RespectChange += -1;
+	if (OtherSocialPosition == SocialPositionLike) RespectChange += .5;
+	if (OtherSocialPosition == SocialPositionHate)	RespectChange += -.5;
 
 	for (FSocialChangeTable TableIndex : SocialChangeTable)
 	{
@@ -238,8 +239,8 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	}
 
 	float LoveChange = 0;
-	if (OtherEmotionalState == EmotionalStateLike) LoveChange += 1;
-	if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -1;
+	if (OtherEmotionalState == EmotionalStateLike) LoveChange += .5;
+	if (OtherEmotionalState == EmotionalStateHate)	LoveChange += -.5;
 
 	for (FEmotionalChangeTable TableIndex : EmotionalChangeTable)
 	{
@@ -249,10 +250,9 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 
 	AlignmentChange.Respect = RespectChange;
 	AlignmentChange.Love = LoveChange;
-	int32 ValueToAdd = 0;
-	RespectChange + LoveChange >= 0 ? ValueToAdd = 1 : ValueToAdd = -1;
-	int32 NewProximity = FMath::Clamp(AlignmentChange.Proximity + ValueToAdd, 0, 10);
-	AlignmentChange.Proximity = NewProximity;
+	int32 ProximityChange = 0;
+	RespectChange + LoveChange >= 0 ? ProximityChange = 1 : ProximityChange = -1;
+	AlignmentChange.Proximity = ProximityChange;
 
 	return AlignmentChange;
 }
