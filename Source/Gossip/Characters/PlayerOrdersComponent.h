@@ -25,12 +25,14 @@ public:
 
 	class APlayerController* PlayerController;
 
+	bool bControlKeyDown;
+
 	void StartBoxSelection();
 	void EndBoxSelection();
 	FVector GetBoxSelectionStartPosition() { return SelectionBoxStartPosition; }
 	FVector GetBoxSelectionEndPosition() { return SelectionBoxEndPosition; }
 	bool GetSelectionActive() { return bSelectionActive; }
-	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections) { CurrentSelections = Selections; }
+	void SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections);
 	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
 	FVector2D GetMousePosition();
 	bool GetPlayerIsMoved() { return bMovingPlayer; }

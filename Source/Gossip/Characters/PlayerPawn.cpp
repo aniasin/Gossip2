@@ -53,6 +53,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftClick", IE_Released, this, &APlayerPawn::LeftClickReleased);
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &APlayerPawn::RightClickPressed);
 	PlayerInputComponent->BindAction("RightClick", IE_Released, this, &APlayerPawn::RightClickReleased);
+
 }
 
 void APlayerPawn::BeginPlay()
@@ -120,11 +121,13 @@ void APlayerPawn::InputPitch(float Value)
 
 void APlayerPawn::LeftClickPressed()
 {
+	PlayerOrdersComponent->bControlKeyDown = (PC->IsInputKeyDown(EKeys::LeftControl));
 	PlayerOrdersComponent->StartBoxSelection();
 }
 
 void APlayerPawn::LeftClickReleased()
 {
+	PlayerOrdersComponent->bControlKeyDown = false;
 	PlayerOrdersComponent->EndBoxSelection();
 }
 

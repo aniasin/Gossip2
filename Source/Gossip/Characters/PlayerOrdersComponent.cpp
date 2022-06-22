@@ -76,6 +76,21 @@ void UPlayerOrdersComponent::PlayerMoveToTarget(AActor* TargetActor)
 	Target = TargetActor;
 }
 
+void UPlayerOrdersComponent::SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections)
+{
+	if (bControlKeyDown)
+	{
+		for (ANonPlayerCharacter* NPC : Selections)
+		{
+			CurrentSelections.AddUnique(NPC);
+		}
+	}
+	else
+	{
+		CurrentSelections = Selections;
+	}	
+}
+
 FVector2D UPlayerOrdersComponent::GetMousePosition()
 {
 	FVector2D MousePosition;
