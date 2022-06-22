@@ -76,7 +76,8 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		}
 
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
-		if (!Ressource || !Ressource->GetRessourceDisponibility()) return EBTNodeResult::Failed;
+		// Minus one because it has taken in account itself
+		if (!Ressource || Ressource->GetRessourceDisponibility() <= -1) return EBTNodeResult::Failed;
 
 		switch (CurrentInctinct)
 		{

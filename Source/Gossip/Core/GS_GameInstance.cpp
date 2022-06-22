@@ -159,7 +159,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
 	if (!CurrentSaveGame) return false;
 	CurrentSaveGame->SaveData = SaveData;
-	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds()  + RealGameTimeSeconds;
+	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds() + RealGameTimeSeconds;
 
 	TArray<uint8>OutSaveData;
 	if (!UGameplayStatics::SaveGameToMemory(CurrentSaveGame, OutSaveData)) return false;

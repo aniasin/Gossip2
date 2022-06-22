@@ -66,7 +66,7 @@ public:
 	void RessourceRespawn();
 	float StartWorking(AActor* Actor);
 	void StopWorking(AActor* Actor);
-	bool GetRessourceDisponibility();
+	int32 GetRessourceDisponibility();
 
 	class UAnimMontage* GetAnimMontageMontage();
 

@@ -126,9 +126,9 @@ void ARessource::StopWorking(AActor* Actor)
 	ActorsWorkingOn.Remove(Actor);
 }
 
-bool ARessource::GetRessourceDisponibility()
+int32 ARessource::GetRessourceDisponibility()
 {
-	return ContentCount - ActorsWorkingOn.Num() > 0;
+	return ContentCount - ActorsWorkingOn.Num();
 }
 
 UAnimMontage* ARessource::GetAnimMontageMontage()

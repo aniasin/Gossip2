@@ -101,6 +101,8 @@ void AGS_AIController::ResetAI()
 		ARessource* Ressource = Cast<ARessource>(BlackboardComponent->GetValueAsObject("TargetActor"));
 		if (Ressource) Ressource->StopWorking(this);
 	}
+	OnAIGoalChanged.Broadcast(0);
+	BlackboardComponent->ClearValue("TargetActor");
 	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);

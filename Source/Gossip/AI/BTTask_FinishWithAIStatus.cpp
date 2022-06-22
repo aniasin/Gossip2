@@ -13,7 +13,6 @@ EBTNodeResult::Type UBTTask_FinishWithAIStatus::ExecuteTask(UBehaviorTreeCompone
 	AGS_AIController* AIController = Cast<AGS_AIController>(OwnerComp.GetAIOwner());
 	if (!AIController) return EBTNodeResult::Failed;
 
-	AIController->ResetAI();
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)AIStatus);
 	return EBTNodeResult::Succeeded;
 }

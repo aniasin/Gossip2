@@ -67,7 +67,6 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	if (!InitializeService(OwnerComp)) return;
 
 	StopSearching();
-	if (PreviousAction != (uint8)EAIAction::None || PreviousGoal != (uint8)EAIGoal::None) return;
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
@@ -170,6 +169,7 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		}
 
 	case EAIInstinct::Reproduction:
+		AIController->ResetAI();
 		NewAIStatus = (uint8)EAIStatus::SearchSocialize;
 		return;
 	}

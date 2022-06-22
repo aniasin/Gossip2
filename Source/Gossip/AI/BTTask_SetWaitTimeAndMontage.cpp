@@ -56,7 +56,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	}
 
 	// Ressource
-	if (!Ressource->GetRessourceDisponibility())
+	if (Ressource->GetRessourceDisponibility() <= 0)
 	{
 		InventoryComp->RemoveKnownRessourceCollector(Ressource);
 		return EBTNodeResult::Failed;
