@@ -67,6 +67,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	if (!InitializeService(OwnerComp)) return;
 
 	StopSearching();
+	if (PreviousAction != (uint8)EAIAction::None || PreviousGoal != (uint8)EAIGoal::None) return;
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();

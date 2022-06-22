@@ -16,11 +16,11 @@ void ARessourceCollector::PostEditChangeProperty(FPropertyChangedEvent& Property
 }
 #endif WITH_EDITOR
 
-void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp)
+void ARessourceCollector::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
 {
 	if (!IsValid(InventoryComp)) return;
 
-	Super::CollectRessource(InventoryComp);
+	Super::CollectRessource(InventoryComp, Actor);
 
 	if (ContentCount <= 0) return;
 	ContentCount += -1;

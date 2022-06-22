@@ -361,6 +361,8 @@ struct FSaveValues
 	UPROPERTY()
 	float ShelterConstructionStep;
 	UPROPERTY()
+	float CoolDown;
+	UPROPERTY()
 	FWeddingRule WeddingRules;
 	UPROPERTY()
 	FGuid FianceeGuid;

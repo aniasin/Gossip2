@@ -21,7 +21,7 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
 #endif WITH_EDITOR
 
-	virtual void CollectRessource(class UInventoryComponent* InventoryComp) override;
+	virtual void CollectRessource(class UInventoryComponent* InventoryComp, AActor* Actor) override;
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp) override;
 	virtual void BeginPlay() override;
 private:

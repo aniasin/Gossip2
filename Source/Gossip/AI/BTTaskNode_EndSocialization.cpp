@@ -12,6 +12,9 @@ EBTNodeResult::Type UBTTaskNode_EndSocialization::ExecuteTask(UBehaviorTreeCompo
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
+	AGS_AIController* AIController = Cast<AGS_AIController>(OwnerComp.GetAIOwner());
+	if (!AIController) return EBTNodeResult::Failed;
+
 	AActor* OtherActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
 	if (!IsValid(OtherActor)) return EBTNodeResult::Failed;
 
@@ -30,9 +33,6 @@ EBTNodeResult::Type UBTTaskNode_EndSocialization::ExecuteTask(UBehaviorTreeCompo
 		BlackboardComp->SetValueAsObject("TargetActor", OtherActor);
 		return EBTNodeResult::Aborted;
 	}
-	BlackboardComp->ClearValue("TargetActor");
-	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
-	BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
-
+	AIController->ResetAI();
 	return EBTNodeResult::Succeeded;
 }

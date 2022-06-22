@@ -59,11 +59,14 @@ public:
 	UPROPERTY()
 	class UAnimMontage* AnimMontage; 
 
-	virtual void CollectRessource(class UInventoryComponent* InventoryComp);
+	virtual void CollectRessource(class UInventoryComponent* InventoryComp, AActor* Actor);
 	virtual void AddRessourceAsKnown(class UInventoryComponent* InventoryComp);
 
 	void RessourceEmpty();
 	void RessourceRespawn();
+	float StartWorking(AActor* Actor);
+	void StopWorking(AActor* Actor);
+	bool GetRessourceDisponibility();
 
 	class UAnimMontage* GetAnimMontageMontage();
 
@@ -85,5 +88,7 @@ private:
 	class UMaterialInstanceDynamic* MaterialInstance;
 
 	int32 MaxContentCount;
+	FTimerHandle TimerRespawn;
 
+	TArray<AActor*>ActorsWorkingOn;
 };

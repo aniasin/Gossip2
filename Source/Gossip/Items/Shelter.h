@@ -78,7 +78,10 @@ public:
 	UPROPERTY()
 	float CurrentConstructionStep;
 
-	void BeginConstruct();
+	float BeginConstruct();
+
+	void LoadConstructionMeshes();
+
 	void ConstructShelter();
 
 	ERessourceSubType GetRessourceSubTypeForImprovement() { return RessourceForImprovement; }
@@ -112,5 +115,4 @@ private:
 
 	FShelterData ShelterData;
 	ERessourceSubType RessourceForImprovement;
-
 };

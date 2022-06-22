@@ -13,6 +13,9 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
+	AGS_AIController* AIController = Cast<AGS_AIController>(OwnerComp.GetAIOwner());
+	if (!AIController) return EBTNodeResult::Failed;
+
 	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!NPC) return EBTNodeResult::Failed;
 
@@ -24,8 +27,7 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 	AActor* TargetActor = SocialComp->FindSocialPartner();
 	if (!TargetActor)
 	{
-		BlackboardComp->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
-		BlackboardComp->SetValueAsEnum("Action", (uint8)EAIAction::None);
+		AIController->ResetAI();
 		return EBTNodeResult::Failed;
 	}
 	NPC->SetMoveSpeed(1);

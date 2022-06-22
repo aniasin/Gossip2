@@ -79,9 +79,10 @@ void ARessource::BeginPlay()
 	}
 }
 
-void ARessource::CollectRessource(UInventoryComponent* InventoryComp)
+void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
 {
 	// Override in SubClasses
+	ActorsWorkingOn.Remove(Actor);
 }
 
 void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
@@ -95,9 +96,9 @@ void ARessource::RessourceEmpty()
 	if (!GM) return;
 
 	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	FTimerHandle Timer;
+
 	float TimerTime = RespawnTime * GM->GameHourDurationSeconds;
-	GetWorldTimerManager().SetTimer(Timer, this, &ARessource::RessourceRespawn, TimerTime);
+	GetWorldTimerManager().SetTimer(TimerRespawn, this, &ARessource::RessourceRespawn, TimerTime);
 	if (MaterialInstance)
 	{
 		MaterialInstance->SetVectorParameterValue("Base Color", DeadColor);
@@ -112,6 +113,22 @@ void ARessource::RessourceRespawn()
 	{
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 	}
+}
+
+float ARessource::StartWorking(AActor* Actor)
+{
+	ActorsWorkingOn.AddUnique(Actor);
+	return WaitTime;
+}
+
+void ARessource::StopWorking(AActor* Actor)
+{
+	ActorsWorkingOn.Remove(Actor);
+}
+
+bool ARessource::GetRessourceDisponibility()
+{
+	return ContentCount - ActorsWorkingOn.Num() > 0;
 }
 
 UAnimMontage* ARessource::GetAnimMontageMontage()
@@ -134,6 +151,7 @@ FSaveValues ARessource::CaptureState()
 	
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
+	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
 
 	return SaveValues;
 }
@@ -154,5 +172,11 @@ void ARessource::RestoreState(FSaveValues SaveData)
 	}
 
 	ContentCount = SaveData.ContentCount;
-	if (ContentCount <= 0) RessourceEmpty();
+	if (ContentCount <= 0)
+	{
+		RessourceEmpty();
+		float TimerTime = SaveData.CoolDown;
+		GetWorldTimerManager().SetTimer(TimerRespawn, this, &ARessource::RessourceRespawn, TimerTime);
+	}
+
 }

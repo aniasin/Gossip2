@@ -10,6 +10,7 @@
 #include "Gossip/Items/RessourceCollector.h"
 #include "Gossip/Items/RessourceProcessor.h"
 #include "Gossip/Items/Ressource.h"
+#include "Gossip/Items/Shelter.h"
 
 
 EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -49,13 +50,18 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 		if (Action == EAIAction::SearchCollector && Hit.GetActor()->IsA(ARessourceCollector::StaticClass())
 			|| Action == EAIAction::StockRaw && Hit.GetActor()->IsA(ARessourceCollector::StaticClass()))
 		{
-			if (Ressource->ContentCount <= 0)
+			if (!Ressource->GetRessourceDisponibility())
 			{
 				InventoryComp->RemoveKnownRessourceCollector(Ressource);
 				continue;
 			}
 			InventoryComp->AddKnownRessourceCollector(Ressource);
 			if (Ressource->RessourceType != Goal) continue;
+			if (Goal == EAIGoal::Shelter)
+			{
+				AShelter* Shelter = Cast<AShelter>(InventoryComp->ShelterActor);
+				if (Ressource->RessourceSubType != Shelter->GetRessourceSubTypeForImprovement()) continue;
+			}
 
 			AIController->BlackboardComponent->SetValueAsObject("TargetActor", Ressource);
 			return EBTNodeResult::Succeeded;

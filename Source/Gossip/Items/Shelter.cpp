@@ -11,6 +11,7 @@
 #include "CityHall.h"
 
 #include "Gossip/Core/GS_Singleton.h"
+#include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Data/ShelterDataAsset.h"
@@ -69,15 +70,19 @@ void AShelter::BeginPlay()
 
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
 	CurrentLevel = ShelterData.ShelterLevel;
+	ConstructionTime = ShelterData.ConstructionTime;
 
 	switch (ShelterGrade)
 	{
-	case ESocialPosition::None:
 	case ESocialPosition::Noble:
+		RessourceForImprovement = ERessourceSubType::Stone;
+		break;
 	case ESocialPosition::Bourgeois:
 		RessourceForImprovement = ERessourceSubType::Stone;
 		break;
 	case ESocialPosition::Worker:
+		RessourceForImprovement = ERessourceSubType::Wood;
+		break;
 	case ESocialPosition::Tchandala:
 		RessourceForImprovement = ERessourceSubType::Wood;
 		break;
@@ -150,7 +155,13 @@ void AShelter::InitializeShelter()
 }
 
 
-void AShelter::BeginConstruct()
+float AShelter::BeginConstruct()
+{
+	LoadConstructionMeshes();
+	return ConstructionTime;
+}
+
+void AShelter::LoadConstructionMeshes()
 {
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
@@ -165,8 +176,8 @@ void AShelter::BeginConstruct()
 void AShelter::ConstructShelter()
 {
 	CurrentConstructionStep += 1;
-	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ShelterData.ConstructionTime));
-	if (CurrentConstructionStep >= ShelterData.ConstructionTime)
+	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ConstructionTime));
+	if (CurrentConstructionStep >= ConstructionTime)
 	{
 		UpgradeShelter();
 	}
@@ -253,7 +264,6 @@ FSaveValues AShelter::CaptureState()
 	FSaveValues SaveValues;
 	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
 	SaveValues.ShelterLevel = CurrentLevel;
-
 	return SaveValues;
 }
 
@@ -262,8 +272,7 @@ void AShelter::RestoreState(FSaveValues SaveValues)
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;
 
-	if (CurrentConstructionStep > 0) BeginConstruct();
-
+	if (CurrentConstructionStep > 0) LoadConstructionMeshes();
 	InitializeShelter();
 }
 

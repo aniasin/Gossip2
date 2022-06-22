@@ -17,9 +17,9 @@ void ARessourceProcessor::PostEditChangeProperty(FPropertyChangedEvent& Property
 }
 #endif WITH_EDITOR
 
-void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp)
+void ARessourceProcessor::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
 {
-	Super::CollectRessource(InventoryComp);
+	Super::CollectRessource(InventoryComp, Actor);
 
 	if (InventoryComp)
 	{

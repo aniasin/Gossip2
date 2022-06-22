@@ -21,6 +21,9 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!NPC) return EBTNodeResult::Failed;
 
+	AGS_AIController* AIController = Cast<AGS_AIController>(OwnerComp.GetAIOwner());
+	if (!AIController) return EBTNodeResult::Failed;
+
 	UActorComponent* InstinctsComponent = NPC->FindComponentByClass(UInstinctsComponent::StaticClass());
 	if (!InstinctsComponent) return EBTNodeResult::Failed;
 	UInstinctsComponent* InstinctsComp = Cast<UInstinctsComponent>(InstinctsComponent);
@@ -73,14 +76,14 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		}
 
 		ARessource* Ressource = Cast<ARessource>(BlackboardComp->GetValueAsObject("TargetActor"));
-		if (!Ressource) return EBTNodeResult::Failed;
+		if (!Ressource || !Ressource->GetRessourceDisponibility()) return EBTNodeResult::Failed;
 
 		switch (CurrentInctinct)
 		{
 		case EAIInstinct::None:
 			break;
 		case EAIInstinct::Assimilation:
-			Ressource->CollectRessource(InventoryComp);
+			Ressource->CollectRessource(InventoryComp, AIController);
 			break;
 
 		case EAIInstinct::Conservation:
@@ -91,7 +94,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 				InstinctsComp->SatisfyInstinct(Goal);
 				break;
 			case EAIGoal::Shelter:
-				Ressource->CollectRessource(InventoryComp);
+				Ressource->CollectRessource(InventoryComp, AIController);
 				break;
 			}
 
@@ -101,7 +104,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		}
 		NPC->StopAnimMontage();
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
-		BlackboardComp->ClearValue("TargetActor");
+		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;

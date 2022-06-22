@@ -10,7 +10,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-
+#include "Gossip/Items/Ressource.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 
@@ -81,7 +81,7 @@ void AGS_AIController::AIMoveToLocation(FVector Location)
 {
 	// We don't want Player to hijack Socialize status.
 	if (BlackboardComponent->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::Socialize) return;
-
+	ResetAI();
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::PlayerOrder);
 	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
 }
@@ -96,6 +96,11 @@ TArray<AActor*> AGS_AIController::GetCurrentlyPerceivedActors()
 
 void AGS_AIController::ResetAI()
 {
+	if (BlackboardComponent->GetValueAsObject("TargetActor") != nullptr)
+	{
+		ARessource* Ressource = Cast<ARessource>(BlackboardComponent->GetValueAsObject("TargetActor"));
+		Ressource->StopWorking(this);
+	}
 	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
@@ -103,6 +108,7 @@ void AGS_AIController::ResetAI()
 
 void AGS_AIController::RequestMoveToLocation(FVector Location, EAIStatus Reason)
 {
+	ResetAI();
 	BlackboardComponent->SetValueAsVector("TargetLocation", Location);
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)Reason);
 }

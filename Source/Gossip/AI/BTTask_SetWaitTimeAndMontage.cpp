@@ -41,11 +41,11 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			BlackboardComp->SetValueAsFloat("WaitTime", 1);
 			return EBTNodeResult::Succeeded;
 
-		case EAIGoal::Shelter:
-			BlackboardComp->SetValueAsFloat("WaitTime", GM->GameHourDurationSeconds);
+		case EAIGoal::Shelter:			
 			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
-			ShelterActor->BeginConstruct();
+			BlackboardComp->SetValueAsFloat("WaitTime", ShelterActor->BeginConstruct() * GM->GameHourDurationSeconds);
+
 			if (ShelterActor->ConstructMontage)
 			{
 				NPC->PlayAnimMontage(ShelterActor->ConstructMontage);
@@ -56,7 +56,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	}
 
 	// Ressource
-	if (Ressource->ContentCount <= 0)
+	if (!Ressource->GetRessourceDisponibility())
 	{
 		InventoryComp->RemoveKnownRessourceCollector(Ressource);
 		return EBTNodeResult::Failed;
@@ -73,6 +73,6 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 		}
 	}
 
-	BlackboardComp->SetValueAsFloat("WaitTime", Ressource->WaitTime * GM->GameHourDurationSeconds);
+	BlackboardComp->SetValueAsFloat("WaitTime", Ressource->StartWorking(OwnerComp.GetAIOwner()) * GM->GameHourDurationSeconds);
 	return EBTNodeResult::Succeeded;
 }

@@ -6,6 +6,8 @@
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "BehaviorTree/BlackboardComponent.h"
+
+#include "Gossip/Items/Ressource.h"
 #include "Gossip/AI/GS_AIController.h"
 
 UPlayerOrdersComponent::UPlayerOrdersComponent()
