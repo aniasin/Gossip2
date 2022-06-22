@@ -10,7 +10,7 @@
 #include "SocialComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API USocialComponent : public UActorComponent, public ISaveGameInterface
 {
 	GENERATED_BODY()

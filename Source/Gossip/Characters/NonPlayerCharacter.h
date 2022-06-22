@@ -22,7 +22,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid Id;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USocialComponent* SocialComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComp;

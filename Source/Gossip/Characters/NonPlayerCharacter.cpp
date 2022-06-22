@@ -35,7 +35,7 @@ ANonPlayerCharacter::ANonPlayerCharacter()
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
+//	SocialComp = CreateDefaultSubobject<USocialComponent>(TEXT("SocialComp"));
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 	InstinctsComp = CreateDefaultSubobject<UInstinctsComponent>(TEXT("InstinctsComp"));
 	FamilyComp = CreateDefaultSubobject<UFamilyComponent>(TEXT("FamilyComp"));
