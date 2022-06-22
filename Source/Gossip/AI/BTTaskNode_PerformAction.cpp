@@ -47,7 +47,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		InstinctsComp->SatisfyInstinct(Goal);
 		InventoryComp->RemoveOwnedItem(Goal, ERessourceSubType::None, false);
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
-		BlackboardComp->ClearValue("TargetActor");
+		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -59,7 +59,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		if (!ShelterActor) return EBTNodeResult::Failed;
 		ShelterActor->ConstructShelter();
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);
-		BlackboardComp->ClearValue("TargetActor");
+		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;
 	}
 
