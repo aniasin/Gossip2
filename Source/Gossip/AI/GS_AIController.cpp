@@ -99,7 +99,7 @@ void AGS_AIController::ResetAI()
 	if (BlackboardComponent->GetValueAsObject("TargetActor") != nullptr)
 	{
 		ARessource* Ressource = Cast<ARessource>(BlackboardComponent->GetValueAsObject("TargetActor"));
-		Ressource->StopWorking(this);
+		if (Ressource) Ressource->StopWorking(this);
 	}
 	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
