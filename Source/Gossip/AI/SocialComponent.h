@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int32 ProximityScoreForFiancee = 10;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_Dialog(int32 Proximity);
+
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	int32 InitiateInteraction(AActor* Other);
 	int32 RespondToInteraction(AActor* Other);

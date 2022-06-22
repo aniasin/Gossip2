@@ -66,17 +66,18 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2;
+	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
 int32 USocialComponent::RespondToInteraction(AActor* Other)
 {
 	if (!IsValid(Other)) return 0;
+	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 
 	UpdateAlignment(Other);
-	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
+
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2;
+	return KnownOthers[OtherSocialComp->Id].Proximity;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)
@@ -92,12 +93,20 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 	FGuid OtherGuid = OtherSocialComp->Id;
 
+	int32 OldProximity = 0;
+	if (KnownOthers.Contains(OtherGuid))
+	{
+		OldProximity = KnownOthers[OtherGuid].Proximity;
+	}
+
 	FAlignment NewAlignment;
 	NewAlignment = CalculateAlignmentChange(Other);
 	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
 	NewAlignment.Love += KnownOthers[OtherGuid].Love;
-	NewAlignment.Proximity = FMath::Clamp(OtherSocialComp->KnownOthers[Id].Proximity + KnownOthers[OtherSocialComp->Id].Proximity / 2, -10, 10);
+	NewAlignment.Proximity = KnownOthers[OtherGuid].Proximity;
 	KnownOthers.Add(OtherGuid, NewAlignment);
+
+	K2_Dialog(NewAlignment.Proximity - OldProximity);
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherGuid].Respect, KnownOthers[OtherGuid].Love);
 	CurrentAlignmentState = AlignmentState;
@@ -242,7 +251,8 @@ FAlignment USocialComponent::CalculateAlignmentChange(AActor* Other)
 	AlignmentChange.Love = LoveChange;
 	int32 ValueToAdd = 0;
 	RespectChange + LoveChange >= 0 ? ValueToAdd = 1 : ValueToAdd = -1;
-	AlignmentChange.Proximity += ValueToAdd;
+	int32 NewProximity = FMath::Clamp(AlignmentChange.Proximity + ValueToAdd, 0, 10);
+	AlignmentChange.Proximity = NewProximity;
 
 	return AlignmentChange;
 }
