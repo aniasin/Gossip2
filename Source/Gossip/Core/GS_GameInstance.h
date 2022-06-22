@@ -40,7 +40,7 @@ public:
 
 
 	UFUNCTION()
-	void SaveGame();
+	virtual void SaveGame()override;
 	UFUNCTION()
 	void RestoreGameState();
 

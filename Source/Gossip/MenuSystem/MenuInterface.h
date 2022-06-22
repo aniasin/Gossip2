@@ -25,5 +25,6 @@ public:
 	virtual void LoadGame() = 0;
 	virtual void LoadMainMenu() = 0;
 	virtual void QuitGame() = 0;
+	virtual void SaveGame() = 0;
 
 };

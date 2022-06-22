@@ -19,6 +19,24 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* BTN_MainMenu;
 
+	UPROPERTY(meta = (BindWidget))
+		class UWidgetSwitcher* Switcher;
+
+	UPROPERTY(meta = (BindWidget))
+		class UWidget* Main;
+	UPROPERTY(meta = (BindWidget))
+		class UWidget* PopUp;
+
+	UPROPERTY(meta = (BindWidget))
+		class UButton* BTN_Back_1;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* BTN_MainMenu_1;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* BTN_Save;
+
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* TextBlock_Save;
+
 protected:
 	virtual bool Initialize();
 
@@ -28,4 +46,8 @@ private:
 		void ResponseNo();
 	UFUNCTION()
 		void ResponseYes();
+	UFUNCTION()
+		void Save();
+	UFUNCTION()
+		void Popup();
 };
