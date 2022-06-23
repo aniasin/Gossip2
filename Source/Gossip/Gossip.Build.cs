@@ -9,6 +9,6 @@ public class Gossip : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG",
-		"OnlineSubsystem", "Slate", "SlateCore", "NavigationSystem", "AIModule", "GameplayTasks", });
+		"OnlineSubsystem", "Slate", "SlateCore", "MoviePlayer", "NavigationSystem", "AIModule", "GameplayTasks", });
 	}
 }

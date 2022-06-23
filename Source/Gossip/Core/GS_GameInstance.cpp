@@ -7,6 +7,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "GS_GameViewportClient.h"
+#include "Runtime/MoviePlayer/Public/MoviePlayer.h"
 
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
@@ -35,12 +37,48 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 
 void UGS_GameInstance::Init()
 {
+	Super::Init();
+
+	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UGS_GameInstance::BeginLoadingScreen);
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UGS_GameInstance::EndLoadingScreen);
+
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
 	FString LogMessage;
 	OnlineSubsystem != nullptr ? LogMessage = OnlineSubsystem->GetSubsystemName().ToString() : "OnlineSubsystem not found!";
 	UE_LOG(LogTemp, Warning, TEXT("Loaded subsystem: %s"), *LogMessage)
 
 	GEngine->OnNetworkFailure().AddUObject(this, &UGS_GameInstance::NetworkError);
+}
+
+void UGS_GameInstance::BeginLoadingScreen(const FString& MapName)
+{
+	if (!IsRunningDedicatedServer())
+	{
+		FLoadingScreenAttributes LoadingScreen;
+		LoadingScreen.bAutoCompleteWhenLoadingCompletes = false;
+		LoadingScreen.MinimumLoadingScreenDisplayTime = 1.5f;
+		LoadingScreen.bMoviesAreSkippable = true;
+		LoadingScreen.WidgetLoadingScreen = FLoadingScreenAttributes::NewTestLoadingScreenWidget();
+		GetMoviePlayer()->WaitForMovieToFinish(false);
+		GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
+
+		FadeScreen(1, true);
+	}
+}
+
+void UGS_GameInstance::FadeScreen(float Time, bool bToBlack)
+{
+	UWorld* World = GetWorld();
+	UGS_GameViewportClient* GameViewportClient = Cast<UGS_GameViewportClient>(World->GetGameViewport());
+	if (GameViewportClient)
+	{
+		GameViewportClient->Fade(Time, bToBlack);
+	}
+}
+
+void UGS_GameInstance::EndLoadingScreen(UWorld* World)
+{
+	FadeScreen(3, false);
 }
 
 void UGS_GameInstance::LoadMenu()
@@ -77,6 +115,10 @@ void UGS_GameInstance::NewGame()
 {
 	if (Menu) Menu->TearDown();
 	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	LatentInfo.ExecutionFunction = FName("OnNewGameLoaded");
+	LatentInfo.Linkage = 0;
+	LatentInfo.UUID = 0;
 	UGameplayStatics::LoadStreamLevel(this, FName("Map_01"), true, true, LatentInfo);
 }
 
@@ -104,6 +146,7 @@ void UGS_GameInstance::NetworkError(UWorld* World, UNetDriver* NetDriver, ENetwo
 
 void UGS_GameInstance::LoadMainMenu()
 {
+	FadeScreen(2, true);
 	FTimerHandle QuitTimer;
 	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::TravelMainMenu, 3);
 }
@@ -117,7 +160,7 @@ void UGS_GameInstance::TravelMainMenu()
 void UGS_GameInstance::QuitGame()
 {
 	FTimerHandle QuitTimer;
-	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::Quit, 3);
+	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::Quit, .5);
 }
 
 void UGS_GameInstance::Quit()
@@ -186,6 +229,7 @@ void UGS_GameInstance::RestoreGameState()
 
 void UGS_GameInstance::OnMapLoaded()
 {
+	FadeScreen(3, false);
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
@@ -200,4 +244,9 @@ void UGS_GameInstance::OnMapLoaded()
 			SaveableEntity->RestoreState(SaveData[SaveableEntity->Id]);
 		}
 	}
+}
+
+void UGS_GameInstance::OnNewGameLoaded()
+{
+	FadeScreen(3, false);
 }

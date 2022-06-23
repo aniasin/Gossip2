@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadSocialRulesMenu();
 
+	void BeginLoadingScreen(const FString& MapName);
+
+	void FadeScreen(float Time, bool bToBlack);
+
+	void EndLoadingScreen(UWorld* World);
+
 	// IMenuInterface
 	UFUNCTION()
 	void NewGame() override;
@@ -46,6 +52,8 @@ public:
 
 	UFUNCTION()
 	void OnMapLoaded();
+	UFUNCTION()
+	void OnNewGameLoaded();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RealGameTimeSeconds;
