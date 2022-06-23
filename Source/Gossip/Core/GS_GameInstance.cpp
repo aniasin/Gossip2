@@ -104,11 +104,23 @@ void UGS_GameInstance::NetworkError(UWorld* World, UNetDriver* NetDriver, ENetwo
 
 void UGS_GameInstance::LoadMainMenu()
 {
+	FTimerHandle QuitTimer;
+	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::TravelMainMenu, 3);
+}
+
+void UGS_GameInstance::TravelMainMenu()
+{
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Main Menu... "));
 	GetFirstLocalPlayerController()->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 }
 
 void UGS_GameInstance::QuitGame()
+{
+	FTimerHandle QuitTimer;
+	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::Quit, 3);
+}
+
+void UGS_GameInstance::Quit()
 {
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Quiting... "));
 	GetFirstLocalPlayerController()->ConsoleCommand("quit");
@@ -118,7 +130,7 @@ void UGS_GameInstance::QuitGame()
 void UGS_GameInstance::SaveGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
-	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
+		TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);

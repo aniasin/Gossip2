@@ -29,7 +29,7 @@ ARessource::ARessource()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 
-	SaveGameComp = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveGameComp"));
+	SaveGameComp = CreateDefaultSubobject<USaveableEntity>(TEXT("SaveGameComp"));	
 }
 
 #if WITH_EDITOR
@@ -59,6 +59,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 
 	bRaw = RessourceData.bRaw;
 	WaitTime = RessourceData.WaitTime;
+	UpdatedWaitTime = WaitTime;
 	MaxContentCount = RessourceData.ContentCount;
 	ContentCount = MaxContentCount;
 	LivingColor = RessourceData.LivingColor;
@@ -83,7 +84,6 @@ void ARessource::BeginPlay()
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
 {
 	// Override in SubClasses
-	ActorsWorkingOn.Remove(Actor);
 }
 
 void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
@@ -119,23 +119,19 @@ void ARessource::RessourceRespawn()
 float ARessource::StartWorking(AActor* Controller)
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
-	float UpdatedWaitTime = WaitTime;
-
-	ActorsWorkingOn.AddUnique(Controller);
-	
-	if (!RestoredWorkers.IsEmpty())
+	if (StoredWorkers.Contains(AIController->Id))
 	{
-		for (auto& RestoredWorker : RestoredWorkers)
-		{
-			if (RestoredWorker.Key != AIController->Id) continue;
-			UpdatedWaitTime = WaitTime - RestoredWorker.Value;
-			RestoredWorkers.Remove(AIController->Id);
-			break;
-		}
+		UpdatedWaitTime -= StoredWorkers[AIController->Id];
+		StoredWorkers.Remove(AIController->Id);
+	}
+	else
+	{
+		UpdatedWaitTime = WaitTime;
 	}
 
+	ActorsWorkingOn.AddUnique(Controller);
 	float Timer = GetWorld()->GetTimeSeconds();
-	Timers.AddUnique(Timer);
+	Timers.Add(Timer);
 
 	return UpdatedWaitTime;
 }
@@ -146,10 +142,10 @@ void ARessource::StopWorking(AActor* Controller)
 	int32 Index = ActorsWorkingOn.Find(Controller);
 
 	float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
-	if (TimeSpent / GM->GameHourDurationSeconds < WaitTime)
+	if (TimeSpent / GM->GameHourDurationSeconds < UpdatedWaitTime)
 	{
 		AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
-		RestoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+		StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
 	}
 
 	ActorsWorkingOn.RemoveAt(Index);
@@ -182,27 +178,18 @@ FSaveValues ARessource::CaptureState()
 	}
 	
 	TArray<float>GameHoursTimesWorkedOn;
-	TMap<FGuid, float>CurrentTimers;
-	if (Timers.Num() > 0)
+	if (!ActorsWorkingOn.IsEmpty())
 	{
-		for (float Timer : Timers)
+		for (AActor* Controller : ActorsWorkingOn)
 		{
-			float TimerWorked = GetWorld()->GetTimeSeconds() - Timer;
-			GameHoursTimesWorkedOn.Add(TimerWorked / GM->GameHourDurationSeconds);
-		}
-		
-		int32 Index = 0;
-		for (AActor* Actor : ActorsWorkingOn)
-		{
-			AGS_AIController* AIController = Cast<AGS_AIController>(Actor->GetInstigatorController());
-			if (AIController)
-			{
-				CurrentTimers.Add(AIController->Id, GameHoursTimesWorkedOn[Index]);
-			}
-			Index++;
+			int32 Index = ActorsWorkingOn.Find(Controller);
+			float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
+			if (TimeSpent / GM->GameHourDurationSeconds >= UpdatedWaitTime) continue;			
+			AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);			
 		}
 	}
-	SaveValues.RessourceTimers = CurrentTimers;
+	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
@@ -225,7 +212,7 @@ void ARessource::RestoreState(FSaveValues SaveData)
 		}
 	}
 
-	RestoredWorkers = SaveData.RessourceTimers;
+	StoredWorkers = SaveData.StoredWorkers;
 
 	ContentCount = SaveData.ContentCount;
 	if (ContentCount <= 0)

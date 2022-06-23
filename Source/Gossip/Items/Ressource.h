@@ -93,5 +93,6 @@ private:
 
 	TArray<AActor*>ActorsWorkingOn;
 	TArray<float>Timers;
-	TMap<FGuid, float>RestoredWorkers;
+	float UpdatedWaitTime;
+	TMap<FGuid, float>StoredWorkers;
 };

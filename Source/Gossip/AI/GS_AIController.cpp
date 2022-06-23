@@ -58,7 +58,7 @@ void AGS_AIController::OnPossess(APawn* InPawn)
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AGS_AIController::OnTargetPerceptionUpdate);
 
 	FTimerHandle Timer;
-	float RandomDelay = FMath::RandRange(1, 2);
+	float RandomDelay = FMath::RandRange(3, 5);
 	GetWorldTimerManager().SetTimer(Timer, this, &AGS_AIController::StartAi, 1, false, RandomDelay);
 }
 

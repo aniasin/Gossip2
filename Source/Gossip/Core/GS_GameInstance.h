@@ -58,6 +58,8 @@ private:
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
 
 	void Travel(FName MapName);
+	void Quit();
+	void TravelMainMenu();
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
