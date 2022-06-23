@@ -104,6 +104,8 @@ void ANonPlayerCharacter::InitializeCharacterProfile()
 {
 	if (SocialComp->CharacterProfile == ECharacterProfile::None) { UE_LOG(LogTemp, Error, TEXT("%s - Character Profile has not been set"), *GetName()) return; }
 
+	AIController->Id = Id;
+
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
 	TArray<FSoftObjectPath> ItemsPath;

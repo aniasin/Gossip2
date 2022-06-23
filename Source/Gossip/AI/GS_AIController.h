@@ -22,6 +22,8 @@ public:
 	class UAISenseConfig_Sight* SightConfig;
 	class UAISenseConfig_Hearing* HearingConfig;
 
+	FGuid Id;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 	UBehaviorTree* BehaviorTree;
 	UPROPERTY(EditAnywhere, Category = "AI")

@@ -91,4 +91,6 @@ private:
 	FTimerHandle TimerRespawn;
 
 	TArray<AActor*>ActorsWorkingOn;
+	TArray<float>Timers;
+	TMap<AGS_AIController*, float>RestoredWorkers;
 };

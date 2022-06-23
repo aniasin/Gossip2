@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimMontage.h"
 
+#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Data/RessourceDataAsset.h"
@@ -117,13 +118,28 @@ void ARessource::RessourceRespawn()
 
 float ARessource::StartWorking(AActor* Actor)
 {
+	AGS_AIController* AIController = Cast<AGS_AIController>(Actor);
+	float UpdatedWaitTime = WaitTime;
+
 	ActorsWorkingOn.AddUnique(Actor);
-	return WaitTime;
+	
+	if (!RestoredWorkers.IsEmpty() && RestoredWorkers.Contains(AIController))
+	{
+		UpdatedWaitTime = WaitTime - RestoredWorkers[AIController];
+		RestoredWorkers.Remove(AIController);
+	}
+
+	float Timer = GetWorld()->GetTimeSeconds();
+	Timers.AddUnique(Timer);
+
+	return UpdatedWaitTime;
 }
 
 void ARessource::StopWorking(AActor* Actor)
 {
-	ActorsWorkingOn.Remove(Actor);
+	int32 Index = ActorsWorkingOn.Find(Actor);
+	ActorsWorkingOn.RemoveAt(Index);
+	Timers.RemoveAt(Index);
 }
 
 int32 ARessource::GetRessourceDisponibility()
@@ -139,6 +155,8 @@ UAnimMontage* ARessource::GetAnimMontageMontage()
 // ISaveGameInterface
 FSaveValues ARessource::CaptureState()
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+
 	FSaveValues SaveValues;
 	TArray<FGuid> OwnersToSave;
 
@@ -149,6 +167,28 @@ FSaveValues ARessource::CaptureState()
 		OwnersToSave.AddUnique(Npc->Id);
 	}
 	
+	TArray<float>GameHoursTimesWorkedOn;
+	TMap<FGuid, float>CurrentTimers;
+	if (Timers.Num() > 0)
+	{
+		for (float Timer : Timers)
+		{
+			float TimerWorked = GetWorld()->GetTimeSeconds() - Timer;
+			GameHoursTimesWorkedOn.Add(TimerWorked / GM->GameHourDurationSeconds);
+		}
+		
+		int32 Index = 0;
+		for (AActor* Actor : ActorsWorkingOn)
+		{
+			AGS_AIController* AIController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+			if (AIController)
+			{
+				CurrentTimers.Add(AIController->Id, GameHoursTimesWorkedOn[Index]);
+			}
+			Index++;
+		}
+	}
+	SaveValues.RessourceTimers = CurrentTimers;
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
@@ -168,6 +208,24 @@ void ARessource::RestoreState(FSaveValues SaveData)
 			if (!NonPlayerCharacter) continue;
 			if (NonPlayerCharacter->Id != Id) continue;
 			Owners.AddUnique(Npc);
+		}
+	}
+
+	if (!SaveData.RessourceTimers.IsEmpty())
+	{
+		TArray<FGuid>Guids;
+		TArray<AActor*>Actors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGS_AIController::StaticClass(), Actors);
+		SaveData.RessourceTimers.GenerateKeyArray(Guids);
+		for (FGuid Guid : Guids)
+		{
+			for (AActor* Actor : Actors)
+			{
+				AGS_AIController* AIController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+				if (Guid != AIController->Id) continue;
+				RestoredWorkers.Add(AIController, SaveData.RessourceTimers[Guid]);
+				break;
+			}
 		}
 	}
 

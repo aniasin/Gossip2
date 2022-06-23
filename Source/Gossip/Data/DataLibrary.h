@@ -363,6 +363,8 @@ struct FSaveValues
 	UPROPERTY()
 	float CoolDown;
 	UPROPERTY()
+	TMap<FGuid, float>RessourceTimers;
+	UPROPERTY()
 	FWeddingRule WeddingRules;
 	UPROPERTY()
 	FGuid FianceeGuid;
