@@ -28,11 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadSocialRulesMenu();
 
+	UFUNCTION()
 	void BeginLoadingScreen(const FString& MapName);
+	UFUNCTION()
+	void EndLoadingScreen(UWorld* World);
 
 	void FadeScreen(float Time, bool bToBlack);
-
-	void EndLoadingScreen(UWorld* World);
 
 	// IMenuInterface
 	UFUNCTION()
@@ -51,7 +52,7 @@ public:
 	void RestoreGameState();
 
 	UFUNCTION()
-	void OnMapLoaded();
+	void OnGameLoaded();
 	UFUNCTION()
 	void OnNewGameLoaded();
 

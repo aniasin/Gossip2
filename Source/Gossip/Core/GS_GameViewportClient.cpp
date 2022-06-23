@@ -41,7 +41,15 @@ void UGS_GameViewportClient::DrawScreenFade(UCanvas* Canvas)
 		if (ThisWorld)
 		{
 			const float Time = ThisWorld->GetTimeSeconds();
-			const float Alpha = FMath::Clamp((Time - FadeStartTime) / FadeDuration, 0.f, 1.f);
+			float Alpha = 0;
+			if (FadeDuration <= 0)
+			{
+				Alpha = 1;
+			}
+			else
+			{
+				Alpha = FMath::Clamp((Time - FadeStartTime) / FadeDuration, 0.f, 1.f);
+			}			
 
 			// Make sure that we stay black in a fade to black
 			if (Alpha == 1.f && !bThisToBlack)

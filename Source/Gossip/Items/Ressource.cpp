@@ -59,7 +59,6 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 
 	bRaw = RessourceData.bRaw;
 	WaitTime = RessourceData.WaitTime;
-	UpdatedWaitTime = WaitTime;
 	MaxContentCount = RessourceData.ContentCount;
 	ContentCount = MaxContentCount;
 	LivingColor = RessourceData.LivingColor;
@@ -84,6 +83,11 @@ void ARessource::BeginPlay()
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
 {
 	// Override in SubClasses
+	AGS_AIController* AIController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+	if (StoredWorkers.Contains(AIController->Id))
+	{
+		StoredWorkers.Remove(AIController->Id);
+	}
 }
 
 void ARessource::AddRessourceAsKnown(UInventoryComponent* InventoryComp)
@@ -118,22 +122,18 @@ void ARessource::RessourceRespawn()
 
 float ARessource::StartWorking(AActor* Controller)
 {
+	float TimeToWait = WaitTime;
 	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
 	if (StoredWorkers.Contains(AIController->Id))
 	{
-		UpdatedWaitTime -= StoredWorkers[AIController->Id];
-		StoredWorkers.Remove(AIController->Id);
-	}
-	else
-	{
-		UpdatedWaitTime = WaitTime;
+		TimeToWait = WaitTime - StoredWorkers[AIController->Id];
 	}
 
 	ActorsWorkingOn.AddUnique(Controller);
 	float Timer = GetWorld()->GetTimeSeconds();
 	Timers.Add(Timer);
 
-	return UpdatedWaitTime;
+	return TimeToWait;
 }
 
 void ARessource::StopWorking(AActor* Controller)
@@ -142,10 +142,17 @@ void ARessource::StopWorking(AActor* Controller)
 	int32 Index = ActorsWorkingOn.Find(Controller);
 
 	float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
-	if (TimeSpent / GM->GameHourDurationSeconds < UpdatedWaitTime)
-	{
+	if (TimeSpent / GM->GameHourDurationSeconds < WaitTime)
+	{		
 		AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
-		StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+		if (StoredWorkers.Contains(AIController->Id))
+		{
+			StoredWorkers[AIController->Id] += TimeSpent / GM->GameHourDurationSeconds;
+		}
+		else
+		{
+			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+		}		
 	}
 
 	ActorsWorkingOn.RemoveAt(Index);
@@ -184,7 +191,7 @@ FSaveValues ARessource::CaptureState()
 		{
 			int32 Index = ActorsWorkingOn.Find(Controller);
 			float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
-			if (TimeSpent / GM->GameHourDurationSeconds >= UpdatedWaitTime) continue;			
+			if (TimeSpent / GM->GameHourDurationSeconds >= WaitTime) continue;			
 			AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
 			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);			
 		}

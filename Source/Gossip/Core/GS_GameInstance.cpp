@@ -62,7 +62,7 @@ void UGS_GameInstance::BeginLoadingScreen(const FString& MapName)
 		GetMoviePlayer()->WaitForMovieToFinish(false);
 		GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
 
-		FadeScreen(1, true);
+		FadeScreen(.1, true);
 	}
 }
 
@@ -114,6 +114,7 @@ void UGS_GameInstance::LoadSocialRulesMenu()
 void UGS_GameInstance::NewGame()
 {
 	if (Menu) Menu->TearDown();
+	FadeScreen(0, true);
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
 	LatentInfo.ExecutionFunction = FName("OnNewGameLoaded");
@@ -130,9 +131,10 @@ void UGS_GameInstance::LoadGame()
 void UGS_GameInstance::Travel(FName MapName)
 {
 	if (Menu) Menu->TearDown();
+	FadeScreen(0, true);
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = FName("OnMapLoaded");
+	LatentInfo.ExecutionFunction = FName("OnGameLoaded");
 	LatentInfo.Linkage = 0;
 	LatentInfo.UUID = 0;
 	UGameplayStatics::LoadStreamLevel(this, MapName, true, true, LatentInfo);
@@ -146,7 +148,7 @@ void UGS_GameInstance::NetworkError(UWorld* World, UNetDriver* NetDriver, ENetwo
 
 void UGS_GameInstance::LoadMainMenu()
 {
-	FadeScreen(2, true);
+	FadeScreen(1, true);
 	FTimerHandle QuitTimer;
 	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::TravelMainMenu, 3);
 }
@@ -227,9 +229,8 @@ void UGS_GameInstance::RestoreGameState()
 	Travel("Map_01");
 }
 
-void UGS_GameInstance::OnMapLoaded()
+void UGS_GameInstance::OnGameLoaded()
 {
-	FadeScreen(3, false);
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
@@ -244,6 +245,7 @@ void UGS_GameInstance::OnMapLoaded()
 			SaveableEntity->RestoreState(SaveData[SaveableEntity->Id]);
 		}
 	}
+	FadeScreen(3, false);
 }
 
 void UGS_GameInstance::OnNewGameLoaded()
