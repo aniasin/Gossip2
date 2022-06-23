@@ -64,9 +64,10 @@ public:
 
 	void RessourceEmpty();
 	void RessourceRespawn();
-	float StartWorking(AActor* Actor);
-	void StopWorking(AActor* Actor);
+	float StartWorking(AActor* Controller);
+	void StopWorking(AActor* Controller);
 	int32 GetRessourceDisponibility();
+	bool GetIsWorkingOn(AActor* Controller) { return ActorsWorkingOn.Contains(Controller); }
 
 	class UAnimMontage* GetAnimMontageMontage();
 
@@ -92,5 +93,5 @@ private:
 
 	TArray<AActor*>ActorsWorkingOn;
 	TArray<float>Timers;
-	TMap<AGS_AIController*, float>RestoredWorkers;
+	TMap<FGuid, float>RestoredWorkers;
 };

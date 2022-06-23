@@ -116,17 +116,22 @@ void ARessource::RessourceRespawn()
 	}
 }
 
-float ARessource::StartWorking(AActor* Actor)
+float ARessource::StartWorking(AActor* Controller)
 {
-	AGS_AIController* AIController = Cast<AGS_AIController>(Actor);
+	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
 	float UpdatedWaitTime = WaitTime;
 
-	ActorsWorkingOn.AddUnique(Actor);
+	ActorsWorkingOn.AddUnique(Controller);
 	
-	if (!RestoredWorkers.IsEmpty() && RestoredWorkers.Contains(AIController))
+	if (!RestoredWorkers.IsEmpty())
 	{
-		UpdatedWaitTime = WaitTime - RestoredWorkers[AIController];
-		RestoredWorkers.Remove(AIController);
+		for (auto& RestoredWorker : RestoredWorkers)
+		{
+			if (RestoredWorker.Key != AIController->Id) continue;
+			UpdatedWaitTime = WaitTime - RestoredWorker.Value;
+			RestoredWorkers.Remove(AIController->Id);
+			break;
+		}
 	}
 
 	float Timer = GetWorld()->GetTimeSeconds();
@@ -135,9 +140,18 @@ float ARessource::StartWorking(AActor* Actor)
 	return UpdatedWaitTime;
 }
 
-void ARessource::StopWorking(AActor* Actor)
+void ARessource::StopWorking(AActor* Controller)
 {
-	int32 Index = ActorsWorkingOn.Find(Actor);
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	int32 Index = ActorsWorkingOn.Find(Controller);
+
+	float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
+	if (TimeSpent / GM->GameHourDurationSeconds < WaitTime)
+	{
+		AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+		RestoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+	}
+
 	ActorsWorkingOn.RemoveAt(Index);
 	Timers.RemoveAt(Index);
 }
@@ -211,23 +225,7 @@ void ARessource::RestoreState(FSaveValues SaveData)
 		}
 	}
 
-	if (!SaveData.RessourceTimers.IsEmpty())
-	{
-		TArray<FGuid>Guids;
-		TArray<AActor*>Actors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGS_AIController::StaticClass(), Actors);
-		SaveData.RessourceTimers.GenerateKeyArray(Guids);
-		for (FGuid Guid : Guids)
-		{
-			for (AActor* Actor : Actors)
-			{
-				AGS_AIController* AIController = Cast<AGS_AIController>(Actor->GetInstigatorController());
-				if (Guid != AIController->Id) continue;
-				RestoredWorkers.Add(AIController, SaveData.RessourceTimers[Guid]);
-				break;
-			}
-		}
-	}
+	RestoredWorkers = SaveData.RessourceTimers;
 
 	ContentCount = SaveData.ContentCount;
 	if (ContentCount <= 0)

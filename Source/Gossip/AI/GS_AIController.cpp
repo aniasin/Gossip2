@@ -99,7 +99,7 @@ void AGS_AIController::ResetAI()
 	if (BlackboardComponent->GetValueAsObject("TargetActor") != nullptr)
 	{
 		ARessource* Ressource = Cast<ARessource>(BlackboardComponent->GetValueAsObject("TargetActor"));
-		if (Ressource) Ressource->StopWorking(this);
+		if (Ressource && Ressource->GetIsWorkingOn(this)) Ressource->StopWorking(this);
 	}
 	OnAIGoalChanged.Broadcast(0);
 	BlackboardComponent->ClearValue("TargetActor");
