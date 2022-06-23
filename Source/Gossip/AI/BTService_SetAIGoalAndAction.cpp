@@ -6,6 +6,7 @@
 #include "InstinctsComponent.h"
 #include "GS_AIController.h"
 
+#include "Gossip/Items/Ressource.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Items/InventoryComponent.h"
 
@@ -181,14 +182,14 @@ void UBTService_SetAIGoalAndAction::SetTravelRoute()
 	if (NewAction == (uint8)EAIAction::TravelCollector)
 	{
 		TargetActor = InventoryComp->SearchNearestKnownRessourceCollector((EAIGoal)NewGoal);
-		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchCollector; return;	}
+		if (!IsValid(TargetActor) ||!TargetActor->IsA(ARessource::StaticClass())) { NewAction = (uint8)EAIAction::SearchCollector; return;	}
 		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 		return;
 	}
 	if (NewAction == (uint8)EAIAction::TravelProcessor)
 	{
 		TargetActor = InventoryComp->SearchNearestKnownRessourceProcessor((EAIGoal)NewGoal);
-		if (!IsValid(TargetActor)) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
+		if (!IsValid(TargetActor) || !TargetActor->IsA(ARessource::StaticClass())) { NewAction = (uint8)EAIAction::SearchProcessor;	return;	}
 		AIController->BlackboardComponent->SetValueAsObject("TargetActor", TargetActor);
 		return;
 	}
