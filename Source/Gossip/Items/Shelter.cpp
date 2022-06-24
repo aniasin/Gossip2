@@ -95,7 +95,7 @@ void AShelter::BeginPlay()
 
 void AShelter::SpawnNPC()
 {
-	if (IsValid(NpcToSpawnClass))
+	if (NpcToSpawnClass)
 	{
 		ANonPlayerCharacter* NPC = GetWorld()->SpawnActor<ANonPlayerCharacter>(NpcToSpawnClass, GetActorTransform());
 		if (!IsValid(NPC)) return;
@@ -155,6 +155,11 @@ void AShelter::InitializeShelter()
 	Inventory->StockingLimit = ShelterData.InventoryCapability * ShelterData.ShelterLevel;
 }
 
+
+void AShelter::MoveShelter(AShelter* NewShelter)
+{
+
+}
 
 float AShelter::BeginConstruct(AActor* Controller)
 {
@@ -328,6 +333,7 @@ FSaveValues AShelter::CaptureState()
 
 void AShelter::RestoreState(FSaveValues SaveValues)
 {
+	//Initialization is called from GameInstance
 	StoredWorkers = SaveValues.StoredWorkers;
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;

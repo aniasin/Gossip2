@@ -9,6 +9,8 @@
 #include "FamilyComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNewCityHallEvent, ECityHallEvents, Event, TArray<AActor*>, GuestsGuid);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLastNameChanged, FCharacterName, NewCharacterName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovingShelter, AActor*, OtherActor);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GOSSIP_API UFamilyComponent : public UActorComponent, public ISaveGameInterface
@@ -22,6 +24,10 @@ public:
 	FGuid Id;
 
 	ECharacterProfile CharacterGender;
+	FCharacterName CharacterName;
+
+	FOnLastNameChanged OnLastNameChanged;
+	FOnMovingShelter OnMovingShelter;
 
 	void RequestWedding(AActor* Other, FWeddingRule WeddingRule);
 
@@ -31,6 +37,7 @@ public:
 	void ResetOwnersAI(AActor* Other);
 
 	void CityHallCalling(FVector Location);
+	void Marry();
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -49,4 +56,7 @@ private:
 	AActor* CurrentFiancee;		
 
 	TArray<AActor*> GetGuests(AActor* Other);
+	void MoveShelter(AActor* Actor);
+	void ChangeName(AActor* Actor);
+	
 };

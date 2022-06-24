@@ -96,6 +96,7 @@ void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 	AIController = Cast<AGS_AIController>(Controller);
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
+	FamilyComp->OnLastNameChanged.AddDynamic(this, &ANonPlayerCharacter::OnCharacterNameChanged);
 
 	InitializeCharacterProfile();
 }
@@ -123,7 +124,8 @@ void ANonPlayerCharacter::InitializeCharacterProfile()
 void ANonPlayerCharacter::InitializeCharacterName()
 {
 	if (CharacterName.FirstName != "") return;
-	ECharacterProfile CharacterProfile = SocialComp->CharacterProfile;
+	ECharacterProfile CharacterProfile = SocialComp->CharacterProfile;	
+
 	if (NamesDatatable)
 	{
 		int32 Min = 0;
@@ -154,6 +156,9 @@ void ANonPlayerCharacter::InitializeCharacterName()
 			CharacterName.LastName = *Row->LastName;
 		}
 	}
+
+	FamilyComp->CharacterGender = CharacterProfile;
+	FamilyComp->CharacterName = CharacterName;
 }
 
 void ANonPlayerCharacter::OnAsyncLoadComplete()
@@ -193,6 +198,17 @@ void ANonPlayerCharacter::OnAiGoalChanded(int32 SpeedLevel)
 void ANonPlayerCharacter::OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts)
 {
 	SocialComp->UpdateEmotionalState(HungryInstincts);
+}
+
+void ANonPlayerCharacter::OnCharacterNameChanged(FCharacterName NewName)
+{
+	CharacterName = NewName;
+}
+
+void ANonPlayerCharacter::OnMovingShelter(AActor* OtherActor)
+{
+	UInventoryComponent* OtherInventoryComp = Cast<UInventoryComponent>(OtherActor->GetComponentByClass(UInventoryComponent::StaticClass()));
+	InventoryComp->SetNewShelter(OtherInventoryComp->ShelterActor);
 }
 
 // ISaveGameInterface

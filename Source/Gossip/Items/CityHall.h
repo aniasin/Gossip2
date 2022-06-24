@@ -65,4 +65,6 @@ private:
 	void BeginCityHallEvent(float OverrideTime);
 	UFUNCTION()
 	void ConvokeCityHallEvent(FCityHallEvent Event);
+	UFUNCTION()
+	void EndCityEvent(ECityHallEvents Event);
 };

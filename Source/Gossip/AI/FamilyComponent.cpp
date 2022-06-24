@@ -26,6 +26,7 @@ void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Other->GetComponentByClass(UFamilyComponent::StaticClass()));
 
 	CurrentWeddingRules = WeddingRule;
+	OtherFamilyComp->CurrentWeddingRules = WeddingRule;
 	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 || IsValid(CurrentFiancee)) 
 	{ 
 	ResetOwnersAI(Other);
@@ -68,6 +69,41 @@ void UFamilyComponent::CityHallCalling(FVector Location)
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
 	AIController->RequestMoveToLocation(Location, EAIStatus::CityHallCall);
+}
+
+void UFamilyComponent::Marry()
+{
+	if (!CurrentFiancee) return;
+	Spouses.AddUnique(CurrentFiancee);
+
+	EFamilySystem FamilySystem = CurrentWeddingRules.FamilySystem;
+	switch (FamilySystem)
+	{
+	case EFamilySystem::Matriarcal:
+		if (CharacterGender == ECharacterProfile::Female) break;
+		ChangeName(CurrentFiancee);
+		MoveShelter(CurrentFiancee);
+		break;
+	case EFamilySystem::Patriarcal:
+		if (CharacterGender == ECharacterProfile::Male) break;
+		ChangeName(CurrentFiancee);
+		MoveShelter(CurrentFiancee);
+		break;
+	case EFamilySystem::Free:
+		break;
+	}
+}
+
+void UFamilyComponent::ChangeName(AActor* Actor)
+{
+	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+	CharacterName.LastName = OtherFamilyComp->CharacterName.LastName;
+	OnLastNameChanged.Broadcast(CharacterName);
+}
+
+void UFamilyComponent::MoveShelter(AActor* Actor)
+{
+	OnMovingShelter.Broadcast(CurrentFiancee);
 }
 
 // ISaveGameInterface

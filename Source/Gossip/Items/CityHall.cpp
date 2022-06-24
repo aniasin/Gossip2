@@ -101,16 +101,35 @@ void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event)
 	for (AActor* Actor : Event.Guests)
 	{
 		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
-		FamilyComp->CityHallCalling(GetActorLocation());
+		FamilyComp->CityHallCalling(GetActorLocation());		
 	}
 
 	GetWorldTimerManager().ClearTimer(CityEventTimerHandle);
-	EventsQueued.RemoveAt(0);
+	FTimerHandle EndTimerHandle;
+	FTimerDelegate EndDelegate;
+	EndDelegate.BindUFunction(this, "EndCityEvent", EventsQueued[0].CityEvent);
+	GetWorldTimerManager().SetTimer(EndTimerHandle, EndDelegate, CityEventGameHourDuration * GM->GameHourDurationSeconds, false);
+}
 
-	FTimerDelegate BeginDelegate;
-	FTimerHandle TimerHandle;
-	BeginDelegate.BindUFunction(this, "BeginCityHallEvent", -1);
-	GetWorldTimerManager().SetTimer(TimerHandle, BeginDelegate, CityEventGameHourDuration * GM->GameHourDurationSeconds, false);
+void ACityHall::EndCityEvent(ECityHallEvents Event)
+{
+	switch (Event)
+	{
+	case ECityHallEvents::Alarm:
+		break;
+	case ECityHallEvents::Banquet:
+		break;
+	case ECityHallEvents::Wedding:
+		UFamilyComponent* PretenderFamilyComp = Cast<UFamilyComponent>(EventsQueued[0].Guests[0]->GetComponentByClass(UFamilyComponent::StaticClass()));
+		UFamilyComponent* FianceeFamilyComp = Cast<UFamilyComponent>(PretenderFamilyComp->GetCurrentFiancee()->GetComponentByClass(UFamilyComponent::StaticClass()));
+		PretenderFamilyComp->Marry();
+		FianceeFamilyComp->Marry();
+		break;
+	}
+
+	EventsQueued.RemoveAt(0);
+	// Next Event
+	BeginCityHallEvent(-1);
 }
 
 void ACityHall::AddInhabitants(ANonPlayerCharacter* NPC)
@@ -174,7 +193,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 				CityHallEvent.Guests.AddUnique(Friend);
 			}
 			break;
-		}		
+		}
 		CurrentCityHallEvents.Add(CityHallEvent);
 	}
 	for (auto& Event : CurrentCityHallEvents)
@@ -187,6 +206,6 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 	if (TimeRemaining.Num() > 0)
 	{
 		BeginCityHallEvent(TimeRemaining[0]);
-	}	
+	}
 }
 

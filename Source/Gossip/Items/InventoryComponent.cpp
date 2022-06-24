@@ -90,6 +90,14 @@ TArray<ARessource*> UInventoryComponent::SortRessourcesByDistance(TArray<ARessou
 	return RessourceToSort;
 }
 
+void UInventoryComponent::SetNewShelter(AActor* NewShelter)
+{
+	AShelter* CurrentShelter = Cast<AShelter>(ShelterActor);
+	AShelter* NewCurrentShelter = Cast<AShelter>(NewShelter);
+	CurrentShelter->MoveShelter(NewCurrentShelter);
+
+}
+
 // ISavegameInterface override
 FSaveValues UInventoryComponent::CaptureState()
 {

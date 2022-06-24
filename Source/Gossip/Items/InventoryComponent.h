@@ -37,6 +37,8 @@ public:
 
 	ERessourceSubType RessourceForShelter;
 
+	void SetNewShelter(AActor* NewShelter);
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;

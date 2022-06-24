@@ -88,6 +88,11 @@ public:
 
 	ERessourceSubType GetRessourceSubTypeForImprovement() { return RessourceForImprovement; }
 
+	//this is Called by GameInstance
+	void SpawnNPC();
+	void InitializeShelter();
+	void MoveShelter(AShelter* NewShelter);
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveValues)override;
@@ -95,7 +100,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void SpawnNPC();
+
 
 	void RegisterNpcToCityHall(ANonPlayerCharacter* NPC);
 
@@ -104,8 +109,6 @@ protected:
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
 #endif WITH_EDITOR
-
-	void InitializeShelter();	
 
 private:	
 	void UpgradeShelter();

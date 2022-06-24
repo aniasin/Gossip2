@@ -89,5 +89,9 @@ private:
 	void OnAiGoalChanded(int32 SpeedLevel);
 	UFUNCTION()
 	void OnInstinctsUpdate(TArray<EAIGoal> HungryInstincts);
+	UFUNCTION()
+	void OnCharacterNameChanged(FCharacterName NewName);
+	UFUNCTION()
+	void OnMovingShelter(AActor* OtherActor);
 
 };
