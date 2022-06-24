@@ -78,11 +78,13 @@ public:
 	UPROPERTY()
 	float CurrentConstructionStep;
 
-	float BeginConstruct();
+	float BeginConstruct(AActor* Controller);
+	void StopConstruct(AActor* Controller);
 
 	void LoadConstructionMeshes();
 
-	void ConstructShelter();
+	void ConstructShelter(AActor* Controller);
+	bool GetIsWorkingOn(AActor* Controller) { return ActorsWorkingOn.Contains(Controller); }
 
 	ERessourceSubType GetRessourceSubTypeForImprovement() { return RessourceForImprovement; }
 
@@ -103,7 +105,7 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
 #endif WITH_EDITOR
 
-	void InitializeShelter();
+	void InitializeShelter();	
 
 private:	
 	void UpgradeShelter();
@@ -115,4 +117,8 @@ private:
 
 	FShelterData ShelterData;
 	ERessourceSubType RessourceForImprovement;
+
+	TArray<AActor*>ActorsWorkingOn;
+	TArray<float>Timers;
+	TMap<FGuid, float>StoredWorkers;
 };

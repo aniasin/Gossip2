@@ -157,6 +157,7 @@ void UGS_GameInstance::TravelMainMenu()
 {
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Main Menu... "));
 	GetFirstLocalPlayerController()->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void UGS_GameInstance::QuitGame()
@@ -250,5 +251,6 @@ void UGS_GameInstance::OnGameLoaded()
 
 void UGS_GameInstance::OnNewGameLoaded()
 {
+	RealGameTimeSeconds = 0;
 	FadeScreen(3, false);
 }

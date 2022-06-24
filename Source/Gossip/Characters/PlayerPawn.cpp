@@ -10,6 +10,8 @@
 #include "PlayerOrdersComponent.h"
 #include "SocialRulesComponent.h"
 
+#include "NonPlayerCharacter.h"
+#include "Gossip/AI/InstinctsComponent.h"
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/Core/GS_GameInstance.h"
 
@@ -46,6 +48,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &APlayerPawn::InputYaw);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APlayerPawn::InputPitch);
 
+	PlayerInputComponent->BindAction("DebugInfo", IE_Pressed, this, &APlayerPawn::DebugInfo);
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerPawn::EscapeMenu);
 	PlayerInputComponent->BindAction("Save", IE_Pressed, this, &APlayerPawn::SaveGame);
 	PlayerInputComponent->BindAction("Load", IE_Pressed, this, &APlayerPawn::LoadGame);
@@ -160,5 +163,29 @@ void APlayerPawn::LoadGame()
 	UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetGameInstance());
 	if (!GI) return;
 	GI->RestoreGameState();
+}
+
+void APlayerPawn::DebugInfo()
+{
+	TArray<ANonPlayerCharacter*> CurrentSelections = PlayerOrdersComponent->GetCurrentSelections();
+	if (CurrentSelections.IsEmpty()) return;
+
+	UE_LOG(LogTemp, Log, TEXT("=== INSTINCTS VALUES ==="));
+	UE_LOG(LogTemp, Log, TEXT("=== %s %s ==="), *CurrentSelections[0]->CharacterName.FirstName, *CurrentSelections[0]->CharacterName.LastName);
+
+	TArray<FInstinctValues>Instincts = CurrentSelections[0]->InstinctsComp->InstinctsInfo;
+	for (FInstinctValues Instinct : Instincts)
+	{
+		float CurrentValue = Instinct.CurrentValue;
+		float GrowCoef = Instinct.GrowCoeffient;
+		float ReportedValue = Instinct.ReportedValue;
+		FString InstinctName = GetEnumValueAsString("EAIGoal", Instinct.Goal);
+		UE_LOG(LogTemp, Log, TEXT("     "));
+		UE_LOG(LogTemp, Log, TEXT("%s"), *InstinctName);
+		UE_LOG(LogTemp, Log, TEXT("CurrentValue: %s"), *FString::SanitizeFloat(CurrentValue));
+		UE_LOG(LogTemp, Log, TEXT("GrowValue: %s"), *FString::SanitizeFloat(GrowCoef));
+		UE_LOG(LogTemp, Log, TEXT("Reported: %s"), *FString::SanitizeFloat(ReportedValue));
+		UE_LOG(LogTemp, Log, TEXT("------------"));
+	}
 }
 

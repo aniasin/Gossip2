@@ -11,6 +11,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "Gossip/Items/Ressource.h"
+#include "Gossip/Items/Shelter.h"
 #include "Gossip/Core/GossipGameMode.h"
 
 
@@ -100,6 +101,8 @@ void AGS_AIController::ResetAI()
 	{
 		ARessource* Ressource = Cast<ARessource>(BlackboardComponent->GetValueAsObject("TargetActor"));
 		if (Ressource && Ressource->GetIsWorkingOn(this)) Ressource->StopWorking(this);
+		AShelter* Shelter = Cast<AShelter>(BlackboardComponent->GetValueAsObject("TargetActor"));
+		if (Shelter && Shelter->GetIsWorkingOn(this)) Shelter->StopConstruct(this);
 	}
 	OnAIGoalChanged.Broadcast(0);
 	BlackboardComponent->ClearValue("TargetActor");

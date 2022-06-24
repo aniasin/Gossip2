@@ -13,6 +13,7 @@
 #include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
+#include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Data/ShelterDataAsset.h"
 #include "Gossip/Save/SaveableEntity.h"
@@ -155,10 +156,46 @@ void AShelter::InitializeShelter()
 }
 
 
-float AShelter::BeginConstruct()
+float AShelter::BeginConstruct(AActor* Controller)
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	LoadConstructionMeshes();
-	return ConstructionTime;
+
+	float TimeToWait = ConstructionTime;
+	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+	if (StoredWorkers.Contains(AIController->Id))
+	{
+		TimeToWait = ConstructionTime - StoredWorkers[AIController->Id];
+	}
+
+	ActorsWorkingOn.AddUnique(Controller);
+	float Timer = GetWorld()->GetTimeSeconds();
+	Timers.Add(Timer);
+
+	return TimeToWait;
+}
+
+void AShelter::StopConstruct(AActor* Controller)
+{
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	int32 Index = ActorsWorkingOn.Find(Controller);
+
+	float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
+	if (TimeSpent / GM->GameHourDurationSeconds < ConstructionTime)
+	{
+		AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+		if (StoredWorkers.Contains(AIController->Id))
+		{
+			StoredWorkers[AIController->Id] += TimeSpent / GM->GameHourDurationSeconds;
+		}
+		else
+		{
+			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+		}
+	}
+
+	ActorsWorkingOn.RemoveAt(Index);
+	Timers.RemoveAt(Index);
 }
 
 void AShelter::LoadConstructionMeshes()
@@ -173,8 +210,15 @@ void AShelter::LoadConstructionMeshes()
 	}
 }
 
-void AShelter::ConstructShelter()
+void AShelter::ConstructShelter(AActor* Controller)
 {
+	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+	if (StoredWorkers.Contains(AIController->Id))
+	{
+		StoredWorkers.Remove(AIController->Id);
+		ActorsWorkingOn.Remove(Controller);
+	}
+
 	CurrentConstructionStep += 1;
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ConstructionTime));
 	if (CurrentConstructionStep >= ConstructionTime)
@@ -261,7 +305,22 @@ void AShelter::SetShelterSize()
 // ISaveGameInterface
 FSaveValues AShelter::CaptureState()
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	FSaveValues SaveValues;
+
+	TArray<float>GameHoursTimesWorkedOn;
+	if (!ActorsWorkingOn.IsEmpty())
+	{
+		for (AActor* Controller : ActorsWorkingOn)
+		{
+			int32 Index = ActorsWorkingOn.Find(Controller);
+			float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
+			if (TimeSpent / GM->GameHourDurationSeconds >= ConstructionTime) continue;
+			AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
+			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
+		}
+	}
+	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
 	SaveValues.ShelterLevel = CurrentLevel;
 	return SaveValues;
@@ -269,6 +328,7 @@ FSaveValues AShelter::CaptureState()
 
 void AShelter::RestoreState(FSaveValues SaveValues)
 {
+	StoredWorkers = SaveValues.StoredWorkers;
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;
 

@@ -36,6 +36,7 @@ public:
 	FVector2D GetMousePositionAtStart() { return MousePositionAtStart; }
 	FVector2D GetMousePosition();
 	bool GetPlayerIsMoved() { return bMovingPlayer; }
+	TArray<ANonPlayerCharacter*>GetCurrentSelections() { return CurrentSelections; }
 
 	void OrderMoveUnderCursor();
 	void PlayerMoveToTarget(AActor* Target);

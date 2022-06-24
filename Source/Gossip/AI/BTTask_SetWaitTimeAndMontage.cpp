@@ -44,7 +44,7 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 		case EAIGoal::Shelter:			
 			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
-			BlackboardComp->SetValueAsFloat("WaitTime", ShelterActor->BeginConstruct() * GM->GameHourDurationSeconds);
+			BlackboardComp->SetValueAsFloat("WaitTime", ShelterActor->BeginConstruct(OwnerComp.GetAIOwner()) * GM->GameHourDurationSeconds);
 
 			if (ShelterActor->ConstructMontage)
 			{

@@ -87,6 +87,7 @@ void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Ac
 	if (StoredWorkers.Contains(AIController->Id))
 	{
 		StoredWorkers.Remove(AIController->Id);
+		ActorsWorkingOn.Remove(Actor);
 	}
 }
 

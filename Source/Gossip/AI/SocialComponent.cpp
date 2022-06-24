@@ -93,12 +93,6 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 	FGuid OtherGuid = OtherSocialComp->Id;
 
-	int32 OldProximity = 0;
-	if (KnownOthers.Contains(OtherGuid))
-	{
-		OldProximity = KnownOthers[OtherGuid].Proximity;
-	}
-
 	FAlignment NewAlignment;
 	NewAlignment = CalculateAlignmentChange(Other);
 	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
@@ -107,7 +101,7 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 	KnownOthers[OtherGuid].Proximity = NewProximity;
 	KnownOthers.Add(OtherGuid, NewAlignment);
 
-	K2_Dialog(NewAlignment.Proximity - OldProximity);
+	K2_Dialog(NewAlignment.Proximity);
 
 	EAlignmentState AlignmentState = GetAlignment(KnownOthers[OtherGuid].Respect, KnownOthers[OtherGuid].Love);
 	CurrentAlignmentState = AlignmentState;

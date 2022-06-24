@@ -48,7 +48,9 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 	{
 		if (Instinct.Goal != Goal) continue;		
 		CurrentInstinct = (EAIInstinct)Instinct.Instinct;
-		FMath::Clamp(Instinct.CurrentValue -= 1, 0, 10);
+		float AddedValue = 0;
+		Instinct.UpdateMultiplier < 1 ? AddedValue = 1 - Instinct.UpdateMultiplier : AddedValue = 0;
+		FMath::Clamp(Instinct.CurrentValue -= 1 + AddedValue, 0, 10);
 		break;		
 	}
 
@@ -63,7 +65,7 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 			|| CurrentInstinct == EAIInstinct::Conservation && Instinct.Instinct == EAIInstinct::Reproduction
 			|| CurrentInstinct == EAIInstinct::Reproduction && Instinct.Instinct == EAIInstinct::Assimilation)
 		{
-			FMath::Clamp(Instinct.GrowCoeffient -= 0.1, 0, 10);
+			FMath::Clamp(Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier, 0, 10);
 		}
 	}
 }
