@@ -150,7 +150,19 @@ FSaveValues ACityHall::CaptureState()
 {
 	FSaveValues SaveValues;
 
-	TMap<FGuid, FSavedCityHallEvent>EventsToSave;
+	TMap<FGuid,FSavedCityHallEvent> OngoingCityEvent;
+	bool bOngoingEvent = GetWorldTimerManager().IsTimerActive(OngoingEventTimerHandle);
+	if (bOngoingEvent)
+	{
+		FSavedCityHallEvent OngoingEvent;
+		OngoingEvent.CityEvent = EventsQueued[0].CityEvent;
+		OngoingEvent.TimeRemaining = GetWorldTimerManager().GetTimerRemaining(OngoingEventTimerHandle);
+		UFamilyComponent* PretenderFamilyComp = Cast<UFamilyComponent>(EventsQueued[0].Guests[0]->GetComponentByClass(UFamilyComponent::StaticClass()));
+		FGuid Guid = PretenderFamilyComp->Id;
+		OngoingCityEvent.Add(Guid, OngoingEvent);
+	}
+
+	TMap<FGuid, FSavedCityHallEvent>CityHallEvents;
 	for (FCityHallEvent Event : EventsQueued)
 	{
 		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Event.Guests[0]->GetComponentByClass(UFamilyComponent::StaticClass()));
@@ -158,13 +170,14 @@ FSaveValues ACityHall::CaptureState()
 		FSavedCityHallEvent CityEvent;
 		CityEvent.CityEvent = Event.CityEvent;
 		CityEvent.TimeRemaining = GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle);
-		EventsToSave.Add(FamilyComp->Id, CityEvent);
+		CityHallEvents.Add(FamilyComp->Id, CityEvent);
 
 		FString EventStr = GetEnumValueAsString("ECityHallEvents", CityEvent.CityEvent);
 		UE_LOG(LogTemp, Log, TEXT("SAVED: %s %s %s"), *FamilyComp->Id.ToString(), *EventStr, *FString::SanitizeFloat(CityEvent.TimeRemaining))
 	}
 
-	SaveValues.CityHallEvents = EventsToSave;
+	SaveValues.OngoingCityEvent = OngoingCityEvent;
+	SaveValues.CityHallEvents = CityHallEvents;
 	return SaveValues;
 }
 
@@ -172,6 +185,35 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 {
 	TArray<AActor*>AllActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), AllActors);
+
+	FCityHallEvent OngoingEvent;
+	float OngoingEventTimer = 0;
+	bool bOngoingEvent = !SaveValues.OngoingCityEvent.IsEmpty();
+	if (bOngoingEvent)
+	{
+
+		for (AActor* Actor : AllActors)
+		{
+			UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+			if (!SaveValues.OngoingCityEvent.Contains(FamilyComp->Id)) continue;
+			FGuid PretenderGuid = FamilyComp->Id;
+			OngoingEvent.CityEvent = SaveValues.OngoingCityEvent[PretenderGuid].CityEvent;
+			OngoingEvent.Guests.Add(Actor);
+			OngoingEvent.Guests.Add(FamilyComp->GetCurrentFiancee());
+
+			TArray<AActor*>Friends;
+			USocialComponent* SocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
+			Friends.Append(SocialComp->GetFriends());
+			USocialComponent* FianceeSocialComp = Cast<USocialComponent>(FamilyComp->GetCurrentFiancee()->GetComponentByClass(USocialComponent::StaticClass()));
+			Friends.Append(FianceeSocialComp->GetFriends());
+			for (AActor* Friend : Friends)
+			{
+				OngoingEvent.Guests.AddUnique(Friend);
+			}
+			OngoingEventTimer = SaveValues.OngoingCityEvent[PretenderGuid].TimeRemaining;
+			break;
+		}
+	}
 
 	float TimeRemaining = 0;
 	TMap<FGuid, FSavedCityHallEvent>SavedCityEvents = SaveValues.CityHallEvents;
@@ -198,16 +240,16 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 			{
 				CityEvent.Guests.AddUnique(Friend);
 			}
-
-			FString EventStr = GetEnumValueAsString("ECityHallEvents", Event);
-			TimeRemaining = SavedCityEvent.Value.TimeRemaining;
-			UE_LOG(LogTemp, Log, TEXT("LOADED: %s %s %s"), *SavedCityEvent.Key.ToString(), *EventStr, *FString::SanitizeFloat(TimeRemaining))
 			EventsQueued.Add(CityEvent);
 			break;
 		}
 	}
 
-	if (!EventsQueued.IsEmpty())
+	if (bOngoingEvent)
+	{
+		ConvokeCityHallEvent(OngoingEvent);
+	}
+	else if (!EventsQueued.IsEmpty())
 	{
 		BeginCityHallEvent(TimeRemaining);
 	}

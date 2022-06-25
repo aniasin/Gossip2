@@ -370,6 +370,8 @@ struct FSaveValues
 	FGuid FianceeGuid;
 	UPROPERTY()
 	TMap<FGuid, FSavedCityHallEvent> CityHallEvents;
+	UPROPERTY()
+	TMap<FGuid, FSavedCityHallEvent>OngoingCityEvent;
 };
 
 USTRUCT(BlueprintType)
