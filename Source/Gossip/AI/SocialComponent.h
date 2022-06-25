@@ -41,7 +41,7 @@ public:
 	void K2_Dialog(int32 Proximity);
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
-	int32 InitiateInteraction(AActor* Other);
+	bool InitiateInteraction(AActor* Other);
 	int32 RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 

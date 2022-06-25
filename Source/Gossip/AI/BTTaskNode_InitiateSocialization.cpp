@@ -54,11 +54,9 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 		AIController->ResetAI();
 		return EBTNodeResult::Failed;
 	}
-
-	int32 Proximity = SocialComp->InitiateInteraction(OtherActor);
-	NPC->SetMoveSpeed(0);
 	
-	if (Proximity >= SocialComp->ProximityScoreForFiancee && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
+	NPC->SetMoveSpeed(0);	
+	if (SocialComp->InitiateInteraction(OtherActor) && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
 	{
 		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
 		UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())

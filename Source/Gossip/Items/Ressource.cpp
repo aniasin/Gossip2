@@ -185,7 +185,6 @@ FSaveValues ARessource::CaptureState()
 		OwnersToSave.AddUnique(Npc->Id);
 	}
 	
-	TArray<float>GameHoursTimesWorkedOn;
 	if (!ActorsWorkingOn.IsEmpty())
 	{
 		for (AActor* Controller : ActorsWorkingOn)

@@ -69,6 +69,7 @@ private:
 	void Travel(FName MapName);
 	void Quit();
 	void TravelMainMenu();
+	void EraseSaveGame();
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 

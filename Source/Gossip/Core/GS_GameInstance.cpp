@@ -256,5 +256,19 @@ void UGS_GameInstance::OnGameLoaded()
 void UGS_GameInstance::OnNewGameLoaded()
 {
 	RealGameTimeSeconds = 0;
+	EraseSaveGame();
 	FadeScreen(3, false);
 }
+
+void UGS_GameInstance::EraseSaveGame()
+{
+	TArray<uint8>OutSaveData;
+	if (UGameplayStatics::LoadDataFromSlot(OutSaveData, "SaveGame", 0))
+	{
+		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
+		{
+			UGameplayStatics::DeleteGameInSlot("SaveGame", 0);
+		}
+	}
+}
+

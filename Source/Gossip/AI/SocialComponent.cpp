@@ -55,7 +55,7 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 	return AlignmentState;
 }
 
-int32 USocialComponent::InitiateInteraction(AActor* Other)
+bool USocialComponent::InitiateInteraction(AActor* Other)
 {
 	if (!IsValid(Other)) return 0;
 
@@ -66,7 +66,7 @@ int32 USocialComponent::InitiateInteraction(AActor* Other)
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return KnownOthers[OtherSocialComp->Id].Proximity;
+	return KnownOthers[OtherSocialComp->Id].Proximity >= ProximityScoreForFiancee && KnownOthers[Id].Proximity >= ProximityScoreForFiancee;
 }
 
 int32 USocialComponent::RespondToInteraction(AActor* Other)

@@ -313,7 +313,6 @@ FSaveValues AShelter::CaptureState()
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	FSaveValues SaveValues;
 
-	TArray<float>GameHoursTimesWorkedOn;
 	if (!ActorsWorkingOn.IsEmpty())
 	{
 		for (AActor* Controller : ActorsWorkingOn)
@@ -333,7 +332,6 @@ FSaveValues AShelter::CaptureState()
 
 void AShelter::RestoreState(FSaveValues SaveValues)
 {
-	//Initialization is called from GameInstance
 	StoredWorkers = SaveValues.StoredWorkers;
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;

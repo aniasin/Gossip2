@@ -55,14 +55,13 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 				InventoryComp->RemoveKnownRessourceCollector(Ressource);
 				continue;
 			}
-			InventoryComp->AddKnownRessourceCollector(Ressource);
 			if (Ressource->RessourceType != Goal) continue;
 			if (Goal == EAIGoal::Shelter)
 			{
 				AShelter* Shelter = Cast<AShelter>(InventoryComp->ShelterActor);
 				if (Ressource->RessourceSubType != Shelter->GetRessourceSubTypeForImprovement()) continue;
 			}
-
+			InventoryComp->AddKnownRessourceCollector(Ressource);
 			AIController->BlackboardComponent->SetValueAsObject("TargetActor", Ressource);
 			return EBTNodeResult::Succeeded;
 		}
