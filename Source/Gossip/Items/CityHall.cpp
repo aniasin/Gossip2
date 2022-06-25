@@ -231,6 +231,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 				CityEvent.Guests.AddUnique(Friend);
 			}
 			EventsQueued.Add(CityEvent);
+			TimeRemaining = SavedCityEvent.Value.TimeRemaining;
 			break;
 		}
 	}

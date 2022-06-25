@@ -65,7 +65,9 @@ void UPlayerOrdersComponent::OrderMoveUnderCursor()
 	for (ANonPlayerCharacter* Selected : CurrentSelections)
 	{
 		uint8 AIStatus = Selected->GetAIController()->BlackboardComponent->GetValueAsEnum("AIStatus");
-		if (AIStatus == (uint8)EAIStatus::Follow || AIStatus == (uint8)EAIStatus::LeadHome) continue;
+		if (AIStatus == (uint8)EAIStatus::Follow 
+			|| AIStatus == (uint8)EAIStatus::LeadHome
+			|| AIStatus == (uint8)EAIStatus::CityHallCall) continue;
 		UNavigationPath* Path = NavigationSystem->FindPathToLocationSynchronously(GetWorld(), Selected->GetActorLocation(), Location);
 		if (!Path->IsValid()) continue;
 		Selected->OrderMove(Location);
