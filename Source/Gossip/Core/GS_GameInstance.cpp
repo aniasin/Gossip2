@@ -10,6 +10,7 @@
 #include "GS_GameViewportClient.h"
 #include "Runtime/MoviePlayer/Public/MoviePlayer.h"
 
+#include "GossipGameMode.h"
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/MenuSystem/MenuBase.h"
@@ -177,7 +178,7 @@ void UGS_GameInstance::SaveGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
 		TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
-	
+
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
@@ -233,6 +234,9 @@ void UGS_GameInstance::RestoreGameState()
 void UGS_GameInstance::OnGameLoaded()
 {
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
+	GM->CumulatedRealGameTime = RealGameTimeSeconds;
+
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)

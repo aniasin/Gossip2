@@ -57,6 +57,7 @@ private:
 	TArray<ANonPlayerCharacter*>Inhabitants;
 	FTimerHandle CityEventTimerHandle;
 	TArray<FCityHallEvent>EventsQueued;
+	FTimerHandle OngoingEventTimerHandle;
 
 	UFUNCTION()
 	void NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests);
@@ -67,4 +68,12 @@ private:
 	void ConvokeCityHallEvent(FCityHallEvent Event);
 	UFUNCTION()
 	void EndCityEvent(ECityHallEvents Event);
+
+	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));
+	template<typename TEnum>
+	static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value) {
+		const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+		if (!enumPtr) return FString("Invalid");
+		return enumPtr->GetNameByValue((int64)Value).ToString();
+	}
 };

@@ -194,7 +194,7 @@ FSaveValues ARessource::CaptureState()
 			float TimeSpent = GetWorld()->GetTimeSeconds() - Timers[Index];
 			if (TimeSpent / GM->GameHourDurationSeconds >= WaitTime) continue;			
 			AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
-			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);			
+			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
 		}
 	}
 	SaveValues.StoredWorkers = StoredWorkers;
@@ -217,9 +217,9 @@ void ARessource::RestoreState(FSaveValues SaveData)
 			if (!NonPlayerCharacter) continue;
 			if (NonPlayerCharacter->Id != Id) continue;
 			Owners.AddUnique(Npc);
+			break;
 		}
 	}
-
 	StoredWorkers = SaveData.StoredWorkers;
 
 	ContentCount = SaveData.ContentCount;

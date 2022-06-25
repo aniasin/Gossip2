@@ -196,7 +196,7 @@ struct FSavedCityHallEvent
 	UPROPERTY()
 	ECityHallEvents CityEvent;
 	UPROPERTY()
-	FGuid PretenderGuid;
+	float TimeRemaining;
 };
 
 // Shelter
@@ -369,7 +369,7 @@ struct FSaveValues
 	UPROPERTY()
 	FGuid FianceeGuid;
 	UPROPERTY()
-	TMap<float, FSavedCityHallEvent> CityHallEvents;
+	TMap<FGuid, FSavedCityHallEvent> CityHallEvents;
 };
 
 USTRUCT(BlueprintType)
