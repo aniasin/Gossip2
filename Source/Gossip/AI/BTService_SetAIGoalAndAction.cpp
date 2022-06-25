@@ -27,7 +27,7 @@ void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& Own
 	AGossipGameMode* GM = Cast<AGossipGameMode>(OwnerComp.GetAIOwner()->GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
-		Interval = GM->GameHourDurationSeconds * 24;
+		Interval = GM->GameHourDurationSeconds * 0.5;
 		
 	}
 }
@@ -70,7 +70,8 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
-
+	
+	if (NewGoal != PreviousGoal) AIController->ResetAI();
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
 	AIController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
 	AIController->BlackboardComponent->SetValueAsEnum("Action", NewAction);

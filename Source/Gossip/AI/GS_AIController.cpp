@@ -13,6 +13,7 @@
 #include "Gossip/Items/Ressource.h"
 #include "Gossip/Items/Shelter.h"
 #include "Gossip/Core/GossipGameMode.h"
+#include "GameFramework/Character.h"
 
 
 
@@ -105,10 +106,13 @@ void AGS_AIController::ResetAI()
 		if (Shelter && Shelter->GetIsWorkingOn(this)) Shelter->StopConstruct(this);
 	}
 	OnAIGoalChanged.Broadcast(0);
+	BlackboardComponent->SetValueAsFloat("WaitTime", 1);
 	BlackboardComponent->ClearValue("TargetActor");
 	BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::None);
 	BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::None);
 	BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::None);
+	ACharacter* NPC = Cast<ACharacter>(GetPawn());
+	NPC->StopAnimMontage();
 }
 
 void AGS_AIController::RequestMoveToLocation(FVector Location, EAIStatus Reason)

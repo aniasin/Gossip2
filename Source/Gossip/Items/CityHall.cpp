@@ -95,6 +95,8 @@ void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event, float OverrideTime)
 	for (AActor* Actor : Event.Guests)
 	{
 		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+		AGS_AIController* AiController = Cast<AGS_AIController>(Actor->GetInstigatorController());
+		AiController->ResetAI();
 		FamilyComp->CityHallCalling(GetActorLocation());		
 	}
 
