@@ -65,7 +65,7 @@ void ACityHall::NewCityEvent(ECityHallEvents Event, TArray<AActor*>Guests)
 	CityEvent.CityEvent = Event;
 	CityEvent.Guests = Guests;
 	EventsQueued.Add(CityEvent);
-	BeginCityHallEvent(-1);
+	BeginCityHallEvent(0);
 }
 
 void ACityHall::BeginCityHallEvent(float OverrideTime)
@@ -73,38 +73,24 @@ void ACityHall::BeginCityHallEvent(float OverrideTime)
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return;
 
-	float TimeToWait = 0.1;
-	if (OverrideTime < 0)
-	{
-		TimeToWait = GameHoursWaitForEvent * GM->GameHourDurationSeconds;
-	}
-	if (OverrideTime > 0.2)
-	{
-		TimeToWait = OverrideTime;
-	}
+	float TimeToWait = CityEventGameHourDuration * GM->GameHourDurationSeconds;
+	if (OverrideTime > 0) {	TimeToWait = OverrideTime;	}
 
-	if (GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle) > 0) return;
-	for (FCityHallEvent Event : EventsQueued)
-	{
-		FTimerDelegate ConvokeDelegate;
-		float Time = 0;
-		ConvokeDelegate.BindUFunction(this, "ConvokeCityHallEvent", Event, Time);
-		GetWorldTimerManager().SetTimer(CityEventTimerHandle, ConvokeDelegate, TimeToWait, false);
-		break;
-	}	
+	if (EventsQueued.IsEmpty() || GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle) > 0) return;	
+	
+	FTimerDelegate ConvokeDelegate;
+	ConvokeDelegate.BindUFunction(this, "ConvokeCityHallEvent", EventsQueued[0], 0);
+	GetWorldTimerManager().SetTimer(CityEventTimerHandle, ConvokeDelegate, TimeToWait, false);
+
 }
 
 void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event, float OverrideTime)
 {
-	UE_LOG(LogTemp, Warning, TEXT("City Event!"))
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return;
 
 	float TimeRemaining = CityEventGameHourDuration * GM->GameHourDurationSeconds;
-	if (OverrideTime > 0)
-	{
-		TimeRemaining = OverrideTime;
-	}
+	if (OverrideTime > 0) {	TimeRemaining = OverrideTime; }
 
 	for (AActor* Actor : Event.Guests)
 	{
@@ -142,7 +128,7 @@ void ACityHall::EndCityEvent(ECityHallEvents Event)
 
 	EventsQueued.RemoveAt(0);
 	// Next Event
-	BeginCityHallEvent(-1);
+	BeginCityHallEvent(0);
 }
 
 void ACityHall::AddInhabitants(ANonPlayerCharacter* NPC)
@@ -178,9 +164,6 @@ FSaveValues ACityHall::CaptureState()
 		CityEvent.CityEvent = Event.CityEvent;
 		CityEvent.TimeRemaining = GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle);
 		CityHallEvents.Add(FamilyComp->Id, CityEvent);
-
-		FString EventStr = GetEnumValueAsString("ECityHallEvents", CityEvent.CityEvent);
-		UE_LOG(LogTemp, Log, TEXT("SAVED: %s %s %s"), *FamilyComp->Id.ToString(), *EventStr, *FString::SanitizeFloat(CityEvent.TimeRemaining))
 	}
 
 	SaveValues.OngoingCityEvent = OngoingCityEvent;
