@@ -9,6 +9,7 @@
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/AI/SocialComponent.h"
+#include "Gossip/AI/GS_AIController.h"
 
 ACityHall::ACityHall()
 {
@@ -126,6 +127,12 @@ void ACityHall::EndCityEvent(ECityHallEvents Event)
 		break;
 	}
 
+	for (AActor* Guest : EventsQueued[0].Guests)
+	{
+		AGS_AIController* AIController = Cast<AGS_AIController>(Guest->GetInstigatorController());
+		AIController->ResetAI();
+	}
+
 	EventsQueued.RemoveAt(0);
 	// Next Event
 	BeginCityHallEvent(-1);
@@ -152,6 +159,9 @@ FSaveValues ACityHall::CaptureState()
 		CityEvent.CityEvent = Event.CityEvent;
 		CityEvent.TimeRemaining = GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle);
 		EventsToSave.Add(FamilyComp->Id, CityEvent);
+
+		FString EventStr = GetEnumValueAsString("ECityHallEvents", CityEvent.CityEvent);
+		UE_LOG(LogTemp, Log, TEXT("SAVED: %s %s %s"), *FamilyComp->Id.ToString(), *EventStr, *FString::SanitizeFloat(CityEvent.TimeRemaining))
 	}
 
 	SaveValues.CityHallEvents = EventsToSave;
@@ -174,7 +184,8 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 			if (FamilyComp->Id != SavedCityEvent.Key) continue;
 			FCityHallEvent CityEvent;
 			ECityHallEvents Event = SavedCityEvent.Value.CityEvent;
-			CityEvent.CityEvent = Event;
+			CityEvent.CityEvent = Event;	
+
 			CityEvent.Guests.Add(Actor);
 			CityEvent.Guests.Add(FamilyComp->GetCurrentFiancee());
 
@@ -187,6 +198,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 			{
 				CityEvent.Guests.AddUnique(Friend);
 			}
+
 			FString EventStr = GetEnumValueAsString("ECityHallEvents", Event);
 			TimeRemaining = SavedCityEvent.Value.TimeRemaining;
 			UE_LOG(LogTemp, Log, TEXT("LOADED: %s %s %s"), *SavedCityEvent.Key.ToString(), *EventStr, *FString::SanitizeFloat(TimeRemaining))

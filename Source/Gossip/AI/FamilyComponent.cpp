@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 
 #include "Gossip/AI/GS_AIController.h" 
+#include "Gossip/Core/GossipGameMode.h"
 
 UFamilyComponent::UFamilyComponent()
 {
@@ -115,11 +116,21 @@ FSaveValues UFamilyComponent::CaptureState()
 		USocialComponent* FianceeSocialComp = Cast<USocialComponent>(CurrentFiancee->GetComponentByClass(USocialComponent::StaticClass()));
 		SaveValues.FianceeGuid = FianceeSocialComp->Id;
 	}
+
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
+	SaveValues.WeddingRules = GM->GetWeddingRule();
+
+	SaveValues.CharacterName = CharacterName;
+
 	return SaveValues;
 }
 
 void UFamilyComponent::RestoreState(FSaveValues SaveData)
 {
+	CurrentWeddingRules = SaveData.WeddingRules;
+
+	CharacterName = SaveData.CharacterName;
+
 	TArray<AActor*>Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetOwner()->GetWorld(), ACharacter::StaticClass(), Actors);
 	for (AActor* Actor : Actors)

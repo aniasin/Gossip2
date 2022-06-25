@@ -105,7 +105,7 @@ void UGS_GameInstance::LoadGameMenu()
 void UGS_GameInstance::LoadSocialRulesMenu()
 {
 	if (!SocialRulesMenuClass) return;
-	if (SocialRulesMenu && SocialRulesMenu->IsInViewport())return;
+	if (IsValid(SocialRulesMenu) && SocialRulesMenu->IsInViewport())return;
 	SocialRulesMenu = CreateWidget<UMenuBase>(this, SocialRulesMenuClass);
 	if (!SocialRulesMenu) return;
 	SocialRulesMenu->SetMenuInterface(this);
