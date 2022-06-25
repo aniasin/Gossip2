@@ -65,7 +65,7 @@ private:
 	UFUNCTION()
 	void BeginCityHallEvent(float OverrideTime);
 	UFUNCTION()
-	void ConvokeCityHallEvent(FCityHallEvent Event);
+	void ConvokeCityHallEvent(FCityHallEvent Event, float OverrideTime);
 	UFUNCTION()
 	void EndCityEvent(ECityHallEvents Event);
 

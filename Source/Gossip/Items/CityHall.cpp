@@ -87,17 +87,24 @@ void ACityHall::BeginCityHallEvent(float OverrideTime)
 	for (FCityHallEvent Event : EventsQueued)
 	{
 		FTimerDelegate ConvokeDelegate;
-		ConvokeDelegate.BindUFunction(this, "ConvokeCityHallEvent", Event);
+		float Time = 0;
+		ConvokeDelegate.BindUFunction(this, "ConvokeCityHallEvent", Event, Time);
 		GetWorldTimerManager().SetTimer(CityEventTimerHandle, ConvokeDelegate, TimeToWait, false);
 		break;
 	}	
 }
 
-void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event)
+void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event, float OverrideTime)
 {
 	UE_LOG(LogTemp, Warning, TEXT("City Event!"))
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return;
+
+	float TimeRemaining = CityEventGameHourDuration * GM->GameHourDurationSeconds;
+	if (OverrideTime > 0)
+	{
+		TimeRemaining = OverrideTime;
+	}
 
 	for (AActor* Actor : Event.Guests)
 	{
@@ -108,7 +115,7 @@ void ACityHall::ConvokeCityHallEvent(FCityHallEvent Event)
 	GetWorldTimerManager().ClearTimer(CityEventTimerHandle);
 	FTimerDelegate EndDelegate;
 	EndDelegate.BindUFunction(this, "EndCityEvent", EventsQueued[0].CityEvent);
-	GetWorldTimerManager().SetTimer(OngoingEventTimerHandle, EndDelegate, CityEventGameHourDuration * GM->GameHourDurationSeconds, false);
+	GetWorldTimerManager().SetTimer(OngoingEventTimerHandle, EndDelegate, TimeRemaining, false);
 }
 
 void ACityHall::EndCityEvent(ECityHallEvents Event)
@@ -187,7 +194,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), AllActors);
 
 	FCityHallEvent OngoingEvent;
-	float OngoingEventTimer = 0;
+	float OngoingEventTimeRemaining = 0;
 	bool bOngoingEvent = !SaveValues.OngoingCityEvent.IsEmpty();
 	if (bOngoingEvent)
 	{
@@ -210,7 +217,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 			{
 				OngoingEvent.Guests.AddUnique(Friend);
 			}
-			OngoingEventTimer = SaveValues.OngoingCityEvent[PretenderGuid].TimeRemaining;
+			OngoingEventTimeRemaining = SaveValues.OngoingCityEvent[PretenderGuid].TimeRemaining;
 			break;
 		}
 	}
@@ -247,7 +254,7 @@ void ACityHall::RestoreState(FSaveValues SaveValues)
 
 	if (bOngoingEvent)
 	{
-		ConvokeCityHallEvent(OngoingEvent);
+		ConvokeCityHallEvent(OngoingEvent, OngoingEventTimeRemaining);
 	}
 	else if (!EventsQueued.IsEmpty())
 	{
