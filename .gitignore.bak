@@ -3,6 +3,7 @@
 
 Content/Characters/*
 CommandPrompt*
+Content/Animations/*
 
 # Compiled Object files
 *.slo

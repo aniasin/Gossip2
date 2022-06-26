@@ -121,7 +121,7 @@ void UGS_GameInstance::NewGame()
 	LatentInfo.ExecutionFunction = FName("OnNewGameLoaded");
 	LatentInfo.Linkage = 0;
 	LatentInfo.UUID = 0;
-	UGameplayStatics::LoadStreamLevel(this, FName("Map_01"), true, true, LatentInfo);
+	UGameplayStatics::LoadStreamLevel(this, FName(Map), true, true, LatentInfo);
 }
 
 void UGS_GameInstance::LoadGame()
@@ -228,7 +228,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
 
 void UGS_GameInstance::RestoreGameState()
 {
-	Travel("Map_01");
+	Travel(FName(Map));
 }
 
 void UGS_GameInstance::OnGameLoaded()

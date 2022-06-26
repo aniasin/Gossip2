@@ -4,6 +4,7 @@
 Content/Characters/*
 CommandPrompt*
 Content/Animations/*
+Content/PolygonNature/*
 
 # Compiled Object files
 *.slo

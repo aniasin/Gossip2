@@ -106,12 +106,17 @@ FVector2D UPlayerOrdersComponent::GetMousePosition()
 FSaveValues UPlayerOrdersComponent::CaptureState()
 {
 	FSaveValues SaveValues;
-
-	SaveValues.Transform = GetOwner()->GetTransform();
+	
+	FTransform Transform;
+	Transform.SetLocation(GetOwner()->GetActorLocation());
+	Transform.SetRotation(GetOwner()->GetInstigatorController()->GetControlRotation().Quaternion());
+	Transform.SetScale3D(FVector(1, 1, 1));
+	SaveValues.Transform = Transform;
 	return SaveValues;
 }
 
 void UPlayerOrdersComponent::RestoreState(FSaveValues SaveData)
 {
 	GetOwner()->SetActorTransform(SaveData.Transform);
+	GetOwner()->GetInstigatorController()->SetControlRotation(SaveData.Transform.Rotator());
 }

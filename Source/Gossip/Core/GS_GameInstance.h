@@ -66,6 +66,8 @@ private:
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
 
+	FString Map = "Map_03";
+
 	void Travel(FName MapName);
 	void Quit();
 	void TravelMainMenu();
