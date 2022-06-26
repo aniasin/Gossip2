@@ -57,10 +57,10 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 
 bool USocialComponent::InitiateInteraction(AActor* Other)
 {
-	if (!IsValid(Other)) return 0;
+	if (!IsValid(Other)) return false;
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
-	if (!IsValid(OtherSocialComp)) return 0;
+	if (!IsValid(OtherSocialComp)) return false;
 
 	UpdateAlignment(Other);
 	OtherSocialComp->RespondToInteraction(GetOwner());
