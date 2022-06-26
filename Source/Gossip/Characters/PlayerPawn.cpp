@@ -2,8 +2,9 @@
 
 
 #include "PlayerPawn.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/FloatingPawnMovement.h"
-#include "Components/SceneComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -21,8 +22,11 @@ APlayerPawn::APlayerPawn()
 { 	
 	PrimaryActorTick.bCanEverTick = true;
 
+	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	SetRootComponent(Capsule);
+
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	RootComponent = CameraBoom;
+	CameraBoom->SetupAttachment(Capsule);
 	//CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f;
 	CameraBoom->bUsePawnControlRotation = true;
@@ -77,6 +81,33 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ActorHeightLevel();
+
+}
+
+void APlayerPawn::ActorHeightLevel()
+{
+	if (MovementComp->Velocity.X < 5 && MovementComp->Velocity.Y < 5) return;
+	
+	FHitResult HitResult;
+	FVector Start = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
+	FVector End = GetActorUpVector() * 200;
+	FCollisionQueryParams Parameters;
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorUpVector() * -1000 + GetActorLocation(), FColor::Green, false, 1, 0, 5);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel3, Parameters))
+
+	{
+		if (GetActorLocation().Z - HitResult.Location.Z < 200)
+		{
+			MovementComp->AddInputVector(GetActorUpVector(), 1);
+		}
+		else if (GetActorLocation().Z - HitResult.Location.Z > 200)
+		{
+			MovementComp->AddInputVector(GetActorUpVector() * -1, 1);
+		}
+	}
+	
 }
 
 // Input

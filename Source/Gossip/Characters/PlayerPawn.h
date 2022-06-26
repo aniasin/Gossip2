@@ -13,6 +13,8 @@ class GOSSIP_API APlayerPawn : public APawn
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere)
+	class UCapsuleComponent* Capsule;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UFloatingPawnMovement* MovementComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -35,6 +37,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void ActorHeightLevel();
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
@@ -54,6 +58,8 @@ protected:
 
 private:
 	class APlayerController* PC;
+
+	bool bMoving;
 
 	void DebugInfo();
 
