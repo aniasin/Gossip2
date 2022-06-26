@@ -32,6 +32,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionBox;
 	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Floor;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Ramp;
+	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallA;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallB;

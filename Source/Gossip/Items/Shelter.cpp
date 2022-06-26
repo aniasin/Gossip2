@@ -33,6 +33,12 @@ AShelter::AShelter()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
 	CollisionBox->SetBoxExtent(FVector(300, 300, 300));
 
+	Floor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Floor"));
+	Floor->SetupAttachment(CollisionBox);
+
+	Ramp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ramp"));
+	Ramp->SetupAttachment(CollisionBox);
+
 	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
 	WallA->SetupAttachment(CollisionBox);
 	WallB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
@@ -61,6 +67,13 @@ AShelter::AShelter()
 void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	Floor->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, CollisionBox->GetScaledBoxExtent().Y / 50, 2));
+	Floor->SetRelativeLocation(FVector(- CollisionBox->GetScaledBoxExtent().X, - CollisionBox->GetScaledBoxExtent().Y, -500));
+
+	Ramp->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, -500));
+	Ramp->SetRelativeRotation(FRotator(0, -90, 0));
+	Ramp->SetRelativeScale3D(FVector(2, 4, 2));
 
 }
 #endif WITH_EDITOR
@@ -292,6 +305,13 @@ void AShelter::OnAsyncLoadConstructionComplete()
 
 void AShelter::SetShelterSize()
 {
+	Floor->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, CollisionBox->GetScaledBoxExtent().Y / 50, 2));
+	Floor->SetRelativeLocation(FVector(-CollisionBox->GetScaledBoxExtent().X, -CollisionBox->GetScaledBoxExtent().Y, -500));
+
+	Ramp->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, -500));
+	Ramp->SetRelativeRotation(FRotator(0, -90, 0));
+	Ramp->SetRelativeScale3D(FVector(2, 4, 2));
+
 	WallA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
 	WallA->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
 	WallB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
