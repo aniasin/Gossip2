@@ -85,6 +85,26 @@ void USocialComponent::EndInteraction(AActor* Other)
 	CurrentAlignmentState = EAlignmentState::None;
 }
 
+TArray<AActor*> USocialComponent::GetKnownOthersWithAlignment(EAlignmentState Alignment)
+{
+	TArray<AActor*>AllCharacters;
+	UGameplayStatics::GetAllActorsOfClass(GetOwner()->GetWorld(), ACharacter::StaticClass(), AllCharacters);
+
+	TArray<AActor*>Result;
+	for (auto KnownOther : KnownOthers)
+	{
+		if (GetAlignment(KnownOther.Value.Respect, KnownOther.Value.Love) != Alignment) continue;
+		for (AActor* Actor : AllCharacters)
+		{
+			USocialComponent* SocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
+			if (SocialComp->Id != KnownOther.Key) continue;
+			Result.Add(Actor);		
+			break;
+		}
+	}
+	return Result;
+}
+
 void USocialComponent::UpdateAlignment(AActor* Other)
 {
 	if (!IsValid(Other)) return;

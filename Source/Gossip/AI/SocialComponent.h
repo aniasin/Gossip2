@@ -48,6 +48,7 @@ public:
 	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);
 
 	EAlignmentState GetAlignment(float Respect, float Love);
+	TArray<AActor*>GetKnownOthersWithAlignment(EAlignmentState Alignment);
 
 	AActor* FindSocialPartner();
 	FVector FindFriendShelter();

@@ -8,6 +8,7 @@
 
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/Items/InventoryComponent.h"
+#include "SocialComponent.h"
 
 UBTService_SetAIGoalAndAction::UBTService_SetAIGoalAndAction(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
 {
@@ -70,6 +71,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
+	CallHelp();
 	
 	if (NewGoal != PreviousGoal) AIController->ResetAI();
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
@@ -234,5 +236,28 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 	}
 	NewAction = (uint8)EAIAction::None;
 	NewGoal = (uint8)EAIGoal::None;	
+}
+
+void UBTService_SetAIGoalAndAction::CallHelp()
+{
+	if (NewAction != (uint8)EAIAction::Improve) return;
+	USocialComponent* SocialComp = Cast<USocialComponent>(AIController->GetPawn()->GetComponentByClass(USocialComponent::StaticClass()));
+	
+	TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
+	Subsidiaries.Append(SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Submissive));
+
+	if (Subsidiaries.IsEmpty()) return;
+	for (AActor* Subsidiary : Subsidiaries)
+	{
+		USocialComponent* OtherSocialComp = Cast<USocialComponent>(Subsidiary->GetComponentByClass(USocialComponent::StaticClass()));
+		if(!OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Masterful).Contains(AIController->GetPawn())
+			|| !OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Imperious).Contains(AIController->GetPawn())) continue;
+
+		AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
+		OtherController->ResetAI();
+		OtherController->BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::Shelter);
+		OtherController->BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::Improve);
+		OtherController->BlackboardComponent->SetValueAsObject("TargetActor", AIController->BlackboardComponent->GetValueAsObject("TargetActor"));
+	}	
 }
 

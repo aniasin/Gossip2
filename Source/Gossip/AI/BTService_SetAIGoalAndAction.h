@@ -44,4 +44,5 @@ private:
 	void SetAction();
 	void SetTravelRoute();
 	void CheckStock();
+	void CallHelp();
 };
