@@ -73,7 +73,6 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	SetTravelRoute();
 	CallHelp();
 	
-	if (NewGoal != PreviousGoal) AIController->ResetAI();
 	AIController->OnAIGoalChanged.Broadcast(0); //Reset speed level to walk
 	AIController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
 	AIController->BlackboardComponent->SetValueAsEnum("Action", NewAction);
@@ -118,6 +117,7 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 	}
 	if (NewGoal != (uint8)EAIGoal::None)
 	{
+		AIController->ResetAI();
 		NewAIStatus = (uint8)EAIStatus::None;
 		SetAction();
 	}
@@ -253,8 +253,11 @@ void UBTService_SetAIGoalAndAction::CallHelp()
 		if(!OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Masterful).Contains(AIController->GetPawn())
 			|| !OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Imperious).Contains(AIController->GetPawn())) continue;
 
+		UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries! Found %s %s!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName,
+			*OtherSocialComp->CharacterName.FirstName, *OtherSocialComp->CharacterName.LastName)
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
 		OtherController->ResetAI();
+		OtherController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
 		OtherController->BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::Shelter);
 		OtherController->BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::Improve);
 		OtherController->BlackboardComponent->SetValueAsObject("TargetActor", AIController->BlackboardComponent->GetValueAsObject("TargetActor"));

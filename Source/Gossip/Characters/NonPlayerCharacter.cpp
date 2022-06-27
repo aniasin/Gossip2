@@ -103,8 +103,6 @@ void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 
 void ANonPlayerCharacter::InitializeCharacterProfile()
 {
-	if (SocialComp->CharacterProfile == ECharacterProfile::None) { UE_LOG(LogTemp, Error, TEXT("%s - Character Profile has not been set"), *GetName()) return; }
-
 	AIController->Id = Id;
 
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
@@ -159,12 +157,13 @@ void ANonPlayerCharacter::InitializeCharacterName()
 
 	FamilyComp->CharacterGender = CharacterProfile;
 	FamilyComp->CharacterName = CharacterName;
+	SocialComp->CharacterName = CharacterName;
 }
 
 void ANonPlayerCharacter::OnAsyncLoadComplete()
 {
 	USkeletalMesh* SkeletalMesh = CharactersData[SocialComp->CharacterProfile].MeshPtr.Get();
-	if (!IsValid(SkeletalMesh)) { UE_LOG(LogTemp, Error, TEXT("CharacterDataAsset has not been filled!")) return; }
+	if (!IsValid(SkeletalMesh)) return;
 
 	GetMesh()->SetSkeletalMesh(SkeletalMesh);
 	GetMesh()->SetAnimInstanceClass(CharactersData[SocialComp->CharacterProfile].AnimBPClass);

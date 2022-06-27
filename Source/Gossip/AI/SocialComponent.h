@@ -37,12 +37,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int32 ProximityScoreForFiancee = 10;
 
+	FCharacterName CharacterName;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void K2_Dialog(int32 Proximity);
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
 	bool InitiateInteraction(AActor* Other);
-	int32 RespondToInteraction(AActor* Other);
+	bool RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 
 	void UpdateEmotionalState(TArray<EAIGoal>HungryInstincts);

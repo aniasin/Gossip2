@@ -66,10 +66,10 @@ bool USocialComponent::InitiateInteraction(AActor* Other)
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return KnownOthers[OtherSocialComp->Id].Proximity >= ProximityScoreForFiancee && KnownOthers[Id].Proximity >= ProximityScoreForFiancee;
+	return KnownOthers[OtherSocialComp->Id].Proximity >= ProximityScoreForFiancee && OtherSocialComp->KnownOthers[Id].Proximity >= ProximityScoreForFiancee;
 }
 
-int32 USocialComponent::RespondToInteraction(AActor* Other)
+bool USocialComponent::RespondToInteraction(AActor* Other)
 {
 	if (!IsValid(Other)) return 0;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
@@ -77,7 +77,7 @@ int32 USocialComponent::RespondToInteraction(AActor* Other)
 	UpdateAlignment(Other);
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
-	return KnownOthers[OtherSocialComp->Id].Proximity;
+	return KnownOthers[OtherSocialComp->Id].Proximity >= ProximityScoreForFiancee && OtherSocialComp->KnownOthers[Id].Proximity >= ProximityScoreForFiancee;
 }
 
 void USocialComponent::EndInteraction(AActor* Other)

@@ -45,4 +45,6 @@ private:
 	void SetTravelRoute();
 	void CheckStock();
 	void CallHelp();
+
+	bool bAltruistAction;
 };
