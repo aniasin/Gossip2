@@ -3,6 +3,7 @@
 
 #include "Shelter.h"
 #include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -81,6 +82,8 @@ void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEven
 void AShelter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MoveShelter(this);
 
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
 	CurrentLevel = ShelterData.ShelterLevel;
@@ -171,7 +174,20 @@ void AShelter::InitializeShelter()
 
 void AShelter::MoveShelter(AShelter* NewShelter)
 {
+	// BoxTrace for Resources
+	TArray<FHitResult> Hits;
+	UWorld* World = GetWorld();
+	FVector BoxExtent = CollisionBox->GetScaledBoxExtent();
+	FVector Direction = GetActorForwardVector() * -1;
+	FVector Start = NewShelter->GetActorLocation();
+	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
+	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
+	DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), FColor::Purple, true, -1, 0, 10);
 
+	bool bHit = (World->SweepMultiByChannel(Hits, Center, Center, FQuat::Identity, ECC_Visibility, Box));
+	FString Message;
+	bHit ? Message = "HIT!" : Message = "NOTHING!";
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Message)
 }
 
 float AShelter::BeginConstruct(AActor* Controller)

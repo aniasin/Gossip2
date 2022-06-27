@@ -73,7 +73,7 @@ void ACityHall::BeginCityHallEvent(float OverrideTime)
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GM) return;
 
-	float TimeToWait = CityEventGameHourDuration * GM->GameHourDurationSeconds;
+	float TimeToWait = GameHoursWaitForEvent * GM->GameHourDurationSeconds;
 	if (OverrideTime > 0) {	TimeToWait = OverrideTime;	}
 
 	if (EventsQueued.IsEmpty() || GetWorldTimerManager().GetTimerRemaining(CityEventTimerHandle) > 0) return;	

@@ -97,6 +97,7 @@ void ANonPlayerCharacter::SetCharacterProfile(AActor* ShelterActor)
 	AIController->OnAIGoalChanged.AddDynamic(this, &ANonPlayerCharacter::OnAiGoalChanded);
 	InstinctsComp->OnInstinctsUpdated.AddDynamic(this, &ANonPlayerCharacter::OnInstinctsUpdate);
 	FamilyComp->OnLastNameChanged.AddDynamic(this, &ANonPlayerCharacter::OnCharacterNameChanged);
+	FamilyComp->OnMovingShelter.AddDynamic(this, &ANonPlayerCharacter::OnMovingShelter);
 
 	InitializeCharacterProfile();
 }
