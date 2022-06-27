@@ -178,7 +178,7 @@ void UGS_GameInstance::Quit()
 // SaveGame ****************************************************************
 void UGS_GameInstance::SaveGame(FString SaveName)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
+	UE_LOG(LogTemp, Warning, TEXT("Saving Game... %s"), *SaveName)
 		TMap<FGuid, FSaveStruct>SaveData;
 
 	TArray<AActor*> Actors;
@@ -257,7 +257,10 @@ void UGS_GameInstance::OnGameLoaded()
 		}
 	}
 	FadeScreen(3, false);
-	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, this, &UGS_GameInstance::AutoSaveGame, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
+	FTimerDelegate AutoSaveDelegate;
+	FString AutoSaveName = "AutoSave";
+	AutoSaveDelegate.BindUFunction(this, "SaveGame", AutoSaveName);
+	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, AutoSaveDelegate, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
 }
 
 void UGS_GameInstance::OnNewGameLoaded()
@@ -266,7 +269,10 @@ void UGS_GameInstance::OnNewGameLoaded()
 	RealGameTimeSeconds = 0;
 	EraseSaveGame();
 	FadeScreen(3, false);
-	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, this, &UGS_GameInstance::AutoSaveGame, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
+	FTimerDelegate AutoSaveDelegate;
+	FString AutoSaveName = "AutoSave";
+	AutoSaveDelegate.BindUFunction(this, "SaveGame", AutoSaveName);
+	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, AutoSaveDelegate, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
 }
 
 void UGS_GameInstance::EraseSaveGame()
@@ -280,29 +286,4 @@ void UGS_GameInstance::EraseSaveGame()
 		}
 	}
 }
-
-void UGS_GameInstance::AutoSaveGame()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Auto Saving Game..."))
-		TMap<FGuid, FSaveStruct>SaveData;
-
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
-	for (AActor* Actor : Actors)
-	{
-		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
-		if (!ActorSaveable) continue;
-		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
-
-		if (!SaveData.Contains(SaveableEntity->Id))
-		{
-			FSaveStruct NewValues;
-			SaveData.Add(SaveableEntity->Id, NewValues);
-		}
-		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
-		SaveData.Add(SaveableEntity->Id, NewValues);
-	}
-	CreateSaveGameBinary(SaveData, "AutoSave");
-}
-
 

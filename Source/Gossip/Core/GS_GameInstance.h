@@ -75,7 +75,6 @@ private:
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
-	void AutoSaveGame();
 	bool CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData, FString SaveName);
 	TMap<FGuid, FSaveStruct> LoadGameDataBinary(FString SaveName);
 };
