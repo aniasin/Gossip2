@@ -82,7 +82,7 @@ bool USocialComponent::RespondToInteraction(AActor* Other)
 
 void USocialComponent::EndInteraction(AActor* Other)
 {
-	CurrentAlignmentState = EAlignmentState::None;
+
 }
 
 TArray<AActor*> USocialComponent::GetKnownOthersWithAlignment(EAlignmentState Alignment)

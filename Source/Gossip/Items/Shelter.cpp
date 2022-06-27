@@ -301,6 +301,7 @@ void AShelter::OnAsyncLoadConstructionComplete()
 	UStaticMesh* Mesh = nullptr;
 	Mesh = ShelterData.ConstructionMeshPath.Get();
 	if (Mesh) ConstructionMesh->SetStaticMesh(Mesh);
+	ConstructionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); //TODO: can mess with NavMesh if not on ground
 }
 
 void AShelter::SetShelterSize()

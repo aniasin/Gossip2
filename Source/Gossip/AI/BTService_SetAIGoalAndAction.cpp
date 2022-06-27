@@ -28,7 +28,7 @@ void UBTService_SetAIGoalAndAction::OnBecomeRelevant(UBehaviorTreeComponent& Own
 	AGossipGameMode* GM = Cast<AGossipGameMode>(OwnerComp.GetAIOwner()->GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
-		Interval = GM->GameHourDurationSeconds * 0.5;
+		Interval = GM->GameHourDurationSeconds;
 		
 	}
 }
@@ -68,6 +68,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	if (!InitializeService(OwnerComp)) return;
 
 	StopSearching();
+	if (PreviousGoal != (uint8)EAIGoal::None) return;
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
@@ -85,20 +86,23 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor
 		|| PreviousAIStatus == (uint8)EAIStatus::SearchSocialize)
 	{
-		if (!AIController->HasTimeSearchingElapsed()) return;
-		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
+		if (AIController->HasTimeSearchingElapsed())
 		{
-			if (Instinct.Goal == (EAIGoal)PreviousGoal)
+			for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 			{
-				Instinct.ReportedValue += Instinct.CurrentValue;
-				Instinct.CurrentValue = 0;
-				continue;
+				if (Instinct.Goal == (EAIGoal)PreviousGoal)
+				{
+					Instinct.ReportedValue += Instinct.CurrentValue;
+					Instinct.CurrentValue = 0;
+					continue;
+				}
+				Instinct.CurrentValue += Instinct.ReportedValue;
+				Instinct.ReportedValue = 0;
 			}
-			Instinct.CurrentValue += Instinct.ReportedValue;
-			Instinct.ReportedValue = 0;
+			AIController->ResetAI();
 		}
-	}
-	AIController->SetTimeSearching();
+		AIController->SetTimeSearching();
+	}	
 }
 
 void UBTService_SetAIGoalAndAction::SetGoalAndAction()
@@ -117,7 +121,6 @@ void UBTService_SetAIGoalAndAction::SetGoalAndAction()
 	}
 	if (NewGoal != (uint8)EAIGoal::None)
 	{
-		AIController->ResetAI();
 		NewAIStatus = (uint8)EAIStatus::None;
 		SetAction();
 	}

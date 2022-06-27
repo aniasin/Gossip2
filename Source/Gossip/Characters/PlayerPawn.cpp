@@ -91,7 +91,7 @@ void APlayerPawn::ActorHeightLevel()
 	
 	FHitResult HitResult;
 	FVector Start = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
-	FVector End = GetActorUpVector() * 200;
+	FVector End = GetActorUpVector() * - 500;
 	FCollisionQueryParams Parameters;
 	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorUpVector() * -1000 + GetActorLocation(), FColor::Green, false, 1, 0, 5);
 
