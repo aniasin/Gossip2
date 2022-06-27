@@ -121,7 +121,7 @@ protected:
 
 private:	
 	void UpgradeShelter();
-	FVector TraceForSpaceInDirection(AActor* NewShelter, FVector Direction);
+	FVector TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction);
 
 	void AddToOwners(AActor* Actor);
 

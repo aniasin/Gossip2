@@ -181,19 +181,34 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 	FVector FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
 	if (!FreeLocation.IsZero())
 	{
+		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
+		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
 		SetActorLocation(FreeLocation);
+
+		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
+		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
 		return;
 	}
 	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
 	if (!FreeLocation.IsZero())
 	{
+		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
+		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
 		SetActorLocation(FreeLocation);
+
+		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
+		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
 		return;
 	}
 	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
 	if (!FreeLocation.IsZero())
 	{
+		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
+		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
 		SetActorLocation(FreeLocation);
+
+		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
+		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
 		return;
 	}
 }
@@ -277,12 +292,11 @@ void AShelter::UpgradeShelter()
 	InitializeShelter();
 }
 
-FVector AShelter::TraceForSpaceInDirection(AActor* NewShelter, FVector Direction)
+FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction)
 {
-	AShelter* NewShelterCandidate = Cast<AShelter>(NewShelter);
 	TArray<FHitResult> Hits;
 	UWorld* World = GetWorld();
-	FVector BoxExtent = NewShelterCandidate->CollisionBox->GetScaledBoxExtent();
+	FVector BoxExtent = NewShelter->CollisionBox->GetScaledBoxExtent();
 	FVector Start = NewShelter->GetActorLocation();
 	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
 	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
@@ -293,7 +307,7 @@ FVector AShelter::TraceForSpaceInDirection(AActor* NewShelter, FVector Direction
 	{
 		return FVector::ZeroVector;
 	}
-	return Center + BoxExtent * (NewShelterCandidate->GetActorUpVector() * -1);
+	return Center + BoxExtent * (NewShelter->GetActorUpVector() * -1);
 }
 
 void AShelter::AddToOwners(AActor* Actor)
