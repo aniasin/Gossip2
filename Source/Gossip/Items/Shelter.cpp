@@ -83,7 +83,11 @@ void AShelter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MoveShelter(this);
+	if (bMove)
+	{
+		MoveShelter(OtherShelter);
+	}
+
 
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
 	CurrentLevel = ShelterData.ShelterLevel;
@@ -174,20 +178,24 @@ void AShelter::InitializeShelter()
 
 void AShelter::MoveShelter(AShelter* NewShelter)
 {
-	// BoxTrace for Resources
-	TArray<FHitResult> Hits;
-	UWorld* World = GetWorld();
-	FVector BoxExtent = CollisionBox->GetScaledBoxExtent();
-	FVector Direction = GetActorForwardVector() * -1;
-	FVector Start = NewShelter->GetActorLocation();
-	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
-	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
-	DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), FColor::Purple, true, -1, 0, 10);
-
-	bool bHit = (World->SweepMultiByChannel(Hits, Center, Center, FQuat::Identity, ECC_Visibility, Box));
-	FString Message;
-	bHit ? Message = "HIT!" : Message = "NOTHING!";
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Message)
+	FVector FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
+	if (!FreeLocation.IsZero())
+	{
+		SetActorLocation(FreeLocation);
+		return;
+	}
+	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
+	if (!FreeLocation.IsZero())
+	{
+		SetActorLocation(FreeLocation);
+		return;
+	}
+	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
+	if (!FreeLocation.IsZero())
+	{
+		SetActorLocation(FreeLocation);
+		return;
+	}
 }
 
 float AShelter::BeginConstruct(AActor* Controller)
@@ -267,6 +275,25 @@ void AShelter::UpgradeShelter()
 	CurrentLevel++;
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been Upgraded! New level: %i"), CurrentLevel);
 	InitializeShelter();
+}
+
+FVector AShelter::TraceForSpaceInDirection(AActor* NewShelter, FVector Direction)
+{
+	AShelter* NewShelterCandidate = Cast<AShelter>(NewShelter);
+	TArray<FHitResult> Hits;
+	UWorld* World = GetWorld();
+	FVector BoxExtent = NewShelterCandidate->CollisionBox->GetScaledBoxExtent();
+	FVector Start = NewShelter->GetActorLocation();
+	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
+	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
+	DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), FColor::Purple, true, -1, 0, 10);
+
+	bool bHit = (World->SweepMultiByChannel(Hits, Center, Center, FQuat::Identity, ECC_Visibility, Box));
+	if (bHit) 
+	{
+		return FVector::ZeroVector;
+	}
+	return Center + BoxExtent * (NewShelterCandidate->GetActorUpVector() * -1);
 }
 
 void AShelter::AddToOwners(AActor* Actor)
