@@ -43,7 +43,7 @@ void UGameMenu::ResponseYes()
 void UGameMenu::Save()
 {
 	if (!MenuInterface) return;
-	MenuInterface->SaveGame();
+	MenuInterface->SaveGame("SaveGame");
 	TextBlock_Save->SetText(FText::FromString("Game Saved!"));
 	BTN_Save->SetVisibility(ESlateVisibility::Hidden);
 }

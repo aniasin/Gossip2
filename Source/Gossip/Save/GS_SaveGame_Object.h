@@ -22,6 +22,8 @@ public:
 	UPROPERTY()
 	FString SaveGameName;
 	UPROPERTY()
+	FString MapName;
+	UPROPERTY()
 	FDateTime CreationTime;
 	UPROPERTY()
 	float GameTimeSeconds;

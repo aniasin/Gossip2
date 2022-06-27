@@ -45,7 +45,7 @@ void UMainMenu::NewGame()
 void UMainMenu::LoadGame()
 {
 	if (!MenuInterface) return;
-	MenuInterface->LoadGame();
+	MenuInterface->LoadGame("SaveGame");
 }
 
 void UMainMenu::OpenMainMenu()

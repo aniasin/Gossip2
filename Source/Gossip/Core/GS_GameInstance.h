@@ -37,20 +37,18 @@ public:
 
 	// IMenuInterface
 	UFUNCTION()
-	void NewGame() override;
+	virtual void NewGame() override;
 	UFUNCTION()
-	void LoadGame() override;
+	virtual void LoadGame(FString SaveName) override;
 	UFUNCTION()
-	void LoadMainMenu() override;
+	virtual void LoadMainMenu() override;
 	UFUNCTION()
-	void QuitGame() override;
+	virtual void QuitGame() override;
+	UFUNCTION()
+	virtual void SaveGame(FString SaveName)override;
 
-
 	UFUNCTION()
-	virtual void SaveGame()override;
-	UFUNCTION()
-	void RestoreGameState();
-
+	void RestoreGameState(FString SaveName);
 	UFUNCTION()
 	void OnGameLoaded();
 	UFUNCTION()
@@ -61,12 +59,14 @@ public:
 
 private:
 	class UMenuBase* Menu;
+	FString CurrentSaveName;
 	UMenuBase* SocialRulesMenu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
 
 	FString Map = "Map_03";
+	FTimerHandle AutoSaveTimerHandle;
 
 	void Travel(FName MapName);
 	void Quit();
@@ -75,6 +75,7 @@ private:
 
 	void NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
-	bool CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData);
-	TMap<FGuid, FSaveStruct> LoadGameDataBinary();
+	void AutoSaveGame();
+	bool CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData, FString SaveName);
+	TMap<FGuid, FSaveStruct> LoadGameDataBinary(FString SaveName);
 };

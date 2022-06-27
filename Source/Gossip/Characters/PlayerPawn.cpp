@@ -186,14 +186,14 @@ void APlayerPawn::SaveGame()
 {
 	UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetGameInstance());
 	if (!GI) return;
-	GI->SaveGame();
+	GI->SaveGame("SaveGame");
 }
 
 void APlayerPawn::LoadGame()
 {
 	UGS_GameInstance* GI = Cast<UGS_GameInstance>(GetGameInstance());
 	if (!GI) return;
-	GI->RestoreGameState();
+	GI->RestoreGameState("SaveGame");
 }
 
 void APlayerPawn::DebugInfo()

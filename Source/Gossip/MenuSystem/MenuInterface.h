@@ -22,9 +22,9 @@ class GOSSIP_API IMenuInterface
 	
 public:
 	virtual void NewGame() = 0;
-	virtual void LoadGame() = 0;
+	virtual void LoadGame(FString SaveName) = 0;
 	virtual void LoadMainMenu() = 0;
 	virtual void QuitGame() = 0;
-	virtual void SaveGame() = 0;
+	virtual void SaveGame(FString SaveName) = 0;
 
 };

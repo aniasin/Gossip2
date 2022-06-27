@@ -124,9 +124,10 @@ void UGS_GameInstance::NewGame()
 	UGameplayStatics::LoadStreamLevel(this, FName(Map), true, true, LatentInfo);
 }
 
-void UGS_GameInstance::LoadGame()
+void UGS_GameInstance::LoadGame(FString SaveName)
 {
-	RestoreGameState();
+	CurrentSaveName = SaveName;
+	RestoreGameState(CurrentSaveName);
 }
 
 void UGS_GameInstance::Travel(FName MapName)
@@ -151,6 +152,7 @@ void UGS_GameInstance::LoadMainMenu()
 {
 	FadeScreen(1, true);
 	FTimerHandle QuitTimer;
+	GetWorld()->GetTimerManager().ClearTimer(AutoSaveTimerHandle);
 	GetWorld()->GetTimerManager().SetTimer(QuitTimer, this, &UGS_GameInstance::TravelMainMenu, 3);
 }
 
@@ -174,10 +176,10 @@ void UGS_GameInstance::Quit()
 }
 
 // SaveGame ****************************************************************
-void UGS_GameInstance::SaveGame()
+void UGS_GameInstance::SaveGame(FString SaveName)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saving Game..."))
-		TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
+		TMap<FGuid, FSaveStruct>SaveData;
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
@@ -195,45 +197,49 @@ void UGS_GameInstance::SaveGame()
 		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
 		SaveData.Add(SaveableEntity->Id, NewValues);
 	}
-	CreateSaveGameBinary(SaveData);
+	CreateSaveGameBinary(SaveData, SaveName);
 }
 
-TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary()
+TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary(FString SaveName)
 {
 	TMap<FGuid, FSaveStruct>SaveData;
 	TArray<uint8>OutSaveData;
-	if (UGameplayStatics::LoadDataFromSlot(OutSaveData, "SaveGame", 0))
+	if (UGameplayStatics::LoadDataFromSlot(OutSaveData, SaveName, 0))
 	{
 		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
 		{
 			SaveData = CurrentSaveGame->SaveData;
 			RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
+			Map = CurrentSaveGame->MapName;
 		}
 	}
 	return SaveData;
 }
 
-bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData)
+bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData, FString SaveName)
 {
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
 	if (!CurrentSaveGame) return false;
 	CurrentSaveGame->SaveData = SaveData;
 	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds() + RealGameTimeSeconds;
+	CurrentSaveGame->MapName = Map;
 
 	TArray<uint8>OutSaveData;
 	if (!UGameplayStatics::SaveGameToMemory(CurrentSaveGame, OutSaveData)) return false;
 	
-	return UGameplayStatics::SaveDataToSlot(OutSaveData, "SaveGame", 0);
+	return UGameplayStatics::SaveDataToSlot(OutSaveData, SaveName, 0);
 }
 
-void UGS_GameInstance::RestoreGameState()
+void UGS_GameInstance::RestoreGameState(FString SaveName)
 {
+	CurrentSaveName = SaveName;
+	LoadGameDataBinary(CurrentSaveName); // This set Map
 	Travel(FName(Map));
 }
 
 void UGS_GameInstance::OnGameLoaded()
 {
-	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary();
+	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary(CurrentSaveName);
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	GM->CumulatedRealGameTime = RealGameTimeSeconds;
 
@@ -251,13 +257,16 @@ void UGS_GameInstance::OnGameLoaded()
 		}
 	}
 	FadeScreen(3, false);
+	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, this, &UGS_GameInstance::AutoSaveGame, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
 }
 
 void UGS_GameInstance::OnNewGameLoaded()
 {
+	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	RealGameTimeSeconds = 0;
 	EraseSaveGame();
 	FadeScreen(3, false);
+	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, this, &UGS_GameInstance::AutoSaveGame, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
 }
 
 void UGS_GameInstance::EraseSaveGame()
@@ -271,4 +280,29 @@ void UGS_GameInstance::EraseSaveGame()
 		}
 	}
 }
+
+void UGS_GameInstance::AutoSaveGame()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Auto Saving Game..."))
+		TMap<FGuid, FSaveStruct>SaveData;
+
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+	for (AActor* Actor : Actors)
+	{
+		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
+		if (!ActorSaveable) continue;
+		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);
+
+		if (!SaveData.Contains(SaveableEntity->Id))
+		{
+			FSaveStruct NewValues;
+			SaveData.Add(SaveableEntity->Id, NewValues);
+		}
+		FSaveStruct NewValues = SaveableEntity->CaptureState(SaveData[SaveableEntity->Id]);
+		SaveData.Add(SaveableEntity->Id, NewValues);
+	}
+	CreateSaveGameBinary(SaveData, "AutoSave");
+}
+
 
