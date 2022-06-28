@@ -10,6 +10,7 @@
 #include "GS_GameViewportClient.h"
 #include "Runtime/MoviePlayer/Public/MoviePlayer.h"
 
+#include "Gossip/Characters/PlayerPawn.h"
 #include "GossipGameMode.h"
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
@@ -243,10 +244,16 @@ void UGS_GameInstance::OnGameLoaded()
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	GM->CumulatedRealGameTime = RealGameTimeSeconds;
 
+	// Restore Player First
+	APlayerPawn* Player = Cast<APlayerPawn>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass()));
+	USaveableEntity* PlayerSaveComp = Cast<USaveableEntity>(Player->GetComponentByClass(USaveableEntity::StaticClass()));
+	PlayerSaveComp->RestoreState(SaveData[Player->Id]);
+
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
 	for (AActor* Actor : Actors)
 	{
+		if (Actor->IsA(APlayerPawn::StaticClass())) continue;
 		UActorComponent* ActorSaveable = Actor->GetComponentByClass(USaveableEntity::StaticClass());
 		if (!ActorSaveable) continue;
 		USaveableEntity* SaveableEntity = Cast<USaveableEntity>(ActorSaveable);

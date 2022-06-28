@@ -83,12 +83,6 @@ void AShelter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bMove)
-	{
-		MoveShelter(OtherShelter);
-	}
-
-
 	ShelterData = ShelterDataAsset->ShelterDataMap[ShelterGrade];
 	CurrentLevel = ShelterData.ShelterLevel;
 	ConstructionTime = ShelterData.ConstructionTime;
@@ -178,39 +172,32 @@ void AShelter::InitializeShelter()
 
 void AShelter::MoveShelter(AShelter* NewShelter)
 {
-	FVector FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
-	if (!FreeLocation.IsZero())
-	{
-		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		SetActorLocation(FreeLocation);
+	FTransform NewTransform = FTransform::Identity;
+	FVector FreeLocation = FVector::ZeroVector;
 
-		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
-		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
-		return;
-	}
-	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
-	if (!FreeLocation.IsZero())
+	if (FreeLocation.IsZero())
 	{
-		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		SetActorLocation(FreeLocation);
-
-		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
-		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
-		return;
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
 	}
-	FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
-	if (!FreeLocation.IsZero())
+
+	if (FreeLocation.IsZero())
 	{
-		FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
-		SetActorLocation(FreeLocation);
-
-		SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + FreeLocation);
-		FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + FreeLocation);
-		return;
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
 	}
+
+	if (FreeLocation.IsZero())
+	{
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
+	}
+	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
+
+	FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
+	FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
+	SetActorRotation(NewTransform.GetRotation());
+	SetActorLocation(NewTransform.GetLocation());
+
+	SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + NewTransform.GetLocation());
+	FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + NewTransform.GetLocation());
 }
 
 float AShelter::BeginConstruct(AActor* Controller)
@@ -294,20 +281,47 @@ void AShelter::UpgradeShelter()
 
 FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction)
 {
-	TArray<FHitResult> Hits;
+	FHitResult Hit;
 	UWorld* World = GetWorld();
-	FVector BoxExtent = NewShelter->CollisionBox->GetScaledBoxExtent();
+	FVector BoxExtent = CollisionBox->GetScaledBoxExtent();
 	FVector Start = NewShelter->GetActorLocation();
+	FQuat Rotation = NewShelter->GetActorTransform().GetRotation();
 	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
 	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
-	DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), FColor::Purple, true, -1, 0, 10);
+	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), Rotation, FColor::Purple, true, -1, 0, 10);
 
-	bool bHit = (World->SweepMultiByChannel(Hits, Center, Center, FQuat::Identity, ECC_Visibility, Box));
+	bool bHit = World->SweepSingleByChannel(Hit, Center, Center, Rotation, ECC_Visibility, Box);
 	if (bHit) 
 	{
 		return FVector::ZeroVector;
 	}
-	return Center + BoxExtent * (NewShelter->GetActorUpVector() * -1);
+	FVector FreeLocation = Center + BoxExtent * (NewShelter->GetActorUpVector() * -1);
+
+	return FreeLocation;
+}
+
+FTransform AShelter::TraceForTerrainHeight(AShelter* NewShelter, FVector FreeLocation)
+{
+	FHitResult Hit;
+	UWorld* World = GetWorld();
+	FVector BoxExtent = CollisionBox->GetScaledBoxExtent();
+	FQuat Rotation = NewShelter->GetActorTransform().GetRotation();
+	FCollisionShape Box = FCollisionShape::MakeBox(BoxExtent);
+	bool bHit = World->SweepSingleByChannel(Hit, FreeLocation, FreeLocation, Rotation, ECC_Visibility, Box);
+
+	FVector NewLocation = FreeLocation + BoxExtent * (NewShelter->GetActorUpVector() * -1);
+	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent), Rotation, FColor::Purple, true, -1, 0, 10);
+	if (bHit)
+	{
+		NewLocation.Z = Hit.Location.Z;
+		DrawDebugSphere(World, Hit.Location, 50, 8, FColor::Red, true);
+		UE_LOG(LogTemp, Log, TEXT("%s"), *Hit.GetActor()->GetName())
+	}
+	FTransform NewTransform;
+	NewTransform.SetLocation(NewLocation);
+	NewTransform.SetRotation(Rotation);
+
+	return NewTransform;
 }
 
 void AShelter::AddToOwners(AActor* Actor)
@@ -405,6 +419,7 @@ FSaveValues AShelter::CaptureState()
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
 	SaveValues.ShelterLevel = CurrentLevel;
+
 	return SaveValues;
 }
 

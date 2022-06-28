@@ -128,7 +128,6 @@ FSaveValues UFamilyComponent::CaptureState()
 void UFamilyComponent::RestoreState(FSaveValues SaveData)
 {
 	CurrentWeddingRules = SaveData.WeddingRules;
-
 	CharacterName = SaveData.CharacterName;
 
 	TArray<AActor*>Actors;

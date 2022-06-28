@@ -67,6 +67,7 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	if (!InitializeService(OwnerComp)) return;
 
+	if (PreviousAIStatus != (uint8)EAIStatus::None) return;
 	StopSearching();
 	if (PreviousGoal != (uint8)EAIGoal::None) return;
 	SetGoalAndAction();	

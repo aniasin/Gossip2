@@ -82,11 +82,6 @@ public:
 	UPROPERTY()
 	float CurrentConstructionStep;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bMove;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	AShelter* OtherShelter;
-
 	float BeginConstruct(AActor* Controller);
 	void StopConstruct(AActor* Controller);
 
@@ -122,6 +117,7 @@ protected:
 private:	
 	void UpgradeShelter();
 	FVector TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction);
+	FTransform TraceForTerrainHeight(AShelter* NewShelter, FVector FreeLocation);
 
 	void AddToOwners(AActor* Actor);
 

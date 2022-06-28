@@ -226,6 +226,7 @@ void ANonPlayerCharacter::RestoreState(FSaveValues SaveValues)
 {
 	SetActorTransform(SaveValues.Transform);
 	SocialComp->CharacterProfile = SaveValues.CharacterProfile;
+	FamilyComp->CharacterGender = SaveValues.CharacterProfile;
 	CharacterName = SaveValues.CharacterName;
 	InitializeCharacterProfile();
 	AIController->ResetAI();
