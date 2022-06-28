@@ -214,6 +214,15 @@ TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary(FString SaveName)
 			Map = CurrentSaveGame->MapName;
 		}
 	}
+	else if (UGameplayStatics::LoadDataFromSlot(OutSaveData, "AutoSave", 0))
+	{		
+		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
+		{
+			SaveData = CurrentSaveGame->SaveData;
+			RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
+			Map = CurrentSaveGame->MapName;
+		}		
+	}
 	return SaveData;
 }
 
@@ -247,7 +256,10 @@ void UGS_GameInstance::OnGameLoaded()
 	// Restore Player First
 	APlayerPawn* Player = Cast<APlayerPawn>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass()));
 	USaveableEntity* PlayerSaveComp = Cast<USaveableEntity>(Player->GetComponentByClass(USaveableEntity::StaticClass()));
-	PlayerSaveComp->RestoreState(SaveData[Player->Id]);
+	if (SaveData.Contains(Player->Id))
+	{
+		PlayerSaveComp->RestoreState(SaveData[Player->Id]);
+	}	
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
