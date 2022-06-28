@@ -21,5 +21,8 @@
 - AI Alignment towards each other will evolve and eventually stabilize after a couple of accointance.
 - AI Emotional State will evolve depending on Instincts feeding.
 - AI will eventually wants to marry.
+- AI will move to husband or wife's place and inherits last name depending of wedding rules.
+- AI will eventually wants children.
+
 
 All feedback welcome!
