@@ -34,11 +34,12 @@ enum class EAIGoal : uint8
 {
 	None				UMETA(DisplayName = "None"),
 	Food				UMETA(DisplayName = "Food"),
+	Jerk				UMETA(DisplayName = "Cruelty"),
 	Leadership			UMETA(DisplayName = "Leadership"),
 	Knowledge			UMETA(DisplayName = "Knowledge"),
 
-	Sleep				UMETA(DisplayName = "Sleep"),
 	Rest				UMETA(DisplayName = "Rest"),
+	Sleep				UMETA(DisplayName = "Sleep"),
 	Shelter				UMETA(DisplayName = "Shelter"),
 	Wealth				UMETA(DisplayName = "Wealth"),
 

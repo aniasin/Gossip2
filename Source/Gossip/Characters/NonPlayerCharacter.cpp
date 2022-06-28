@@ -122,7 +122,7 @@ void ANonPlayerCharacter::InitializeCharacterProfile()
 
 void ANonPlayerCharacter::InitializeCharacterName()
 {
-	if (CharacterName.FirstName != "") return;
+	if (!CharacterName.FirstName.IsEmpty()) return;
 	ECharacterProfile CharacterProfile = SocialComp->CharacterProfile;	
 
 	if (NamesDatatable)
@@ -228,6 +228,8 @@ void ANonPlayerCharacter::RestoreState(FSaveValues SaveValues)
 	SocialComp->CharacterProfile = SaveValues.CharacterProfile;
 	FamilyComp->CharacterGender = SaveValues.CharacterProfile;
 	CharacterName = SaveValues.CharacterName;
+	FamilyComp->CharacterName = CharacterName;
+	SocialComp->CharacterName = CharacterName;
 	InitializeCharacterProfile();
 	AIController->ResetAI();
 }

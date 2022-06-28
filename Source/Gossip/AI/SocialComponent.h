@@ -43,7 +43,7 @@ public:
 	void K2_Dialog(int32 Proximity);
 
 	EAlignmentState RefreshKnownOthers(AActor* Other);
-	bool InitiateInteraction(AActor* Other);
+	bool InitiateInteraction(AActor* Other, EAIGoal Goal);
 	bool RespondToInteraction(AActor* Other);
 	void EndInteraction(AActor* Other);
 
@@ -52,7 +52,7 @@ public:
 	EAlignmentState GetAlignment(float Respect, float Love);
 	TArray<AActor*>GetKnownOthersWithAlignment(EAlignmentState Alignment);
 
-	AActor* FindSocialPartner();
+	AActor* FindSocialPartner(bool bFriendly);
 	FVector FindFriendShelter();
 
 	TMap<FGuid, FAlignment> GetKnownOthers() { return KnownOthers; }
@@ -98,7 +98,7 @@ private:
 	TArray<AActor*>Friends;
 	TArray<FGuid>FriendsGuid;
 
-	void UpdateAlignment(AActor* Other);
+	void UpdateAlignment(AActor* Other, int32 Override);
 	FAlignment CalculateAlignmentChange(AActor* Other);
 	void UpdateFriendList(AActor* Actor, AActor* Other, int32 Proximity);
 

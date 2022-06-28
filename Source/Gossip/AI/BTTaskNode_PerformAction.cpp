@@ -54,11 +54,18 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::Improve)
 	{
 		InstinctsComp->SatisfyInstinct(Goal);
-		InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
-		AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
-		if (!ShelterActor) return EBTNodeResult::Failed;
-		ShelterActor->ConstructShelter(AIController);
-		BlackboardComp->SetValueAsFloat("WaitTime", 1);
+		switch (Goal)
+		{
+		case EAIGoal::Leadership:
+			break;
+		case EAIGoal::Shelter:
+			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
+			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
+			if (!ShelterActor) return EBTNodeResult::Failed;
+			ShelterActor->ConstructShelter(AIController);
+			break;
+
+		}
 		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;
 	}

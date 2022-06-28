@@ -50,7 +50,8 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 		CurrentInstinct = (EAIInstinct)Instinct.Instinct;
 		float AddedValue = 0;
 		Instinct.UpdateMultiplier < 1 ? AddedValue = 1 - Instinct.UpdateMultiplier : AddedValue = 0;
-		FMath::Clamp(Instinct.CurrentValue -= 1 + AddedValue, 0, 10);
+		float NewValue = FMath::Clamp(Instinct.CurrentValue -= 1 + AddedValue, 0, 10);
+		Instinct.CurrentValue = NewValue;
 		break;		
 	}
 
@@ -58,14 +59,16 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 	{
 		if (CurrentInstinct == (EAIInstinct)Instinct.Instinct)
 		{
-			FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
+			float NewGrowCoef = FMath::Clamp(Instinct.GrowCoeffient += 0.1, 0, 10);
+			Instinct.GrowCoeffient = NewGrowCoef;			
 			continue;
 		}
 		if (CurrentInstinct == EAIInstinct::Assimilation && Instinct.Instinct == EAIInstinct::Conservation
 			|| CurrentInstinct == EAIInstinct::Conservation && Instinct.Instinct == EAIInstinct::Reproduction
 			|| CurrentInstinct == EAIInstinct::Reproduction && Instinct.Instinct == EAIInstinct::Assimilation)
 		{
-			FMath::Clamp(Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier, 0, 10);
+			float NewGrowCoef = FMath::Clamp(Instinct.GrowCoeffient -= 0.1 * Instinct.UpdateMultiplier, 0, 10);
+			Instinct.GrowCoeffient = NewGrowCoef;
 		}
 	}
 }
@@ -75,8 +78,9 @@ void UInstinctsComponent::InstinctsUpdate()
 	TArray<EAIGoal> HungryInstincts;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{
-		FMath::Clamp(Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier, 0, 10);
-		if (FMath::Abs(Instinct.CurrentValue) >= 1) HungryInstincts.AddUnique(Instinct.Goal);
+		float NewInstinctValue = FMath::Clamp(Instinct.CurrentValue += Instinct.GrowCoeffient * Instinct.UpdateMultiplier, 0, 10);
+		Instinct.CurrentValue = NewInstinctValue;
+		if (Instinct.CurrentValue >= 1) HungryInstincts.AddUnique(Instinct.Goal);
 	}
 	OnInstinctsUpdated.Broadcast(HungryInstincts);
 	SortInstinctsByPriority();

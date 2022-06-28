@@ -32,6 +32,7 @@ public:
 	void RequestWedding(AActor* Other, FWeddingRule WeddingRule);
 
 	AActor* GetCurrentFiancee() { return CurrentFiancee; }
+	TArray<AActor*>GetSpouses() { return Spouses; }
 
 	void SetCurrentFiancee(AActor* Fiancee) { CurrentFiancee = Fiancee; }
 	void ResetOwnersAI(AActor* Other);

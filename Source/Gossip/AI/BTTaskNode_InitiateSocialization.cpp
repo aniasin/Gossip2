@@ -43,6 +43,8 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	AGS_AIController* OtherController = Cast<AGS_AIController>(OtherActor->GetInstigatorController());
 	if (!IsValid(OtherController)) { BlackboardComp->ClearValue("TargetActor"); return EBTNodeResult::Failed; }
 
+	EAIGoal Goal = (EAIGoal)BlackboardComp->GetValueAsEnum("Goal");
+
 	NPC->SetMoveSpeed(0);
 
 	if (OtherController->GetBlackboardComponent()->GetValueAsEnum("AIStatus") == (uint8)EAIStatus::LeadHome
@@ -54,23 +56,30 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 		AIController->ResetAI();
 		return EBTNodeResult::Failed;
 	}
-	
-	NPC->SetMoveSpeed(0);	
-	if (SocialComp->InitiateInteraction(OtherActor) && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
-	{
-		BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
-		UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
 
-		OtherController->ResetAI();
-		OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
-		OtherController->GetBlackboardComponent()->SetValueAsVector("TargetLocation", BlackboardComp->GetValueAsVector("HomeLocation"));
-		OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Follow);
-		OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::Sex);
-		UE_LOG(LogTemp, Log, TEXT("%s Should follow"), *OtherActor->GetName())
-		return EBTNodeResult::Succeeded;
+	switch (Goal)
+	{
+	case EAIGoal::Jerk:
+		SocialComp->InitiateInteraction(OtherActor, Goal);
+		break;
+	case EAIGoal::Sex:
+		if (SocialComp->InitiateInteraction(OtherActor, Goal) && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
+		{
+			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
+			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
+
+				OtherController->ResetAI();
+			OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
+			OtherController->GetBlackboardComponent()->SetValueAsVector("TargetLocation", BlackboardComp->GetValueAsVector("HomeLocation"));
+			OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Follow);
+			OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::Sex);
+			UE_LOG(LogTemp, Log, TEXT("%s Should follow"), *OtherActor->GetName())
+				return EBTNodeResult::Succeeded;
+		}
+		break;
 	}
 	
-	InstinctComp->SatisfyInstinct(EAIGoal::Sex);
+	InstinctComp->SatisfyInstinct(Goal);
 	BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);
 	OtherController->ResetAI();
 	OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Socialize);

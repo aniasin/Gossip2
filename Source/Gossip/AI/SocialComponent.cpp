@@ -55,14 +55,16 @@ EAlignmentState USocialComponent::RefreshKnownOthers(AActor* Other)
 	return AlignmentState;
 }
 
-bool USocialComponent::InitiateInteraction(AActor* Other)
+bool USocialComponent::InitiateInteraction(AActor* Other, EAIGoal Goal)
 {
 	if (!IsValid(Other)) return false;
 
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 	if (!IsValid(OtherSocialComp)) return false;
 
-	UpdateAlignment(Other);
+	int32 Override = 0;
+	if (Goal == EAIGoal::Jerk) Override = -1;
+	UpdateAlignment(Other, Override);
 	OtherSocialComp->RespondToInteraction(GetOwner());
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
@@ -74,7 +76,7 @@ bool USocialComponent::RespondToInteraction(AActor* Other)
 	if (!IsValid(Other)) return 0;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
 
-	UpdateAlignment(Other);
+	UpdateAlignment(Other, 0);
 
 	UpdateFriendList(GetOwner(), Other, KnownOthers[OtherSocialComp->Id].Proximity);
 	return KnownOthers[OtherSocialComp->Id].Proximity >= ProximityScoreForFiancee && OtherSocialComp->KnownOthers[Id].Proximity >= ProximityScoreForFiancee;
@@ -105,7 +107,7 @@ TArray<AActor*> USocialComponent::GetKnownOthersWithAlignment(EAlignmentState Al
 	return Result;
 }
 
-void USocialComponent::UpdateAlignment(AActor* Other)
+void USocialComponent::UpdateAlignment(AActor* Other, int32 Override)
 {
 	if (!IsValid(Other)) return;
 	USocialComponent* OtherSocialComp = Cast<USocialComponent>(Other->FindComponentByClass(USocialComponent::StaticClass()));
@@ -115,11 +117,13 @@ void USocialComponent::UpdateAlignment(AActor* Other)
 
 	FAlignment NewAlignment;
 	NewAlignment = CalculateAlignmentChange(Other);
-	NewAlignment.Respect += KnownOthers[OtherGuid].Respect;
-	NewAlignment.Love += KnownOthers[OtherGuid].Love;
-	int32 NewProximity = FMath::Clamp(NewAlignment.Proximity += KnownOthers[OtherGuid].Proximity, 0, 10);
+	NewAlignment.Respect += KnownOthers[OtherGuid].Respect + Override;
+	NewAlignment.Love += KnownOthers[OtherGuid].Love + Override;
+	int32 NewProximity = FMath::Clamp(NewAlignment.Proximity += KnownOthers[OtherGuid].Proximity + Override, 0, 10);
 	KnownOthers[OtherGuid].Proximity = NewProximity;
 	KnownOthers.Add(OtherGuid, NewAlignment);
+
+	UE_LOG(LogTemp, Warning, TEXT("Alignment : Respect: %s - Love: %s"), *FString::SanitizeFloat(KnownOthers[OtherGuid].Respect), *FString::SanitizeFloat(KnownOthers[OtherGuid].Love))
 
 	K2_Dialog(NewAlignment.Proximity);
 
@@ -163,7 +167,7 @@ EAlignmentState USocialComponent::GetAlignment(float Respect, float Love)
 	return EAlignmentState::None;
 }
 
-AActor* USocialComponent::FindSocialPartner()
+AActor* USocialComponent::FindSocialPartner(bool bFriendly)
 {
 	AGS_AIController* AIController = Cast<AGS_AIController>(GetOwner()->GetInstigatorController());
 	if (!AIController) return nullptr;	
@@ -174,7 +178,8 @@ AActor* USocialComponent::FindSocialPartner()
 	{
 		USocialComponent* OtherSocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
 		if (!OtherSocialComp) continue;
-		if (!KnownOthers.Contains(OtherSocialComp->Id) || KnownOthers[OtherSocialComp->Id].Proximity <= -2) continue;
+		if (!KnownOthers.Contains(OtherSocialComp->Id) || KnownOthers[OtherSocialComp->Id].Proximity <= -2 && bFriendly) continue;
+		if (!KnownOthers.Contains(OtherSocialComp->Id) || KnownOthers[OtherSocialComp->Id].Proximity >= 5 && !bFriendly) continue;
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Actor->GetInstigatorController());
 
 		EAIStatus AIStatus = (EAIStatus)OtherController->BlackboardComponent->GetValueAsEnum("AIStatus");

@@ -67,9 +67,9 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	if (!InitializeService(OwnerComp)) return;
 
-	if (PreviousAIStatus != (uint8)EAIStatus::None) return;
 	StopSearching();
 	if (PreviousGoal != (uint8)EAIGoal::None) return;
+	if (PreviousAIStatus != (uint8)EAIStatus::None) return;
 	SetGoalAndAction();	
 	CheckStock();
 	SetTravelRoute();
@@ -85,23 +85,23 @@ void UBTService_SetAIGoalAndAction::TickNode(UBehaviorTreeComponent& OwnerComp, 
 void UBTService_SetAIGoalAndAction::StopSearching()
 {
 	if (PreviousAction == (uint8)EAIAction::SearchCollector || PreviousAction == (uint8)EAIAction::SearchProcessor
-		|| PreviousAIStatus == (uint8)EAIStatus::SearchSocialize)
+		|| PreviousAction == (uint8)EAIAction::StockRaw || PreviousAIStatus == (uint8)EAIStatus::SearchSocialize)
 	{
-		if (AIController->HasTimeSearchingElapsed())
+		if (!AIController->HasTimeSearchingElapsed()) return;
+		
+		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 		{
-			for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
+			if (Instinct.Goal == (EAIGoal)PreviousGoal)
 			{
-				if (Instinct.Goal == (EAIGoal)PreviousGoal)
-				{
-					Instinct.ReportedValue += Instinct.CurrentValue;
-					Instinct.CurrentValue = 0;
-					continue;
-				}
-				Instinct.CurrentValue += Instinct.ReportedValue;
-				Instinct.ReportedValue = 0;
+				Instinct.ReportedValue += Instinct.CurrentValue;
+				Instinct.CurrentValue = 0;
+				continue;
 			}
-			AIController->ResetAI();
+			Instinct.CurrentValue += Instinct.ReportedValue;
+			Instinct.ReportedValue = 0;
 		}
+		AIController->ResetAI();	
+		UE_LOG(LogTemp, Warning, TEXT("Elapsed!"))
 		AIController->SetTimeSearching();
 	}	
 }
@@ -146,14 +146,26 @@ void UBTService_SetAIGoalAndAction::SetAction()
 	case EAIInstinct::None:
 		break;
 	case EAIInstinct::Assimilation:
-		OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, false);
-		if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy;  return; }
+		switch ((EAIGoal)NewGoal)
+		{
+		case EAIGoal::Food:
+			OwnedRessourceProcessed = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, false);
+			if (OwnedRessourceProcessed > 0) { NewAction = (uint8)EAIAction::Satisfy;  return; }
 
-		OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, true);
-		if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::TravelProcessor;  return; }
+			OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, ERessourceSubType::None, true);
+			if (OwnedRessourceRaw > 0) { NewAction = (uint8)EAIAction::TravelProcessor;  return; }
 
-		NewAction = (uint8)EAIAction::TravelCollector;
-		return;
+			NewAction = (uint8)EAIAction::TravelCollector;
+			return;
+		case EAIGoal::Jerk:
+			NewAIStatus = (uint8)EAIStatus::SearchSocialize;
+			return;
+		case EAIGoal::Leadership:
+			NewAction = (uint8)EAIAction::Improve;
+			NewAIStatus = (uint8)EAIStatus::Altruism;
+			AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", AIController->GetPawn());
+			return;
+		}
 
 	case EAIInstinct::Conservation:
 		switch ((EAIGoal)NewGoal)
@@ -176,9 +188,15 @@ void UBTService_SetAIGoalAndAction::SetAction()
 		}
 
 	case EAIInstinct::Reproduction:
-		AIController->ResetAI();
-		NewAIStatus = (uint8)EAIStatus::SearchSocialize;
-		return;
+		switch ((EAIGoal)NewGoal)
+		{
+		case EAIGoal::Sex:
+			NewAIStatus = (uint8)EAIStatus::SearchSocialize;
+			return;
+		case EAIGoal::Children:
+			NewAIStatus = (uint8)EAIStatus::SearchSocialize;
+		}
+
 	}
 	NewAction = (uint8)EAIInstinct::None;
 }
@@ -250,6 +268,7 @@ void UBTService_SetAIGoalAndAction::CallHelp()
 	TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
 	Subsidiaries.Append(SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Submissive));
 
+	UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName)
 	if (Subsidiaries.IsEmpty()) return;
 	for (AActor* Subsidiary : Subsidiaries)
 	{
@@ -261,8 +280,9 @@ void UBTService_SetAIGoalAndAction::CallHelp()
 			*OtherSocialComp->CharacterName.FirstName, *OtherSocialComp->CharacterName.LastName)
 		AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
 		OtherController->ResetAI();
+
 		OtherController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
-		OtherController->BlackboardComponent->SetValueAsEnum("Goal", (uint8)EAIGoal::Shelter);
+		OtherController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
 		OtherController->BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::Improve);
 		OtherController->BlackboardComponent->SetValueAsObject("TargetActor", AIController->BlackboardComponent->GetValueAsObject("TargetActor"));
 	}	

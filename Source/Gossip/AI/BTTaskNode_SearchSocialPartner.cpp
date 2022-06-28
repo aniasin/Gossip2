@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GS_AIController.h"
 #include "SocialComponent.h"
+#include "FamilyComponent.h"
 
 #include "Gossip/Characters/NonPlayerCharacter.h"
 
@@ -18,19 +19,52 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 
 	ANonPlayerCharacter* NPC = Cast<ANonPlayerCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!NPC) return EBTNodeResult::Failed;
+	
+	UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(NPC->GetComponentByClass(UFamilyComponent::StaticClass()));
+	if (!FamilyComp) return EBTNodeResult::Failed;
 
 	UActorComponent* SocialComponent = NPC->FindComponentByClass(USocialComponent::StaticClass());
 	if (!SocialComponent) return EBTNodeResult::Failed;
 	USocialComponent* SocialComp = Cast<USocialComponent>(SocialComponent);
 	if (!SocialComp) return EBTNodeResult::Failed;
 
-	AActor* TargetActor = SocialComp->FindSocialPartner();
-	if (!TargetActor)
+	EAIGoal Goal = (EAIGoal)BlackboardComp->GetValueAsEnum("Goal");
+
+	bool bFriendly = true;
+	AActor* TargetActor = nullptr;
+	switch (Goal)
 	{
-		AIController->ResetAI();
-		return EBTNodeResult::Failed;
+	case EAIGoal::Sex:
+		TargetActor = SocialComp->FindSocialPartner(bFriendly);
+		if (!TargetActor)
+		{
+			return EBTNodeResult::Failed;
+		}
+		NPC->SetMoveSpeed(1);
+		BlackboardComp->SetValueAsObject("TargetActor", TargetActor);
+		return EBTNodeResult::Succeeded;
+
+	case EAIGoal::Jerk:
+		bFriendly = false;
+		TargetActor = SocialComp->FindSocialPartner(bFriendly);
+		if (!TargetActor)
+		{
+			return EBTNodeResult::Failed;
+		}
+		NPC->SetMoveSpeed(1);
+		BlackboardComp->SetValueAsObject("TargetActor", TargetActor);
+		return EBTNodeResult::Succeeded;
+
+	case EAIGoal::Children:
+		TArray<AActor*>Spouses = FamilyComp->GetSpouses();
+		if (Spouses.IsEmpty())
+		{
+			return EBTNodeResult::Failed;
+		}
+		NPC->SetMoveSpeed(1);
+		int32 RandomSpouse = FMath::RandRange(0, Spouses.Num() - 1);
+		BlackboardComp->SetValueAsObject("TargetActor", Spouses[RandomSpouse]);
+		return EBTNodeResult::Succeeded;
 	}
-	NPC->SetMoveSpeed(1);
-	BlackboardComp->SetValueAsObject("TargetActor", TargetActor);
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::Failed;
 }
