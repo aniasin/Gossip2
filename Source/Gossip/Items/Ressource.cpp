@@ -196,6 +196,7 @@ FSaveValues ARessource::CaptureState()
 			StoredWorkers.Add(AIController->Id, TimeSpent / GM->GameHourDurationSeconds);
 		}
 	}
+	SaveValues.Transform = GetActorTransform();
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
@@ -228,5 +229,5 @@ void ARessource::RestoreState(FSaveValues SaveData)
 		float TimerTime = SaveData.CoolDown;
 		GetWorldTimerManager().SetTimer(TimerRespawn, this, &ARessource::RessourceRespawn, TimerTime);
 	}
-
+	SetActorTransform(SaveData.Transform);
 }

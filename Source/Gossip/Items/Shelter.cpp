@@ -419,12 +419,14 @@ FSaveValues AShelter::CaptureState()
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
 	SaveValues.ShelterLevel = CurrentLevel;
+	SaveValues.Transform = GetActorTransform();
 
 	return SaveValues;
 }
 
 void AShelter::RestoreState(FSaveValues SaveValues)
 {
+	SetActorTransform(SaveValues.Transform);
 	StoredWorkers = SaveValues.StoredWorkers;
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;
