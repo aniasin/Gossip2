@@ -106,7 +106,7 @@ FVector2D UPlayerOrdersComponent::GetMousePosition()
 FSaveValues UPlayerOrdersComponent::CaptureState()
 {
 	FSaveValues SaveValues;
-	
+
 	FTransform Transform;
 	Transform.SetLocation(GetOwner()->GetActorLocation());
 	Transform.SetRotation(GetOwner()->GetInstigatorController()->GetControlRotation().Quaternion());

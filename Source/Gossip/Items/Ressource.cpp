@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimMontage.h"
 
+#include "Gossip/Core/GS_Singleton.h"
 #include "Gossip/AI/GS_AIController.h"
 #include "Gossip/Characters/NonPlayerCharacter.h"
 #include "Gossip/Core/GossipGameMode.h"
@@ -64,6 +65,7 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	LivingColor = RessourceData.LivingColor;
 	DeadColor = RessourceData.DeadColor;
 	RespawnTime = RessourceData.RespawnTimeInGameHour;
+	MaxQuality = RessourceData.MeshesPtr.Num();
 }
 #endif WITH_EDITOR
 
@@ -78,6 +80,16 @@ void ARessource::BeginPlay()
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 		Mesh->SetMaterial(0, MaterialInstance);
 	}
+}
+
+void ARessource::InitializeRessource(int32 Index)
+{
+	UStaticMesh* MeshPtr;
+	int32 MeshIndex = Index;
+	if (!RessourceData.MeshesPtr.IsValidIndex(MeshIndex)) { MeshIndex = 0; }
+	MeshPtr = LoadObject<UStaticMesh>(nullptr, *RessourceData.MeshesPtr[MeshIndex].ToString());
+	if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); }
+	else { Mesh->SetStaticMesh(nullptr); }
 }
 
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)
@@ -165,6 +177,12 @@ int32 ARessource::GetRessourceDisponibility()
 	return ContentCount - ActorsWorkingOn.Num();
 }
 
+void ARessource::IncrementQuality()
+{
+	Quality++;
+	//InitializeRessource(Quality);
+}
+
 UAnimMontage* ARessource::GetAnimMontageMontage()
 {
 	return AnimMontage;
@@ -200,6 +218,7 @@ FSaveValues ARessource::CaptureState()
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
+	SaveValues.DiversityIndex = Quality;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
 
 	return SaveValues;
@@ -230,4 +249,7 @@ void ARessource::RestoreState(FSaveValues SaveData)
 		GetWorldTimerManager().SetTimer(TimerRespawn, this, &ARessource::RessourceRespawn, TimerTime);
 	}
 	SetActorTransform(SaveData.Transform);
+
+	Quality = SaveData.DiversityIndex;
+	//InitializeRessource(Quality);
 }

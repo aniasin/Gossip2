@@ -69,6 +69,8 @@ void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEven
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
+	CollisionBox->SetBoxExtent(FVector(ShelterSize, ShelterSize, ShelterSize));
+
 	Floor->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, CollisionBox->GetScaledBoxExtent().Y / 50, 2));
 	Floor->SetRelativeLocation(FVector(- CollisionBox->GetScaledBoxExtent().X, - CollisionBox->GetScaledBoxExtent().Y, -500));
 
@@ -255,7 +257,7 @@ void AShelter::StopConstruct(AActor* Controller)
 
 float AShelter::BeginHandwork(AActor* Controller)
 {
-
+	if (SleepCollector->GetPossibleUpgrade()) SleepCollector->IncrementQuality();
 	return 0.33;
 }
 

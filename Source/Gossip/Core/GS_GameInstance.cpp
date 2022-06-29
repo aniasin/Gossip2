@@ -203,26 +203,45 @@ void UGS_GameInstance::SaveGame(FString SaveName)
 
 TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary(FString SaveName)
 {
+	UGS_SaveGame_Object* CurrentSaveGame = nullptr;
+	UGS_SaveGame_Object* AutoSaveGame = nullptr;
+	FDateTime CurrentSaveDate;
+	FDateTime AutoSaveDate;
 	TMap<FGuid, FSaveStruct>SaveData;
+	TMap<FGuid, FSaveStruct>AutoSaveData;
 	TArray<uint8>OutSaveData;
-	if (UGameplayStatics::LoadDataFromSlot(OutSaveData, SaveName, 0))
+
+	UGameplayStatics::LoadDataFromSlot(OutSaveData, SaveName, 0);	
+	CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData));
+	if (CurrentSaveGame)
 	{
-		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
-		{
-			SaveData = CurrentSaveGame->SaveData;
-			RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
-			Map = CurrentSaveGame->MapName;
-		}
+		CurrentSaveDate = CurrentSaveGame->CreationTime;
 	}
-	else if (UGameplayStatics::LoadDataFromSlot(OutSaveData, "AutoSave", 0))
-	{		
-		if (UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData)))
-		{
-			SaveData = CurrentSaveGame->SaveData;
-			RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
-			Map = CurrentSaveGame->MapName;
-		}		
+	
+	UGameplayStatics::LoadDataFromSlot(OutSaveData, "AutoSave", 0);		
+	AutoSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::LoadGameFromMemory(OutSaveData));
+	if (AutoSaveGame)
+	{
+		AutoSaveDate = AutoSaveGame->CreationTime;
+
+	}			
+	if (CurrentSaveGame && CurrentSaveDate >= AutoSaveDate)
+	{
+		SaveData = CurrentSaveGame->SaveData;
+		RealGameTimeSeconds = CurrentSaveGame->GameTimeSeconds;
+		Map = CurrentSaveGame->MapName;
+		UE_LOG(LogTemp, Warning, TEXT("Loaded %s"), *CurrentSaveGame->SaveGameName)
+		return SaveData;
 	}
+	else if (AutoSaveGame)
+	{
+		AutoSaveData = AutoSaveGame->SaveData;
+		RealGameTimeSeconds = AutoSaveGame->GameTimeSeconds;
+		Map = AutoSaveGame->MapName;
+		UE_LOG(LogTemp, Warning, TEXT("Loaded %s"), *AutoSaveGame->SaveGameName)
+		return AutoSaveData;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("No SaveGame, creating new Game!"))
 	return SaveData;
 }
 
@@ -231,6 +250,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData, FS
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
 	if (!CurrentSaveGame) return false;
 	CurrentSaveGame->SaveData = SaveData;
+	CurrentSaveGame->CreationTime = FDateTime::Now();
 	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds() + RealGameTimeSeconds;
 	CurrentSaveGame->MapName = Map;
 
@@ -250,6 +270,7 @@ void UGS_GameInstance::RestoreGameState(FString SaveName)
 void UGS_GameInstance::OnGameLoaded()
 {
 	TMap<FGuid, FSaveStruct>SaveData = LoadGameDataBinary(CurrentSaveName);
+
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	GM->CumulatedRealGameTime = RealGameTimeSeconds;
 

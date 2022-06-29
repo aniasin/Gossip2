@@ -357,6 +357,8 @@ struct FSaveValues
 	UPROPERTY()
 	int32 ContentCount;
 	UPROPERTY()
+	int32 DiversityIndex;
+	UPROPERTY()
 	TArray<FInventoryItem>Inventory;
 	UPROPERTY()
 	int32 ShelterLevel;
