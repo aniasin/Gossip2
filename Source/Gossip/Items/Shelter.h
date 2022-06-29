@@ -36,13 +36,13 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Ramp;
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* WallA;
+	UStaticMeshComponent* WallFront;
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* WallB;
+	UStaticMeshComponent* WallBack;
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* WallC;
+	UStaticMeshComponent* WallRight;
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* WallD;
+	UStaticMeshComponent* WallLeft;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* PillarA;
 	UPROPERTY(VisibleAnywhere)
@@ -99,6 +99,7 @@ public:
 	void SpawnNPC();
 	void InitializeShelter();
 	void MoveShelter(AShelter* NewShelter);
+	void RemoveWall(int32 WallIndex);
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
@@ -129,6 +130,7 @@ private:
 
 	FShelterData ShelterData;
 	ERessourceSubType RessourceForImprovement;
+	TArray<int32> ShelterRemovedWalls;
 
 	TArray<AActor*>ActorsWorkingOn;
 	TArray<float>Timers;

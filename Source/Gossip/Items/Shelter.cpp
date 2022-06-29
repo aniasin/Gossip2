@@ -40,14 +40,14 @@ AShelter::AShelter()
 	Ramp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ramp"));
 	Ramp->SetupAttachment(CollisionBox);
 
-	WallA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
-	WallA->SetupAttachment(CollisionBox);
-	WallB = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
-	WallB->SetupAttachment(CollisionBox);
-	WallC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallC"));
-	WallC->SetupAttachment(CollisionBox);
-	WallD = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallD"));
-	WallD->SetupAttachment(CollisionBox);
+	WallFront = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
+	WallFront->SetupAttachment(CollisionBox);
+	WallBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
+	WallBack->SetupAttachment(CollisionBox);
+	WallRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallC"));
+	WallRight->SetupAttachment(CollisionBox);
+	WallLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallD"));
+	WallLeft->SetupAttachment(CollisionBox);
 
 	PillarA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarA"));
 	PillarA->SetupAttachment(CollisionBox);
@@ -174,19 +174,27 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 {
 	FTransform NewTransform = FTransform::Identity;
 	FVector FreeLocation = FVector::ZeroVector;
+	int32 NewShelterWall = 0;
+	int32 ShelterWall = 0;
 
 	if (FreeLocation.IsZero())
 	{
+		ShelterWall = 1;
+		NewShelterWall = 2;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
 	}
 
 	if (FreeLocation.IsZero())
 	{
+		ShelterWall = 4;
+		NewShelterWall = 3;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
 	}
 
 	if (FreeLocation.IsZero())
 	{
+		ShelterWall = 3;
+		NewShelterWall = 4;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
 	}
 	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
@@ -195,6 +203,9 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 	FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
 	SetActorRotation(NewTransform.GetRotation());
 	SetActorLocation(NewTransform.GetLocation());
+
+	NewShelter->RemoveWall(NewShelterWall);
+	RemoveWall(ShelterWall);
 
 	SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + NewTransform.GetLocation());
 	FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + NewTransform.GetLocation());
@@ -335,6 +346,18 @@ FTransform AShelter::TraceForTerrainHeight(AShelter* NewShelter, FVector FreeLoc
 	return NewTransform;
 }
 
+void AShelter::RemoveWall(int32 WallIndex)
+{
+	TArray<UStaticMeshComponent*> Walls;
+	Walls.Add(nullptr);
+	Walls.Add(WallFront);
+	Walls.Add(WallBack);
+	Walls.Add(WallRight);
+	Walls.Add(WallLeft);
+	Walls[WallIndex]->SetStaticMesh(nullptr);
+	ShelterRemovedWalls.AddUnique(WallIndex);
+}
+
 void AShelter::AddToOwners(AActor* Actor)
 {
 	Owners.AddUnique(Actor);
@@ -360,10 +383,10 @@ void AShelter::OnAsyncLoadComplete()
 
 	if (WallMesh)
 	{
-		WallA->SetStaticMesh(WallMesh);
-		WallB->SetStaticMesh(WallMesh);
-		WallC->SetStaticMesh(WallMesh);
-		WallD->SetStaticMesh(WallMesh);
+		if (!ShelterRemovedWalls.Contains(1)) WallFront->SetStaticMesh(WallMesh);
+		if (!ShelterRemovedWalls.Contains(2)) WallBack->SetStaticMesh(WallMesh);
+		if (!ShelterRemovedWalls.Contains(3)) WallRight->SetStaticMesh(WallMesh);
+		if (!ShelterRemovedWalls.Contains(4)) WallLeft->SetStaticMesh(WallMesh);
 	}
 
 	if (PillarMesh)
@@ -395,14 +418,14 @@ void AShelter::SetShelterSize()
 	Ramp->SetRelativeRotation(FRotator(0, -90, 0));
 	Ramp->SetRelativeScale3D(FVector(2, 4, 2));
 
-	WallA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
-	WallA->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-	WallB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
-	WallB->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-	WallC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, 0));
-	WallC->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-	WallD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
-	WallD->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
+	WallFront->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
+	WallFront->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
+	WallBack->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
+	WallBack->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
+	WallRight->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, 0));
+	WallRight->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
+	WallLeft->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, 0));
+	WallLeft->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
 
 	PillarA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, 0));
 	PillarB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1 , 0));
@@ -430,6 +453,7 @@ FSaveValues AShelter::CaptureState()
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ShelterConstructionStep = CurrentConstructionStep;
 	SaveValues.ShelterLevel = CurrentLevel;
+	SaveValues.ShelterRemovedWalls = ShelterRemovedWalls;
 	SaveValues.Transform = GetActorTransform();
 
 	return SaveValues;
@@ -441,6 +465,7 @@ void AShelter::RestoreState(FSaveValues SaveValues)
 	StoredWorkers = SaveValues.StoredWorkers;
 	CurrentConstructionStep = SaveValues.ShelterConstructionStep;
 	CurrentLevel = SaveValues.ShelterLevel;
+	ShelterRemovedWalls = SaveValues.ShelterRemovedWalls;
 
 	if (CurrentConstructionStep > 0) LoadConstructionMeshes();
 	InitializeShelter();

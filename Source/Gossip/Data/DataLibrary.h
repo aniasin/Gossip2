@@ -363,6 +363,8 @@ struct FSaveValues
 	UPROPERTY()
 	float ShelterConstructionStep;
 	UPROPERTY()
+	TArray<int32> ShelterRemovedWalls;
+	UPROPERTY()
 	float CoolDown;
 	UPROPERTY()
 	TMap<FGuid, float>StoredWorkers;

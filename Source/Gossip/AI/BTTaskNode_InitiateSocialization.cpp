@@ -65,16 +65,17 @@ EBTNodeResult::Type UBTTaskNode_InitiateSocialization::ExecuteTask(UBehaviorTree
 	case EAIGoal::Sex:
 		if (SocialComp->InitiateInteraction(OtherActor, Goal) && OtherSocialComp->CharacterProfile != SocialComp->CharacterProfile)
 		{
+			InstinctComp->SatisfyInstinct(Goal);
 			BlackboardComp->SetValueAsEnum("AIStatus", (uint8)EAIStatus::LeadHome);
 			UE_LOG(LogTemp, Log, TEXT("%s Should Lead"), *NPC->GetName())
 
-				OtherController->ResetAI();
+			OtherController->ResetAI();
 			OtherController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NPC);
 			OtherController->GetBlackboardComponent()->SetValueAsVector("TargetLocation", BlackboardComp->GetValueAsVector("HomeLocation"));
 			OtherController->GetBlackboardComponent()->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Follow);
 			OtherController->GetBlackboardComponent()->SetValueAsEnum("Goal", (uint8)EAIGoal::Sex);
 			UE_LOG(LogTemp, Log, TEXT("%s Should follow"), *OtherActor->GetName())
-				return EBTNodeResult::Succeeded;
+			return EBTNodeResult::Succeeded;
 		}
 		break;
 	}
