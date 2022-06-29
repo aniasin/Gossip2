@@ -63,7 +63,7 @@ bool USocialComponent::InitiateInteraction(AActor* Other, EAIGoal Goal)
 	if (!IsValid(OtherSocialComp)) return false;
 
 	int32 Override = 0;
-	if (Goal == EAIGoal::Jerk) Override = -1;
+	if (Goal == EAIGoal::Jerk) Override = -2;
 	UpdateAlignment(Other, Override);
 	OtherSocialComp->RespondToInteraction(GetOwner());
 

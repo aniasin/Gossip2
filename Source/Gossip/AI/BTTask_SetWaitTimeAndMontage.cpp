@@ -35,6 +35,8 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 	{
 		EAIGoal CurrentGoal = (EAIGoal)BlackboardComp->GetValueAsEnum("Goal");
 		EAIAction CurrentAction = (EAIAction)BlackboardComp->GetValueAsEnum("Action");
+
+		AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));;
 		switch (CurrentGoal)
 		{
 		case EAIGoal::Food:
@@ -42,7 +44,6 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			return EBTNodeResult::Succeeded;
 
 		case EAIGoal::Shelter:			
-			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
 			BlackboardComp->SetValueAsFloat("WaitTime", ShelterActor->BeginConstruct(OwnerComp.GetAIOwner()) * GM->GameHourDurationSeconds);
 
@@ -50,6 +51,11 @@ EBTNodeResult::Type UBTTask_SetWaitTimeAndMontage::ExecuteTask(UBehaviorTreeComp
 			{
 				NPC->PlayAnimMontage(ShelterActor->ConstructMontage);
 			}
+			return EBTNodeResult::Succeeded;
+
+		case EAIGoal::HandWork:
+			if (!ShelterActor) return EBTNodeResult::Failed;
+			BlackboardComp->SetValueAsFloat("WaitTime", ShelterActor->BeginHandwork(OwnerComp.GetAIOwner()) * GM->GameHourDurationSeconds);
 			return EBTNodeResult::Succeeded;
 		}
 		return EBTNodeResult::Failed;

@@ -73,6 +73,26 @@ void UInstinctsComponent::SatisfyInstinct(EAIGoal Goal)
 	}
 }
 
+void UInstinctsComponent::TransferInstinctValue(EAIGoal GoalToTransfer, EAIGoal Destination)
+{
+	float Value = 0;
+	EAIInstinct CurrentInstinct = EAIInstinct::None;
+	for (FInstinctValues& Instinct : InstinctsInfo)
+	{
+		if (Instinct.Goal != GoalToTransfer) continue;
+		CurrentInstinct = Instinct.Instinct;
+		Value = Instinct.CurrentValue * Instinct.UpdateMultiplier;
+		Instinct.CurrentValue = 0;
+		break;
+	}
+	for (FInstinctValues& Instinct : InstinctsInfo)
+	{
+		if (Instinct.Goal != Destination) continue;
+		Instinct.CurrentValue += Value;
+		break;
+	}
+}
+
 void UInstinctsComponent::InstinctsUpdate()
 {
 	TArray<EAIGoal> HungryInstincts;

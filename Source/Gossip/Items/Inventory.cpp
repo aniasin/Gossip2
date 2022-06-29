@@ -19,6 +19,7 @@ void UInventory::BeginPlay()
 
 void UInventory::AddOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
+	if (RessourceType == EAIGoal::HandWork) RessourceType = EAIGoal::Shelter;
 	FInventoryItem Item;
 	Item.Ressource = RessourceType;
 	Item.RessourceSubType = RessourceSubType;
@@ -31,6 +32,7 @@ void UInventory::AddOwnedItem(EAIGoal RessourceType, ERessourceSubType Ressource
 void UInventory::RemoveOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
 	int32 Index = 0;
+	if (RessourceType == EAIGoal::HandWork) RessourceType = EAIGoal::Shelter;
 	for (FInventoryItem Item : InventoryItems)
 	{
 		if (Item.Ressource == RessourceType && Item.bRaw == bRaw && (Item.RessourceSubType == RessourceSubType || RessourceSubType == ERessourceSubType::None))
@@ -44,8 +46,8 @@ void UInventory::RemoveOwnedItem(EAIGoal RessourceType, ERessourceSubType Ressou
 
 int32 UInventory::GetOwnedItemsCount(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw)
 {
-	// TODO check for Time and remove if spoiled
 	int32 Count = 0;
+	if (RessourceType == EAIGoal::HandWork) RessourceType = EAIGoal::Shelter;
 	for (FInventoryItem Item : InventoryItems)
 	{
 		if (Item.Ressource == RessourceType && Item.bRaw == bRaw && (Item.RessourceSubType == RessourceSubType || RessourceSubType == ERessourceSubType::None)) Count++;

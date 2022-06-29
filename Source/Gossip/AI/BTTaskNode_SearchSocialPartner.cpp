@@ -6,6 +6,7 @@
 #include "GS_AIController.h"
 #include "SocialComponent.h"
 #include "FamilyComponent.h"
+#include "InstinctsComponent.h"
 
 #include "Gossip/Characters/NonPlayerCharacter.h"
 
@@ -59,7 +60,11 @@ EBTNodeResult::Type UBTTaskNode_SearchSocialPartner::ExecuteTask(UBehaviorTreeCo
 		TArray<AActor*>Spouses = FamilyComp->GetSpouses();
 		if (Spouses.IsEmpty())
 		{
-			return EBTNodeResult::Failed;
+			UInstinctsComponent* InstinctComp = Cast<UInstinctsComponent>(NPC->GetComponentByClass(UInstinctsComponent::StaticClass()));
+			InstinctComp->TransferInstinctValue(Goal, EAIGoal::Sex);
+			InstinctComp->SatisfyInstinct(Goal);
+			AIController->ResetAI();
+			return EBTNodeResult::Succeeded;
 		}
 		NPC->SetMoveSpeed(1);
 		int32 RandomSpouse = FMath::RandRange(0, Spouses.Num() - 1);

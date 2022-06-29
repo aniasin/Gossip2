@@ -54,17 +54,21 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 	if (Action == EAIAction::Improve)
 	{
 		InstinctsComp->SatisfyInstinct(Goal);
+
+		AShelter* ShelterActor = ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 		switch (Goal)
 		{
 		case EAIGoal::Leadership:
 			break;
 		case EAIGoal::Shelter:
 			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
-			AShelter* ShelterActor = Cast<AShelter>(BlackboardComp->GetValueAsObject("TargetActor"));
 			if (!ShelterActor) return EBTNodeResult::Failed;
 			ShelterActor->ConstructShelter(AIController);
 			break;
-
+		case  EAIGoal::HandWork:
+			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
+			if (!ShelterActor) return EBTNodeResult::Failed;
+			UE_LOG(LogTemp, Log, TEXT("%s %s has done handwork!"), *NPC->CharacterName.FirstName, *NPC->CharacterName.LastName)
 		}
 		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;
@@ -108,8 +112,12 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 			}
 
 		case EAIInstinct::Reproduction:	
-			// Directly set in SetAIGoalAndAction
-			break;
+			switch (Goal)
+			{
+			case EAIGoal::HandWork:
+				Ressource->CollectRessource(InventoryComp, AIController);
+				break;
+			}
 		}
 		NPC->StopAnimMontage();
 		BlackboardComp->SetValueAsFloat("WaitTime", 1);

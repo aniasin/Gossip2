@@ -40,6 +40,9 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 	
 	bool bHit = (World->SweepMultiByChannel(Hits, Start, End, FQuat::Identity, ECC_GameTraceChannel2, Sphere));
 
+	EAIGoal NeededRessourceType = Goal;
+	if (Goal == EAIGoal::HandWork) NeededRessourceType = EAIGoal::Shelter;
+
 	ARessource* Ressource;
 	for (FHitResult Hit : Hits)
 	{
@@ -54,9 +57,9 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 			{
 				InventoryComp->RemoveKnownRessourceCollector(Ressource);
 				continue;
-			}
-			if (Ressource->RessourceType != Goal) continue;
-			if (Goal == EAIGoal::Shelter)
+			}			
+			if (Ressource->RessourceType != NeededRessourceType) continue;
+			if (Goal == EAIGoal::Shelter || Goal == EAIGoal::HandWork)
 			{
 				AShelter* Shelter = Cast<AShelter>(InventoryComp->ShelterActor);
 				if (Ressource->RessourceSubType != Shelter->GetRessourceSubTypeForImprovement()) continue;
@@ -68,7 +71,7 @@ EBTNodeResult::Type UBTTaskNode_FindRessourcesInRange::ExecuteTask(UBehaviorTree
 		if (Action == EAIAction::SearchProcessor && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass())
 			|| Action == EAIAction::StockProcessed && Hit.GetActor()->IsA(ARessourceProcessor::StaticClass()))
 		{
-			if (Ressource->RessourceType != Goal) continue;
+			if (Ressource->RessourceType != NeededRessourceType) continue;
 			AIController->BlackboardComponent->SetValueAsObject("TargetActor", Ressource);
 			return EBTNodeResult::Succeeded;
 		}

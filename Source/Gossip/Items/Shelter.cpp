@@ -242,6 +242,17 @@ void AShelter::StopConstruct(AActor* Controller)
 	Timers.RemoveAt(Index);
 }
 
+float AShelter::BeginHandwork(AActor* Controller)
+{
+
+	return 0.33;
+}
+
+void AShelter::StopHandwork(AActor* Controller)
+{
+
+}
+
 void AShelter::LoadConstructionMeshes()
 {
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;

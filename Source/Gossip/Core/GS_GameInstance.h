@@ -19,6 +19,10 @@ class GOSSIP_API UGS_GameInstance : public UGameInstance, public IMenuInterface
 public:
 
 	UGS_GameInstance(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UMenuBase* SocialRulesMenu;
+
 	virtual void Init();
 
 	UFUNCTION(BlueprintCallable)
@@ -60,7 +64,6 @@ public:
 private:
 	class UMenuBase* Menu;
 	FString CurrentSaveName;
-	UMenuBase* SocialRulesMenu;
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;

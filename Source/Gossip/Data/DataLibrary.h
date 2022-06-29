@@ -45,7 +45,7 @@ enum class EAIGoal : uint8
 
 	Sex					UMETA(DisplayName = "Sex"),
 	Children			UMETA(DisplayName = "Children"),
-	Work				UMETA(DisplayName = "Work"),
+	HandWork			UMETA(DisplayName = "HandWork"),
 };
 
 UENUM(BlueprintType)

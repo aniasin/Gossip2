@@ -85,6 +85,9 @@ public:
 	float BeginConstruct(AActor* Controller);
 	void StopConstruct(AActor* Controller);
 
+	float BeginHandwork(AActor* Controller);
+	void StopHandwork(AActor* Controller);
+
 	void LoadConstructionMeshes();
 
 	void ConstructShelter(AActor* Controller);

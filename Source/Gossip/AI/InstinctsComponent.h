@@ -26,6 +26,7 @@ public:
 	FOnInstinctsUpdateSignature OnInstinctsUpdated;
 
 	void SatisfyInstinct(EAIGoal Goal);
+	void TransferInstinctValue(EAIGoal GoalToTransfer, EAIGoal Destination);
 
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;

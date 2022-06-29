@@ -91,6 +91,7 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 		
 		for (FInstinctValues& Instinct : InstinctsComp->InstinctsInfo)
 		{
+			if (PreviousAction == (uint8)EAIAction::StockRaw) break;
 			if (Instinct.Goal == (EAIGoal)PreviousGoal)
 			{
 				Instinct.ReportedValue += Instinct.CurrentValue;
@@ -101,9 +102,9 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 			Instinct.ReportedValue = 0;
 		}
 		AIController->ResetAI();	
-		UE_LOG(LogTemp, Warning, TEXT("Elapsed!"))
-		AIController->SetTimeSearching();
+		UE_LOG(LogTemp, Warning, TEXT("TimeSearching Elapsed in SetAIGoal&Action!"))
 	}	
+	AIController->SetTimeSearching();
 }
 
 void UBTService_SetAIGoalAndAction::SetGoalAndAction()
@@ -182,6 +183,11 @@ void UBTService_SetAIGoalAndAction::SetAction()
 				NewAction = (uint8)EAIAction::Improve;
 				return;
 			}
+			else
+			{
+				NewAction = (uint8)EAIAction::TravelCollector;
+				return;
+			}
 		case EAIGoal::Rest:
 			NewAction = (uint8)EAIAction::TravelCollector;
 			return;
@@ -195,8 +201,21 @@ void UBTService_SetAIGoalAndAction::SetAction()
 			return;
 		case EAIGoal::Children:
 			NewAIStatus = (uint8)EAIStatus::SearchSocialize;
+		case EAIGoal::HandWork:
+			if (!InventoryComp->ShelterActor) return;
+			OwnedRessourceRaw = InventoryComp->GetOwnedItemsCount((EAIGoal)NewGoal, InventoryComp->RessourceForShelter, true);
+			if (OwnedRessourceRaw > 0)
+			{
+				AIController->BlackboardComponent->SetValueAsObject("TargetActor", InventoryComp->ShelterActor);
+				NewAction = (uint8)EAIAction::Improve;
+				return;
+			}
+			else
+			{
+				NewAction = (uint8)EAIAction::TravelCollector;
+				return;
+			}
 		}
-
 	}
 	NewAction = (uint8)EAIInstinct::None;
 }
@@ -224,7 +243,6 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 	if (NewGoal != ((uint8)EAIGoal::None)) return;
 
 	ERessourceSubType RessourceSubType = ERessourceSubType::None;
-	NewGoal == (uint8)EAIGoal::Shelter ? RessourceSubType = InventoryComp->RessourceForShelter : ERessourceSubType::None;
 
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
@@ -263,6 +281,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 void UBTService_SetAIGoalAndAction::CallHelp()
 {
 	if (NewAction != (uint8)EAIAction::Improve) return;
+	if (NewGoal != (uint8)EAIGoal::Shelter) return;
 	USocialComponent* SocialComp = Cast<USocialComponent>(AIController->GetPawn()->GetComponentByClass(USocialComponent::StaticClass()));
 	
 	TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
