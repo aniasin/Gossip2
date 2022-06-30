@@ -25,6 +25,8 @@ public:
 	UPROPERTY()
 	FOnInstinctsUpdateSignature OnInstinctsUpdated;
 
+	TArray<EAIGoal>NotFoundRessources;
+
 	void SatisfyInstinct(EAIGoal Goal);
 	void TransferInstinctValue(EAIGoal GoalToTransfer, EAIGoal Destination);
 

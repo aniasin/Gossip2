@@ -95,6 +95,7 @@ void UInstinctsComponent::TransferInstinctValue(EAIGoal GoalToTransfer, EAIGoal 
 
 void UInstinctsComponent::InstinctsUpdate()
 {
+	NotFoundRessources.Empty();
 	TArray<EAIGoal> HungryInstincts;
 	for (FInstinctValues& Instinct : InstinctsInfo)
 	{

@@ -101,6 +101,7 @@ void UBTService_SetAIGoalAndAction::StopSearching()
 			Instinct.CurrentValue += Instinct.ReportedValue;
 			Instinct.ReportedValue = 0;
 		}
+		InstinctsComp->NotFoundRessources.AddUnique((EAIGoal)PreviousGoal);
 		AIController->ResetAI();	
 		UE_LOG(LogTemp, Warning, TEXT("TimeSearching Elapsed in SetAIGoal&Action!"))
 	}	
@@ -246,6 +247,7 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 
 	for (FInstinctValues Instinct : InstinctsComp->InstinctsInfo)
 	{
+		if (InstinctsComp->NotFoundRessources.Contains(Instinct.Goal)) continue;
 		if (!Instinct.bRawStockable && !Instinct.bProcessedStockable) continue;
 		if (Instinct.bRawStockable && InventoryComp->GetOwnedItemsCount(Instinct.Goal, RessourceSubType, true) < InventoryComp->StockingLimit 
 			&& PreviousAction != (uint8)EAIAction::StockProcessed
