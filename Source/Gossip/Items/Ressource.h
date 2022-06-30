@@ -91,6 +91,7 @@ private:
 	class UMaterialInstanceDynamic* MaterialInstance;
 
 	int32 MaxQuality;
+	bool bHasDifferentQualities;
 
 	int32 MaxContentCount;
 	FTimerHandle TimerRespawn;

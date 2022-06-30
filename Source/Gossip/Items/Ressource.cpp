@@ -155,7 +155,13 @@ void ARessource::RessourceRespawn()
 
 float ARessource::StartWorking(AActor* Controller)
 {
+	if (bHasDifferentQualities)
+	{
+		WaitTime -= FMath::Clamp((WaitTime / 100) * DiversityIndex, 0.1, WaitTime);
+	}
+
 	float TimeToWait = WaitTime;
+
 	AGS_AIController* AIController = Cast<AGS_AIController>(Controller);
 	if (StoredWorkers.Contains(AIController->Id))
 	{
@@ -199,6 +205,7 @@ int32 ARessource::GetRessourceDisponibility()
 
 void ARessource::IncrementQuality()
 {
+	bHasDifferentQualities = true;
 	int32 NewIndex = FMath::Clamp(DiversityIndex + 1, 0, MaxQuality);
 	DiversityIndex = NewIndex;
 	InitializeRessource(DiversityIndex);
@@ -240,6 +247,7 @@ FSaveValues ARessource::CaptureState()
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
 	SaveValues.DiversityIndex = DiversityIndex;
+	SaveValues.Boolean = bHasDifferentQualities;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
 
 	return SaveValues;
@@ -271,6 +279,7 @@ void ARessource::RestoreState(FSaveValues SaveData)
 	}
 	SetActorTransform(SaveData.Transform);
 
+	bHasDifferentQualities = SaveData.Boolean;
 	DiversityIndex = SaveData.DiversityIndex;
 	InitializeRessource(DiversityIndex);
 }

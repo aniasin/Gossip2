@@ -68,6 +68,7 @@ private:
 	TSubclassOf<class UUserWidget> GameMenuClass;
 	TSubclassOf<class UUserWidget> SocialRulesMenuClass;
 
+	TArray<FString>MapList;
 	FString Map = "Map_03";
 	FTimerHandle AutoSaveTimerHandle;
 

@@ -35,6 +35,9 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 		SocialRulesMenuClass = SocialRulesMenuBPClass.Class;
 		if (!SocialRulesMenuClass)	UE_LOG(LogTemp, Warning, TEXT("Could not find SocialRulesMenuClass in GameInstance!"));
 	}
+
+	MapList.Add("Map_03");
+	MapList.Add("Map_01");
 }
 
 void UGS_GameInstance::Init()
@@ -122,6 +125,9 @@ void UGS_GameInstance::NewGame()
 	LatentInfo.ExecutionFunction = FName("OnNewGameLoaded");
 	LatentInfo.Linkage = 0;
 	LatentInfo.UUID = 0;
+
+	int32 RandomIndexInRange = FMath::RandRange(0, MapList.Num() - 1);
+	Map = MapList[RandomIndexInRange];
 	UGameplayStatics::LoadStreamLevel(this, FName(Map), true, true, LatentInfo);
 }
 
@@ -223,7 +229,6 @@ TMap<FGuid, FSaveStruct> UGS_GameInstance::LoadGameDataBinary(FString SaveName)
 	if (AutoSaveGame)
 	{
 		AutoSaveDate = AutoSaveGame->CreationTime;
-
 	}			
 	if (CurrentSaveGame && CurrentSaveDate >= AutoSaveDate)
 	{

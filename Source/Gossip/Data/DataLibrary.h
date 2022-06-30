@@ -371,6 +371,8 @@ struct FSaveValues
 	UPROPERTY()
 	TMap<FGuid, float>StoredWorkers;
 	UPROPERTY()
+	bool Boolean;
+	UPROPERTY()
 	FWeddingRule WeddingRules;
 	UPROPERTY()
 	FGuid FianceeGuid;
