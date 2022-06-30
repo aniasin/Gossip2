@@ -26,7 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid SpawnedNpcId;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = 300, ClampMax = 600))
-	float ShelterSize = 300;
+	float ShelterSizeX = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 300, ClampMax = 600))
+	float ShelterSizeY = 300;
 
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;

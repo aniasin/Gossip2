@@ -184,7 +184,7 @@ int32 ARessource::GetRessourceDisponibility()
 
 void ARessource::IncrementQuality()
 {
-	int32 NewIndex = FMath::Clamp(DiversityIndex++, 0, MaxQuality);
+	int32 NewIndex = FMath::Clamp(DiversityIndex + 1, 0, MaxQuality);
 	DiversityIndex = NewIndex;
 	InitializeRessource(DiversityIndex);
 }

@@ -250,6 +250,7 @@ bool UGS_GameInstance::CreateSaveGameBinary(TMap<FGuid, FSaveStruct>SaveData, FS
 	UGS_SaveGame_Object* CurrentSaveGame = Cast<UGS_SaveGame_Object>(UGameplayStatics::CreateSaveGameObject(UGS_SaveGame_Object::StaticClass()));
 	if (!CurrentSaveGame) return false;
 	CurrentSaveGame->SaveData = SaveData;
+	CurrentSaveGame->SaveGameName = SaveName;
 	CurrentSaveGame->CreationTime = FDateTime::Now();
 	CurrentSaveGame->GameTimeSeconds = GetWorld()->GetTimeSeconds() + RealGameTimeSeconds;
 	CurrentSaveGame->MapName = Map;
