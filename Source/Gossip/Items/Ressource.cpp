@@ -65,13 +65,27 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	LivingColor = RessourceData.LivingColor;
 	DeadColor = RessourceData.DeadColor;
 	RespawnTime = RessourceData.RespawnTimeInGameHour;
-	MaxQuality = RessourceData.MeshesPtr.Num();
+	MaxQuality = RessourceData.MeshesPtr.Num();	
 }
 #endif WITH_EDITOR
 
 void ARessource::BeginPlay()
 {
 	Super::BeginPlay();
+
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
+	if (!RessourceInfos) return;
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
+	RessourceType = RessourceData.RessourceType;
+
+	bRaw = RessourceData.bRaw;
+	WaitTime = RessourceData.WaitTime;
+	MaxContentCount = RessourceData.ContentCount;
+	ContentCount = MaxContentCount;
+	LivingColor = RessourceData.LivingColor;
+	DeadColor = RessourceData.DeadColor;
+	RespawnTime = RessourceData.RespawnTimeInGameHour;
+	MaxQuality = RessourceData.MeshesPtr.Num();
 
 	if (IsValid(Mesh->GetStaticMesh()))
 	{
@@ -80,6 +94,7 @@ void ARessource::BeginPlay()
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 		Mesh->SetMaterial(0, MaterialInstance);
 	}
+	UE_LOG(LogTemp, Log, TEXT("Max quality has been set: %i"), MaxQuality)
 }
 
 void ARessource::InitializeRessource(int32 Index)

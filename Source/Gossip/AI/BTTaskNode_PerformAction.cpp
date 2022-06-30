@@ -68,7 +68,7 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		case  EAIGoal::HandWork:
 			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
 			if (!ShelterActor) return EBTNodeResult::Failed;
-			UE_LOG(LogTemp, Log, TEXT("%s %s has done handwork!"), *NPC->CharacterName.FirstName, *NPC->CharacterName.LastName)
+			ShelterActor->StopHandwork(AIController);
 		}
 		AIController->ResetAI();
 		return EBTNodeResult::Succeeded;

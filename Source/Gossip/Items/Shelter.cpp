@@ -274,13 +274,19 @@ void AShelter::StopConstruct(AActor* Controller)
 
 float AShelter::BeginHandwork(AActor* Controller)
 {
-	if (SleepCollector->GetPossibleUpgrade()) SleepCollector->IncrementQuality();
-	return 0.33;
+	
+	return 0.05;
 }
 
 void AShelter::StopHandwork(AActor* Controller)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Handwork!"))
+	if (SleepCollector->GetPossibleUpgrade())
+	{
+		SleepCollector->IncrementQuality();
+		UE_LOG(LogTemp, Warning, TEXT("Handwork Done!"))
+	}
+		
 }
 
 void AShelter::LoadConstructionMeshes()
