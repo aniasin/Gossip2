@@ -48,6 +48,7 @@ protected:
 	void MoveRight(float Value);
 	void InputYaw(float Value);
 	void InputPitch(float Value);
+	void CameraZoom(float Value);
 	void LeftClickPressed();
 	void LeftClickReleased();
 	void RightClickPressed();

@@ -94,7 +94,6 @@ void ARessource::BeginPlay()
 		MaterialInstance->SetVectorParameterValue("Base Color", LivingColor);
 		Mesh->SetMaterial(0, MaterialInstance);
 	}
-	UE_LOG(LogTemp, Log, TEXT("Max quality has been set: %i"), MaxQuality)
 }
 
 void ARessource::InitializeRessource(int32 Index)

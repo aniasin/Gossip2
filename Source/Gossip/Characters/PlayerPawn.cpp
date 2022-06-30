@@ -51,6 +51,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APlayerPawn::MoveRight);
 	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &APlayerPawn::InputYaw);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APlayerPawn::InputPitch);
+	PlayerInputComponent->BindAxis("CameraZoom", this, &APlayerPawn::CameraZoom);
 
 	PlayerInputComponent->BindAction("DebugInfo", IE_Pressed, this, &APlayerPawn::DebugInfo);
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerPawn::EscapeMenu);
@@ -122,7 +123,11 @@ void APlayerPawn::MoveForward(float Value)
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		float NewSpeed = 1000;
+		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
+		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 
@@ -138,7 +143,11 @@ void APlayerPawn::MoveRight(float Value)
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
+		float NewSpeed = 1000;
+		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
+		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 
@@ -151,6 +160,14 @@ void APlayerPawn::InputYaw(float Value)
 void APlayerPawn::InputPitch(float Value)
 {
 	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
+}
+
+void APlayerPawn::CameraZoom(float Value)
+{
+	if (PlayerOrdersComponent->GetPlayerIsMoved()) return;
+	float NewLength = FMath::Clamp(CameraBoom->TargetArmLength - Value * 100, 0, 3000);
+	CameraBoom->SocketOffset = FVector(CameraBoom->SocketOffset.X, CameraBoom->SocketOffset.Y, NewLength);
+	CameraBoom->TargetArmLength = NewLength;
 }
 
 void APlayerPawn::LeftClickPressed()
