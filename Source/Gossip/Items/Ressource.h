@@ -68,7 +68,7 @@ public:
 	void StopWorking(AActor* Controller);
 	int32 GetRessourceDisponibility();
 	bool GetIsWorkingOn(AActor* Controller) { return ActorsWorkingOn.Contains(Controller); }
-	bool GetPossibleUpgrade() { return Quality < MaxQuality; }
+	bool GetPossibleUpgrade() { return DiversityIndex < MaxQuality; }
 	void IncrementQuality();
 
 	class UAnimMontage* GetAnimMontageMontage();
@@ -90,7 +90,6 @@ private:
 	FRessourceData RessourceData;
 	class UMaterialInstanceDynamic* MaterialInstance;
 
-	int32 Quality = 0;
 	int32 MaxQuality;
 
 	int32 MaxContentCount;

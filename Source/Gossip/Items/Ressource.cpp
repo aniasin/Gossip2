@@ -84,6 +84,11 @@ void ARessource::BeginPlay()
 
 void ARessource::InitializeRessource(int32 Index)
 {
+	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
+	if (!RessourceInfos) return;
+	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
+	RessourceType = RessourceData.RessourceType;
+
 	UStaticMesh* MeshPtr;
 	int32 MeshIndex = Index;
 	if (!RessourceData.MeshesPtr.IsValidIndex(MeshIndex)) { MeshIndex = 0; }
@@ -179,8 +184,9 @@ int32 ARessource::GetRessourceDisponibility()
 
 void ARessource::IncrementQuality()
 {
-	Quality++;
-	//InitializeRessource(Quality);
+	int32 NewIndex = FMath::Clamp(DiversityIndex++, 0, MaxQuality);
+	DiversityIndex = NewIndex;
+	InitializeRessource(DiversityIndex);
 }
 
 UAnimMontage* ARessource::GetAnimMontageMontage()
@@ -218,7 +224,7 @@ FSaveValues ARessource::CaptureState()
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ContentCount = ContentCount;
 	SaveValues.OwnersIds = OwnersToSave;
-	SaveValues.DiversityIndex = Quality;
+	SaveValues.DiversityIndex = DiversityIndex;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
 
 	return SaveValues;
@@ -250,6 +256,6 @@ void ARessource::RestoreState(FSaveValues SaveData)
 	}
 	SetActorTransform(SaveData.Transform);
 
-	Quality = SaveData.DiversityIndex;
-	//InitializeRessource(Quality);
+	DiversityIndex = SaveData.DiversityIndex;
+	InitializeRessource(DiversityIndex);
 }
