@@ -19,14 +19,10 @@ public:
 	float GameHourDurationSeconds = 60; // for test purpose, should be 300 (aka 5 RealMinustes/1 GameHour)
 	float CumulatedRealGameTime;
 
-	void SetWeddingRule(FWeddingRule Value);
-	FWeddingRule GetWeddingRule();
-
 protected:
 
 private:
-	FWeddingRule WeddingRule;
-	bool bWeddingRuleHasbeenSeenOnce;
+
 };
 
 

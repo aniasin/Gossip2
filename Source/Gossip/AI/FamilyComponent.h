@@ -40,6 +40,8 @@ public:
 	void CityHallCalling(FVector Location);
 	void Marry();
 
+	void SetWeddingRule(FWeddingRule Rule) { CurrentWeddingRules = Rule; }
+
 	// ISaveGameInterface
 	virtual FSaveValues CaptureState()override;
 	virtual void RestoreState(FSaveValues SaveData)override;

@@ -24,6 +24,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FGuid OwnId;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AActor* PlayerRuler;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid SpawnedNpcId;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = 300, ClampMax = 600))
 	float ShelterSizeX = 300;

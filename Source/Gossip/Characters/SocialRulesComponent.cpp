@@ -3,7 +3,11 @@
 
 #include "SocialRulesComponent.h"
 #include "PlayerOrdersComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
+#include "Gossip/Items/InventoryComponent.h"
+#include "Gossip/AI/FamilyComponent.h"
 #include "Gossip/Core/GS_GameInstance.h"
 #include "Gossip/Core/GossipGameMode.h"
 #include "Gossip/AI/FamilyComponent.h"
@@ -75,9 +79,16 @@ void USocialRulesComponent::SetNewWeddingRule(FWeddingRule Rule)
 {
 	WeddingRule = Rule;
 
-	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
-	if (!GM) return;
-	GM->SetWeddingRule(WeddingRule);
+	TArray<AActor*>AllCharacters;
+	UGameplayStatics::GetAllActorsOfClass(GetOwner()->GetWorld(), ACharacter::StaticClass(), AllCharacters);
+	for (AActor* Actor : AllCharacters)
+	{
+		UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(Actor->GetComponentByClass(UInventoryComponent::StaticClass()));
+		if (!InventoryComp) continue;
+		if (InventoryComp->PlayerRuler != GetOwner()) continue;
+		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
+		FamilyComp->SetWeddingRule(WeddingRule);
+	}
 }
 
 // ISaveGameInterface
@@ -91,9 +102,6 @@ FSaveValues USocialRulesComponent::CaptureState()
 void USocialRulesComponent::RestoreState(FSaveValues SaveData)
 {
 	WeddingRule = SaveData.WeddingRules;
-
-	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
-	if (!GM) return;
-	GM->SetWeddingRule(WeddingRule);
+	SetNewWeddingRule(WeddingRule);
 }
 

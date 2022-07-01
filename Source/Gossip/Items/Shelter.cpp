@@ -134,6 +134,9 @@ void AShelter::SpawnNPC()
 		if (!IsValid(NPC)) return;
 		NPC->Id = SpawnedNpcId;
 
+		if (PlayerRuler == nullptr) PlayerRuler = GetWorld()->GetFirstPlayerController()->GetPawn();
+		NPC->InventoryComp->PlayerRuler = PlayerRuler;
+
 		if (!SleepCollector || !FoodProcessor) { UE_LOG(LogTemp, Warning, TEXT("No Ressource has been set in %s"), *GetName()) return; }
 		SleepCollector->Owners.AddUnique(NPC);
 		FoodProcessor->Owners.AddUnique(NPC);
@@ -280,13 +283,15 @@ float AShelter::BeginHandwork(AActor* Controller)
 
 void AShelter::StopHandwork(AActor* Controller)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Handwork!"))
-	if (SleepCollector->GetPossibleUpgrade())
+	TArray<ARessource*>ImprovableFurnitures;
+	ImprovableFurnitures.Add(SleepCollector);
+	ImprovableFurnitures.Add(FoodProcessor);
+	int32 Index = FMath::RandRange(0, ImprovableFurnitures.Num() - 1);
+
+	if (ImprovableFurnitures[Index]->GetPossibleUpgrade())
 	{
-		SleepCollector->IncrementQuality();
-		UE_LOG(LogTemp, Warning, TEXT("Handwork Done!"))
-	}
-		
+		ImprovableFurnitures[Index]->IncrementQuality();
+	}		
 }
 
 void AShelter::LoadConstructionMeshes()

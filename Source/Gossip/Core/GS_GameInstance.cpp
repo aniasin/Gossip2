@@ -11,6 +11,7 @@
 #include "Runtime/MoviePlayer/Public/MoviePlayer.h"
 
 #include "Gossip/Characters/PlayerPawn.h"
+#include "Gossip/Characters/AIPawn.h"
 #include "GossipGameMode.h"
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
@@ -281,12 +282,29 @@ void UGS_GameInstance::OnGameLoaded()
 	GM->CumulatedRealGameTime = RealGameTimeSeconds;
 
 	// Restore Player First
-	APlayerPawn* Player = Cast<APlayerPawn>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass()));
-	USaveableEntity* PlayerSaveComp = Cast<USaveableEntity>(Player->GetComponentByClass(USaveableEntity::StaticClass()));
-	if (SaveData.Contains(Player->Id))
+	TArray<AActor*> PlayerActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APawn::StaticClass(), PlayerActors);
+	for (AActor* Player : PlayerActors)
 	{
-		PlayerSaveComp->RestoreState(SaveData[Player->Id]);
-	}	
+		APlayerPawn* PlayerPawn = Cast<APlayerPawn>(Player);
+		if (PlayerPawn)
+		{
+			USaveableEntity* PlayerSaveComp = Cast<USaveableEntity>(Player->GetComponentByClass(USaveableEntity::StaticClass()));
+			if (SaveData.Contains(PlayerPawn->Id))
+			{
+				PlayerSaveComp->RestoreState(SaveData[PlayerPawn->Id]);
+			}
+		}
+		AAIPawn* AIPlayer = Cast<AAIPawn>(Player);
+		if (AIPlayer)
+		{
+			USaveableEntity* AISaveComp = Cast<USaveableEntity>(AIPlayer->GetComponentByClass(USaveableEntity::StaticClass()));
+			if (SaveData.Contains(AIPlayer->Id))
+			{
+				AISaveComp->RestoreState(SaveData[AIPlayer->Id]);
+			}
+		}
+	}
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);

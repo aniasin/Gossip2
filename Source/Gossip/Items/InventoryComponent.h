@@ -22,6 +22,7 @@ public:
 
 	UPROPERTY()
 	AActor* ShelterActor;
+	AActor* PlayerRuler;
 
 	UFUNCTION()
 	TArray<ARessource*> SortRessourcesByDistance(TArray<ARessource*> RessourceToSort);

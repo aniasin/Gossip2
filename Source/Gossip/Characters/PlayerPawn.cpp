@@ -107,8 +107,7 @@ void APlayerPawn::ActorHeightLevel()
 		{
 			MovementComp->AddInputVector(GetActorUpVector() * -1, 1);
 		}
-	}
-	
+	}	
 }
 
 // Input
@@ -127,7 +126,7 @@ void APlayerPawn::MoveForward(float Value)
 		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
 		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
-		UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
+		//UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 
@@ -147,7 +146,7 @@ void APlayerPawn::MoveRight(float Value)
 		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
 		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
-		UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
+		//UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 

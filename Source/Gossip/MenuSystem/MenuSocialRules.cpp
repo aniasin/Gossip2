@@ -18,9 +18,9 @@ bool UMenuSocialRules::Initialize()
 
 	if (GetOwningPlayer())
 	{
-		AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwningPlayer()->GetWorld()->GetAuthGameMode());
-		if (!GM) return false;
-		WeddingRule = GM->GetWeddingRule();
+		USocialRulesComponent* SocialRuleComp = Cast<USocialRulesComponent>(GetOwningPlayerPawn()->GetComponentByClass(USocialRulesComponent::StaticClass()));
+		if (!SocialRuleComp) return false;
+		WeddingRule = SocialRuleComp->WeddingRule;
 
 		ESlateVisibility ButtonVisibility;
 		WeddingRule.FamilySystem == EFamilySystem::None || WeddingRule.WeddingSystem == EWeddingSystem::None ? ButtonVisibility = ESlateVisibility::Hidden : ButtonVisibility = ESlateVisibility::Visible;

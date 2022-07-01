@@ -28,7 +28,7 @@ void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 
 	CurrentWeddingRules = WeddingRule;
 	OtherFamilyComp->CurrentWeddingRules = WeddingRule;
-	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 || IsValid(CurrentFiancee)) 
+	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 || IsValid(CurrentFiancee) || Spouses.Num() >= 3) 
 	{ 
 	ResetOwnersAI(Other);
 	return; 
@@ -93,6 +93,7 @@ void UFamilyComponent::Marry()
 	case EFamilySystem::Free:
 		break;
 	}
+	CurrentFiancee = nullptr;
 }
 
 void UFamilyComponent::ChangeName(AActor* Actor)
@@ -117,9 +118,6 @@ FSaveValues UFamilyComponent::CaptureState()
 		SaveValues.FianceeGuid = FianceeSocialComp->Id;
 	}
 
-	AGossipGameMode* GM = Cast<AGossipGameMode>(GetOwner()->GetWorld()->GetAuthGameMode());
-	SaveValues.WeddingRules = GM->GetWeddingRule();
-
 	SaveValues.CharacterName = CharacterName;
 
 	return SaveValues;
@@ -127,7 +125,6 @@ FSaveValues UFamilyComponent::CaptureState()
 
 void UFamilyComponent::RestoreState(FSaveValues SaveData)
 {
-	CurrentWeddingRules = SaveData.WeddingRules;
 	CharacterName = SaveData.CharacterName;
 
 	TArray<AActor*>Actors;

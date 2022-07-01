@@ -8,11 +8,21 @@
 #include "DataLibrary.generated.h"
 
 UENUM(BlueprintType)
+enum class ECultures : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	Africa			UMETA(DisplayName = "Africa"),
+	Caucase			UMETA(DisplayName = "Caucase"),
+	Asia			UMETA(DisplayName = "Asia"),
+	Arabic			UMETA(DisplayName = "Arabic"),
+};
+
+UENUM(BlueprintType)
 enum class ECharacterProfile : uint8
 {
 	None			UMETA(DisplayName = "None"),
 	Male			UMETA(DisplayName = "Male"),
-	Female		UMETA(DisplayName = "Female"),
+	Female			UMETA(DisplayName = "Female"),
 };
 
 UENUM(BlueprintType)

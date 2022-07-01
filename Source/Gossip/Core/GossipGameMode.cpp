@@ -16,12 +16,3 @@ AGossipGameMode::AGossipGameMode()
 	}
 }
 
-void AGossipGameMode::SetWeddingRule(FWeddingRule Value)
-{
-	WeddingRule = Value;
-}
-
-FWeddingRule AGossipGameMode::GetWeddingRule()
-{
-	return WeddingRule;
-}
