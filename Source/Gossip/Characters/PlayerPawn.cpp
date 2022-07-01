@@ -61,6 +61,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftClick", IE_Released, this, &APlayerPawn::LeftClickReleased);
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &APlayerPawn::RightClickPressed);
 	PlayerInputComponent->BindAction("RightClick", IE_Released, this, &APlayerPawn::RightClickReleased);
+	PlayerInputComponent->BindAction("MiddleMouse", IE_Pressed, this, &APlayerPawn::MoveToLocation);
 
 }
 
@@ -140,6 +141,11 @@ void APlayerPawn::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APlayerPawn::MoveToLocation()
+{
+	PlayerOrdersComponent->PlayerMoveToLocation();
 }
 
 void APlayerPawn::InputYaw(float Value)

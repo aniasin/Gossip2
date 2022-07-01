@@ -40,12 +40,14 @@ public:
 
 	void OrderMoveUnderCursor();
 	void PlayerMoveToTarget(AActor* Target);
+	void PlayerMoveToLocation();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:	
 	AActor* Target;
+	FVector TargetLocation;
 	bool bMovingPlayer;
 	TArray<ANonPlayerCharacter*>CurrentSelections;
 	FVector SelectionBoxStartPosition;
@@ -53,5 +55,6 @@ private:
 	FVector2D MousePositionAtStart;
 	bool bSelectionActive;
 
+	void PlayerAutoMove();
 	
 };

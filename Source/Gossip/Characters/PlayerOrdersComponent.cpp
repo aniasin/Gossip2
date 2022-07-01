@@ -27,11 +27,31 @@ void UPlayerOrdersComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bMovingPlayer)
+	PlayerAutoMove();
+
+}
+
+void UPlayerOrdersComponent::PlayerAutoMove()
+{
+	if (bMovingPlayer && Target)
 	{
 		FVector NewLocation = FMath::Lerp(GetOwner()->GetActorLocation(), Target->GetActorLocation(), 0.025);
 		GetOwner()->SetActorLocation(NewLocation);
-		if (FVector::Distance(Target->GetActorLocation(), GetOwner()->GetActorLocation()) <= 300) bMovingPlayer = false;
+		if (FVector::Distance(Target->GetActorLocation(), GetOwner()->GetActorLocation()) <= 300)
+		{
+			bMovingPlayer = false;
+			Target = nullptr;
+		}
+	}
+	else if (bMovingPlayer && !TargetLocation.IsZero())
+	{
+		FVector NewLocation = FMath::Lerp(GetOwner()->GetActorLocation(), TargetLocation, 0.025);
+		GetOwner()->SetActorLocation(NewLocation);
+		if (FVector::Distance(TargetLocation, GetOwner()->GetActorLocation()) <= 300)
+		{
+			bMovingPlayer = false;
+			TargetLocation = FVector::ZeroVector;
+		}
 	}
 }
 
@@ -81,6 +101,16 @@ void UPlayerOrdersComponent::PlayerMoveToTarget(AActor* TargetActor)
 {
 	bMovingPlayer = true;
 	Target = TargetActor;
+}
+
+void UPlayerOrdersComponent::PlayerMoveToLocation()
+{
+	FHitResult Hit;
+	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	FVector Location = Hit.Location;
+
+	bMovingPlayer = true;
+	TargetLocation = Location;
 }
 
 void UPlayerOrdersComponent::SetCurrentSelections(TArray<ANonPlayerCharacter*> Selections)
