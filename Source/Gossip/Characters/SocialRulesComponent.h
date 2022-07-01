@@ -16,7 +16,7 @@ class GOSSIP_API USocialRulesComponent : public UActorComponent, public ISaveGam
 public:	
 	USocialRulesComponent();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FWeddingRule WeddingRule;
 
 	void SetNewWeddingRule(FWeddingRule Rule);

@@ -2,7 +2,7 @@
 
 
 #include "AIPawn.h"
-#include "Gossip/AI/SocialComponent.h"
+#include "Gossip/Characters/SocialRulesComponent.h"
 #include "Gossip/Save/SaveableEntity.h"
 
 

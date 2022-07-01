@@ -38,7 +38,7 @@ UGS_GameInstance::UGS_GameInstance(const FObjectInitializer& ObjectInitializer)
 	}
 
 	MapList.Add("Map_03");
-	MapList.Add("Map_01");
+	//MapList.Add("Map_01");
 }
 
 void UGS_GameInstance::Init()

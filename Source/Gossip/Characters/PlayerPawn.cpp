@@ -122,11 +122,7 @@ void APlayerPawn::MoveForward(float Value)
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		float NewSpeed = 1000;
-		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
-		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
-		//UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 
@@ -142,11 +138,7 @@ void APlayerPawn::MoveRight(float Value)
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-		float NewSpeed = 1000;
-		FMath::Clamp(NewSpeed += CameraBoom->TargetArmLength, 1000, 3000);
-		MovementComp->MaxSpeed = NewSpeed;
 		AddMovementInput(Direction, Value);
-		//UE_LOG(LogTemp, Warning, TEXT("Speed: %s"), *FString::SanitizeFloat(MovementComp->Velocity.Length()))
 	}
 }
 
@@ -167,6 +159,9 @@ void APlayerPawn::CameraZoom(float Value)
 	float NewLength = FMath::Clamp(CameraBoom->TargetArmLength - Value * 100, 0, 3000);
 	CameraBoom->SocketOffset = FVector(CameraBoom->SocketOffset.X, CameraBoom->SocketOffset.Y, NewLength);
 	CameraBoom->TargetArmLength = NewLength;
+
+	MovementComp->MaxSpeed = FMath::Clamp(NewLength *2, 1200, 6000);
+	MovementComp->Acceleration = FMath::Clamp(NewLength * 4, 4000, 24000);
 }
 
 void APlayerPawn::LeftClickPressed()

@@ -7,6 +7,7 @@
 #include "NavigationPath.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "Gossip/Items/InventoryComponent.h"
 #include "Gossip/Items/Ressource.h"
 #include "Gossip/AI/GS_AIController.h"
 
@@ -49,6 +50,8 @@ void UPlayerOrdersComponent::EndBoxSelection()
 	bSelectionActive = false;
 	for (ANonPlayerCharacter* Selected : CurrentSelections)
 	{
+		UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(Selected->GetComponentByClass(UInventoryComponent::StaticClass()));
+		if (InventoryComp && InventoryComp->PlayerRuler != GetOwner()) return;
 		Selected->SetSelected(true);
 	}
 }

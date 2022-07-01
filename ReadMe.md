@@ -24,5 +24,7 @@
 - AI will move to husband or wife's place and inherits last name depending of wedding rules.
 - AI will eventually wants children.
 
+- AI Factions
+
 
 All feedback welcome!
