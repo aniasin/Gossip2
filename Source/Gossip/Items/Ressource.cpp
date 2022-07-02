@@ -45,7 +45,6 @@ void ARessource::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
 	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
-	RessourceType = RessourceData.RessourceType;
 	
 	UStaticMesh* MeshPtr;
 	if (!RessourceData.MeshesPtr.IsValidIndex(DiversityIndex)) { DiversityIndex = 0; }
@@ -76,7 +75,6 @@ void ARessource::BeginPlay()
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
 	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
-	RessourceType = RessourceData.RessourceType;
 
 	bRaw = RessourceData.bRaw;
 	WaitTime = RessourceData.WaitTime;
@@ -101,7 +99,6 @@ void ARessource::InitializeRessource(int32 Index)
 	URessourceDataAsset* RessourceInfos = Cast<URessourceDataAsset>(RessourceDataAsset);
 	if (!RessourceInfos) return;
 	RessourceData = RessourceInfos->RessourceDataMap[RessourceSubType];
-	RessourceType = RessourceData.RessourceType;
 
 	UStaticMesh* MeshPtr;
 	int32 MeshIndex = Index;

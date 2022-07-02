@@ -22,6 +22,7 @@ public:
 	void AddOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw);
 	void RemoveOwnedItem(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw);
 	int32 GetOwnedItemsCount(EAIGoal RessourceType, ERessourceSubType RessourceSubType, bool bRaw);
+	TArray<FInventoryItem>GetInventoryItems() { return InventoryItems; }
 
 protected:
 	virtual void BeginPlay() override;

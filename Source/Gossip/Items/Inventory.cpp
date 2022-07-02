@@ -33,7 +33,7 @@ void UInventory::RemoveOwnedItem(EAIGoal RessourceType, ERessourceSubType Ressou
 {
 	int32 Index = 0;
 	if (RessourceType == EAIGoal::HandWork) RessourceType = EAIGoal::Shelter;
-	for (FInventoryItem Item : InventoryItems)
+	for (FInventoryItem& Item : InventoryItems)
 	{
 		if (Item.Ressource == RessourceType && Item.bRaw == bRaw && (Item.RessourceSubType == RessourceSubType || RessourceSubType == ERessourceSubType::None))
 		{
