@@ -93,7 +93,7 @@ TArray<AActor*> USocialComponent::GetKnownOthersWithAlignment(EAlignmentState Al
 	UGameplayStatics::GetAllActorsOfClass(GetOwner()->GetWorld(), ACharacter::StaticClass(), AllCharacters);
 
 	TArray<AActor*>Result;
-	for (auto KnownOther : KnownOthers)
+	for (auto& KnownOther : KnownOthers)
 	{
 		if (GetAlignment(KnownOther.Value.Respect, KnownOther.Value.Love) != Alignment) continue;
 		for (AActor* Actor : AllCharacters)

@@ -115,6 +115,11 @@ void AGS_AIController::ResetAI()
 	NPC->StopAnimMontage();
 }
 
+void AGS_AIController::SetHomeLocation(FVector Location)
+{
+	BlackboardComponent->SetValueAsVector("HomeLocation", Location);
+}
+
 void AGS_AIController::RequestMoveToLocation(FVector Location, EAIStatus Reason)
 {
 	ResetAI();

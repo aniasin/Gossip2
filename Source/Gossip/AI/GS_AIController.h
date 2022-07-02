@@ -50,6 +50,7 @@ public:
 	TArray<AActor*> GetCurrentlyPerceivedActors();
 
 	void ResetAI();
+	void SetHomeLocation(FVector Location);
 	void RequestMoveToLocation(FVector Location, EAIStatus Reason);
 
 	void SetTimeSearching();

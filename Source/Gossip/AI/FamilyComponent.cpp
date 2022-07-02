@@ -28,7 +28,8 @@ void UFamilyComponent::RequestWedding(AActor* Other, FWeddingRule WeddingRule)
 
 	CurrentWeddingRules = WeddingRule;
 	OtherFamilyComp->CurrentWeddingRules = WeddingRule;
-	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 || IsValid(CurrentFiancee) || Spouses.Num() >= 3) 
+	if (WeddingRule.WeddingSystem == EWeddingSystem::Monogamy && Spouses.Num() > 0 
+		|| IsValid(CurrentFiancee) || Spouses.Num() >= 3 || Spouses.Contains(Other)) 
 	{ 
 	ResetOwnersAI(Other);
 	return; 

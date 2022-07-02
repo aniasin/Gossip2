@@ -61,12 +61,12 @@ EBTNodeResult::Type UBTTaskNode_PerformAction::ExecuteTask(UBehaviorTreeComponen
 		case EAIGoal::Leadership:
 			break;
 		case EAIGoal::Shelter:
-			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
+			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, true);
 			if (!ShelterActor) return EBTNodeResult::Failed;
 			ShelterActor->ConstructShelter(AIController);
 			break;
 		case  EAIGoal::HandWork:
-			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, false);
+			InventoryComp->RemoveOwnedItem(Goal, InventoryComp->RessourceForShelter, true);
 			if (!ShelterActor) return EBTNodeResult::Failed;
 			ShelterActor->StopHandwork(AIController);
 		}

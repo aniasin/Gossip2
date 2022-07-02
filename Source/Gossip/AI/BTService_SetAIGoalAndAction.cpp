@@ -283,29 +283,31 @@ void UBTService_SetAIGoalAndAction::CheckStock()
 void UBTService_SetAIGoalAndAction::CallHelp()
 {
 	if (NewAction != (uint8)EAIAction::Improve) return;
-	if (NewGoal != (uint8)EAIGoal::Shelter) return;
-	USocialComponent* SocialComp = Cast<USocialComponent>(AIController->GetPawn()->GetComponentByClass(USocialComponent::StaticClass()));
-	
-	TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
-	Subsidiaries.Append(SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Submissive));
-
-	UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName)
-	if (Subsidiaries.IsEmpty()) return;
-	for (AActor* Subsidiary : Subsidiaries)
+	if (NewGoal == (uint8)EAIGoal::Shelter || NewGoal == (uint8)EAIGoal::Leadership)
 	{
-		USocialComponent* OtherSocialComp = Cast<USocialComponent>(Subsidiary->GetComponentByClass(USocialComponent::StaticClass()));
-		if(!OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Masterful).Contains(AIController->GetPawn())
-			|| !OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Imperious).Contains(AIController->GetPawn())) continue;
+		USocialComponent* SocialComp = Cast<USocialComponent>(AIController->GetPawn()->GetComponentByClass(USocialComponent::StaticClass()));
 
-		UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries! Found %s %s!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName,
-			*OtherSocialComp->CharacterName.FirstName, *OtherSocialComp->CharacterName.LastName)
-		AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
-		OtherController->ResetAI();
+		TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
+		Subsidiaries.Append(SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Submissive));
 
-		OtherController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
-		OtherController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
-		OtherController->BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::Improve);
-		OtherController->BlackboardComponent->SetValueAsObject("TargetActor", AIController->BlackboardComponent->GetValueAsObject("TargetActor"));
-	}	
+		UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName)
+		if (Subsidiaries.IsEmpty()) return;
+		for (AActor* Subsidiary : Subsidiaries)
+		{
+			USocialComponent* OtherSocialComp = Cast<USocialComponent>(Subsidiary->GetComponentByClass(USocialComponent::StaticClass()));
+			if (!OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Masterful).Contains(AIController->GetPawn())
+				|| !OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Imperious).Contains(AIController->GetPawn())) continue;
+
+			UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries! Found %s %s!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName,
+				*OtherSocialComp->CharacterName.FirstName, *OtherSocialComp->CharacterName.LastName)
+				AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
+			OtherController->ResetAI();
+
+			OtherController->BlackboardComponent->SetValueAsEnum("AIStatus", (uint8)EAIStatus::Altruism);
+			OtherController->BlackboardComponent->SetValueAsEnum("Goal", NewGoal);
+			OtherController->BlackboardComponent->SetValueAsEnum("Action", (uint8)EAIAction::Improve);
+			OtherController->BlackboardComponent->SetValueAsObject("TargetActor", AIController->BlackboardComponent->GetValueAsObject("TargetActor"));
+		}
+	}
 }
 

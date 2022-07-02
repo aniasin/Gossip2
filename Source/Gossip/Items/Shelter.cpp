@@ -189,6 +189,12 @@ void AShelter::InitializeShelter()
 	}
 
 	Inventory->StockingLimit = ShelterData.InventoryCapability * ShelterData.ShelterLevel;
+
+	if (!Owners.IsEmpty())
+	{
+		AGS_AIController* AIController = Cast<AGS_AIController>(Owners[0]->GetInstigatorController());
+		AIController->SetHomeLocation(GetActorLocation());
+	}
 }
 
 
@@ -278,7 +284,7 @@ void AShelter::StopConstruct(AActor* Controller)
 float AShelter::BeginHandwork(AActor* Controller)
 {
 	
-	return 0.05;
+	return 0.3;
 }
 
 void AShelter::StopHandwork(AActor* Controller)
