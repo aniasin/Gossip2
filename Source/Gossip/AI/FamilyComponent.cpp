@@ -121,6 +121,13 @@ FSaveValues UFamilyComponent::CaptureState()
 
 	SaveValues.CharacterName = CharacterName;
 
+	for (AActor* Spouse : Spouses)
+	{
+		UFamilyComponent* FamilyComp = Cast<UFamilyComponent>(Spouse->GetComponentByClass(UFamilyComponent::StaticClass()));
+		SaveValues.Guids.AddUnique(FamilyComp->Id);
+	}
+	
+
 	return SaveValues;
 }
 
@@ -134,8 +141,17 @@ void UFamilyComponent::RestoreState(FSaveValues SaveData)
 	{
 		USocialComponent* OtherSocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
 		if (!OtherSocialComp) continue;
-		if (OtherSocialComp->Id != SaveData.FianceeGuid) continue;
-		CurrentFiancee = Actor;
+		if (OtherSocialComp->Id != SaveData.FianceeGuid && !SaveData.Guids.Contains(OtherSocialComp->Id)) continue;
+		if (OtherSocialComp->Id == SaveData.FianceeGuid)
+		{
+			CurrentFiancee = Actor;
+			continue;
+		}
+		if (SaveData.Guids.Contains(OtherSocialComp->Id))
+		{
+			Spouses.Add(Actor);
+			continue;
+		}
 	}
 }
 

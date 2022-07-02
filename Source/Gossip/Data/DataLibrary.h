@@ -363,7 +363,7 @@ struct FSaveValues
 	UPROPERTY()
 	EAIGoal RessourceType;
 	UPROPERTY()
-	TArray<FGuid>OwnersIds;
+	TArray<FGuid>Guids;
 	UPROPERTY()
 	int32 ContentCount;
 	UPROPERTY()

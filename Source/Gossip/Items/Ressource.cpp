@@ -245,7 +245,7 @@ FSaveValues ARessource::CaptureState()
 	SaveValues.Transform = GetActorTransform();
 	SaveValues.StoredWorkers = StoredWorkers;
 	SaveValues.ContentCount = ContentCount;
-	SaveValues.OwnersIds = OwnersToSave;
+	SaveValues.Guids = OwnersToSave;
 	SaveValues.DiversityIndex = DiversityIndex;
 	SaveValues.Boolean = bHasDifferentQualities;
 	SaveValues.CoolDown = GetWorldTimerManager().GetTimerRemaining(TimerRespawn);
@@ -257,7 +257,7 @@ void ARessource::RestoreState(FSaveValues SaveData)
 {
 	TArray<AActor*> Npcs;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANonPlayerCharacter::StaticClass(), Npcs);
-	for (FGuid SavedId : SaveData.OwnersIds)
+	for (FGuid SavedId : SaveData.Guids)
 	{
 		for (AActor* Npc : Npcs)
 		{
