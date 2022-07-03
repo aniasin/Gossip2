@@ -73,6 +73,8 @@ public:
 	class ARessource* SleepCollector;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class ARessource* FoodProcessor;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class ARessource* RestCollector;
 	UPROPERTY(EditAnywhere)
 	ESocialPosition ShelterGrade;
 	UPROPERTY(EditAnywhere)
@@ -137,6 +139,7 @@ private:
 	FShelterData ShelterData;
 	ERessourceSubType RessourceForImprovement;
 	TArray<int32> ShelterRemovedWalls;
+	class ARessource* CurrentImprovingFurniture;
 
 	TArray<AActor*>ActorsWorkingOn;
 	TArray<float>Timers;

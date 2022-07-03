@@ -76,21 +76,21 @@ void ANonPlayerCharacter::Tick(float DeltaTime)
 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message, this, FColor::Cyan, DeltaTime);
 		PosZ += 50;
 
-		TArray<ERessourceSubType>ItemsShown;
-		for (FInventoryItem Item : InventoryComp->GetInventoryItems())
-		{
-			if (ItemsShown.Contains(Item.RessourceSubType)) continue;
-			FString ItemType = GetEnumValueAsString("EAIGoal", Item.Ressource);
-			FString IsRaw;
-			Item.bRaw ? IsRaw = "Raw" : IsRaw = "Processed";
-			int32 Count = InventoryComp->GetOwnedItemsCount(Item.Ressource, Item.RessourceSubType, Item.bRaw);
-			FString Message2 = FString::Printf(TEXT("%s %s %i"), *ItemType, *IsRaw, Count);
-			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message2, this, FColor::Cyan, DeltaTime);
-			PosZ += 30;
-			ItemsShown.Add(Item.RessourceSubType);
-		}
-		FString Message2 = FString::Printf(TEXT("==== INVENTORY ===="));
-		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message2, this, FColor::Cyan, DeltaTime);
+// 		TArray<ERessourceSubType>ItemsShown;
+// 		for (FInventoryItem Item : InventoryComp->GetInventoryItems())
+// 		{
+// 			if (ItemsShown.Contains(Item.RessourceSubType)) continue;
+// 			FString ItemType = GetEnumValueAsString("EAIGoal", Item.Ressource);
+// 			FString IsRaw;
+// 			Item.bRaw ? IsRaw = "Raw" : IsRaw = "Processed";
+// 			int32 Count = InventoryComp->GetOwnedItemsCount(Item.Ressource, Item.RessourceSubType, Item.bRaw);
+// 			FString Message2 = FString::Printf(TEXT("%s %s %i"), *ItemType, *IsRaw, Count);
+// 			DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message2, this, FColor::Cyan, DeltaTime);
+// 			PosZ += 30;
+// 			ItemsShown.Add(Item.RessourceSubType);
+// 		}
+// 		FString Message2 = FString::Printf(TEXT("==== INVENTORY ===="));
+// 		DrawDebugString(GetWorld(), FVector(0, 0, PosZ), Message2, this, FColor::Cyan, DeltaTime);
 	}	
 }
 

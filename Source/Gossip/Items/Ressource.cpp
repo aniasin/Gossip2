@@ -106,6 +106,7 @@ void ARessource::InitializeRessource(int32 Index)
 	MeshPtr = LoadObject<UStaticMesh>(nullptr, *RessourceData.MeshesPtr[MeshIndex].ToString());
 	if (IsValid(MeshPtr)) { Mesh->SetStaticMesh(MeshPtr); }
 	else { Mesh->SetStaticMesh(nullptr); }
+
 }
 
 void ARessource::CollectRessource(UInventoryComponent* InventoryComp, AActor* Actor)

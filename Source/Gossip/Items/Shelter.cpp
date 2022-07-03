@@ -283,21 +283,25 @@ void AShelter::StopConstruct(AActor* Controller)
 
 float AShelter::BeginHandwork(AActor* Controller)
 {
-	
-	return 0.3;
-}
-
-void AShelter::StopHandwork(AActor* Controller)
-{
 	TArray<ARessource*>ImprovableFurnitures;
-	ImprovableFurnitures.Add(SleepCollector);
-	ImprovableFurnitures.Add(FoodProcessor);
+	 if (IsValid(SleepCollector)) ImprovableFurnitures.Add(SleepCollector);
+	 if (IsValid(FoodProcessor)) ImprovableFurnitures.Add(FoodProcessor);
+	 if (IsValid(RestCollector)) ImprovableFurnitures.Add(RestCollector);
 	int32 Index = FMath::RandRange(0, ImprovableFurnitures.Num() - 1);
 
 	if (ImprovableFurnitures[Index]->GetPossibleUpgrade())
 	{
-		ImprovableFurnitures[Index]->IncrementQuality();
-	}		
+		CurrentImprovingFurniture = ImprovableFurnitures[Index];
+		 return 0.1 * ImprovableFurnitures[Index]->DiversityIndex;
+	}
+	return 0.1;
+}
+
+void AShelter::StopHandwork(AActor* Controller)
+{
+	if (!CurrentImprovingFurniture) return;
+	CurrentImprovingFurniture->IncrementQuality();
+	CurrentImprovingFurniture = nullptr;
 }
 
 void AShelter::LoadConstructionMeshes()

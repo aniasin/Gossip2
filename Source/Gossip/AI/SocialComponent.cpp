@@ -101,7 +101,6 @@ TArray<AActor*> USocialComponent::GetKnownOthersWithAlignment(EAlignmentState Al
 			USocialComponent* SocialComp = Cast<USocialComponent>(Actor->GetComponentByClass(USocialComponent::StaticClass()));
 			if (SocialComp->Id != KnownOther.Key) continue;
 			Result.Add(Actor);		
-			break;
 		}
 	}
 	return Result;

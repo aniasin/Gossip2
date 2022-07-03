@@ -290,7 +290,7 @@ void UBTService_SetAIGoalAndAction::CallHelp()
 		TArray<AActor*>Subsidiaries = SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Cooperative);
 		Subsidiaries.Append(SocialComp->GetKnownOthersWithAlignment(EAlignmentState::Submissive));
 
-		UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName)
+		UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries..."), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName)
 		if (Subsidiaries.IsEmpty()) return;
 		for (AActor* Subsidiary : Subsidiaries)
 		{
@@ -298,7 +298,7 @@ void UBTService_SetAIGoalAndAction::CallHelp()
 			if (!OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Masterful).Contains(AIController->GetPawn())
 				|| !OtherSocialComp->GetKnownOthersWithAlignment(EAlignmentState::Imperious).Contains(AIController->GetPawn())) continue;
 
-			UE_LOG(LogTemp, Log, TEXT("%s %s is calling subsidiaries! Found %s %s!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName,
+			UE_LOG(LogTemp, Log, TEXT("... Found %s %s!"), *SocialComp->CharacterName.FirstName, *SocialComp->CharacterName.LastName,
 				*OtherSocialComp->CharacterName.FirstName, *OtherSocialComp->CharacterName.LastName)
 				AGS_AIController* OtherController = Cast<AGS_AIController>(Subsidiary->GetInstigatorController());
 			OtherController->ResetAI();
