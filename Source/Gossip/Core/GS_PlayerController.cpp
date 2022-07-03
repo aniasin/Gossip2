@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// staticMeshes occlusion courtesy of https://alfredbaudisch.com/
 
 
 #include "GS_PlayerController.h"
