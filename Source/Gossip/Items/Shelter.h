@@ -27,8 +27,8 @@ public:
 		AActor* PlayerRuler;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGuid SpawnedNpcId;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = 300, ClampMax = 600))
-	float ShelterSizeX = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = 400, ClampMax = 600))
+	float ShelterSizeX = 400;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 300, ClampMax = 600))
 	float ShelterSizeY = 300;
 

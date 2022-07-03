@@ -29,6 +29,12 @@ class GOSSIP_API AGS_PlayerController : public APlayerController
 public:
 	AGS_PlayerController();
 
+	void StartCheckingForActorToOcclude();
+	void StopCheckingForActorToOcclude();
+
+	UFUNCTION(BlueprintCallable)
+	void SyncOccludedActors();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -53,6 +59,7 @@ protected:
 
 private:
 	TMap<const AActor*, FCameraOccludedActor> OccludedActors;
+	FTimerHandle OcclusionTimerHandle;
 
 	bool HideOccludedActor(const AActor* Actor);
 	bool OnHideOccludedActor(const FCameraOccludedActor& OccludedActor) const;
@@ -65,7 +72,5 @@ private:
 		return bOcclusionEnabled && FadeMaterial && ActiveCamera && ActiveCapsuleComponent;
 	}
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void SyncOccludedActors();
+
 };

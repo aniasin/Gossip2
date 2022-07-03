@@ -25,6 +25,16 @@ void AGS_PlayerController::BeginPlay()
 	ActiveCapsuleComponent = Cast<UCapsuleComponent>(GetPawn()->GetComponentByClass(UCapsuleComponent::StaticClass()));	
 }
 
+void AGS_PlayerController::StartCheckingForActorToOcclude()
+{
+	GetWorldTimerManager().SetTimer(OcclusionTimerHandle, this, &AGS_PlayerController::SyncOccludedActors, 0.5, true, 1);
+}
+
+void AGS_PlayerController::StopCheckingForActorToOcclude()
+{
+	GetWorldTimerManager().ClearTimer(OcclusionTimerHandle);
+}
+
 void AGS_PlayerController::SyncOccludedActors()
 {
 	if (!ShouldCheckCameraOcclusion()) return;

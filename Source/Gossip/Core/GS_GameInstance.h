@@ -56,7 +56,7 @@ public:
 	UFUNCTION()
 	void OnGameLoaded();
 	UFUNCTION()
-	void OnNewGameLoaded();
+	void OnNewGameCreated();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RealGameTimeSeconds;

@@ -13,6 +13,7 @@
 #include "Gossip/Characters/PlayerPawn.h"
 #include "Gossip/Characters/AIPawn.h"
 #include "GossipGameMode.h"
+#include "GS_PlayerController.h"
 #include "Gossip/Save/GS_SaveGame_Object.h"
 #include "Gossip/Save/SaveableEntity.h"
 #include "Gossip/MenuSystem/MenuBase.h"
@@ -123,7 +124,7 @@ void UGS_GameInstance::NewGame()
 	FadeScreen(0, true);
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = FName("OnNewGameLoaded");
+	LatentInfo.ExecutionFunction = FName("OnNewGameCreated");
 	LatentInfo.Linkage = 0;
 	LatentInfo.UUID = 0;
 
@@ -169,6 +170,9 @@ void UGS_GameInstance::TravelMainMenu()
 	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Main Menu... "));
 	GetFirstLocalPlayerController()->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+	AGS_PlayerController* PC = Cast<AGS_PlayerController>(GetFirstLocalPlayerController());
+	PC->StopCheckingForActorToOcclude();
 }
 
 void UGS_GameInstance::QuitGame()
@@ -304,6 +308,9 @@ void UGS_GameInstance::OnGameLoaded()
 				AISaveComp->RestoreState(SaveData[AIPlayer->Id]);
 			}
 		}
+
+		AGS_PlayerController* PC = Cast<AGS_PlayerController>(GetFirstLocalPlayerController());
+		PC->StartCheckingForActorToOcclude();
 	}
 
 	TArray<AActor*> Actors;
@@ -327,7 +334,7 @@ void UGS_GameInstance::OnGameLoaded()
 	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, AutoSaveDelegate, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
 }
 
-void UGS_GameInstance::OnNewGameLoaded()
+void UGS_GameInstance::OnNewGameCreated()
 {
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
 	RealGameTimeSeconds = 0;
@@ -337,6 +344,9 @@ void UGS_GameInstance::OnNewGameLoaded()
 	FString AutoSaveName = "AutoSave";
 	AutoSaveDelegate.BindUFunction(this, "SaveGame", AutoSaveName);
 	GetWorld()->GetTimerManager().SetTimer(AutoSaveTimerHandle, AutoSaveDelegate, GM->GameHourDurationSeconds, true, GM->GameHourDurationSeconds);
+
+	AGS_PlayerController* PC = Cast<AGS_PlayerController>(GetFirstLocalPlayerController());
+	PC->StartCheckingForActorToOcclude();
 }
 
 void UGS_GameInstance::EraseSaveGame()
