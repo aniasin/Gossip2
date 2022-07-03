@@ -359,7 +359,7 @@ FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Directi
 
 	FVector BoxExtent = NewShelter->CollisionBox->GetScaledBoxExtent();
 	float BoxExtentOffset = 0;
-	Direction == FVector(-1, 0, 0) ? BoxExtentOffset = BoxExtent.X : BoxExtentOffset = BoxExtent.Y;
+	Direction == NewShelter->GetActorForwardVector() * -1 ? BoxExtentOffset = BoxExtent.X : BoxExtentOffset = BoxExtent.Y;
 
 	FVector Start = NewShelter->GetActorLocation();
 	FQuat Rotation = NewShelter->GetActorTransform().GetRotation();
