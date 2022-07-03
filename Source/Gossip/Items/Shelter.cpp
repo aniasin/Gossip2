@@ -122,8 +122,14 @@ void AShelter::BeginPlay()
 		break;
 	}
 
+	if (bDebug) CurrentLevel = 1;
 	InitializeShelter();
 	SpawnNPC();
+
+	if (bDebug && IsValid(DebugOtherShelter))
+	{
+		MoveShelter(DebugOtherShelter);
+	}
 }
 
 void AShelter::SpawnNPC()
@@ -207,22 +213,22 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 
 	if (FreeLocation.IsZero())
 	{
-		ShelterWall = 1;
-		NewShelterWall = 2;
+		ShelterWall = 4;
+		NewShelterWall = 3;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
 	}
 
 	if (FreeLocation.IsZero())
 	{
-		ShelterWall = 4;
-		NewShelterWall = 3;
+		ShelterWall = 1;
+		NewShelterWall = 2;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
 	}
 
 	if (FreeLocation.IsZero())
 	{
-		ShelterWall = 3;
-		NewShelterWall = 4;
+		ShelterWall = 2;
+		NewShelterWall = 3;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
 	}
 	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
@@ -349,8 +355,8 @@ FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Directi
 	FVector Start = NewShelter->GetActorLocation();
 	FQuat Rotation = NewShelter->GetActorTransform().GetRotation();
 	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
-	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2));
-	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X, BoxExtent.Y, BoxExtent.Z / 2), Rotation, FColor::Purple, true, -1, 0, 10);
+	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X - 50, BoxExtent.Y - 50, BoxExtent.Z / 2));
+	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X - 50, BoxExtent.Y -50, BoxExtent.Z / 2), Rotation, FColor::Purple, true, -1, 0, 10);
 
 	bool bHit = World->SweepSingleByChannel(Hit, Center, Center, Rotation, ECC_Visibility, Box);
 	if (bHit) 

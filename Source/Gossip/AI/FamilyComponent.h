@@ -59,7 +59,6 @@ private:
 	AActor* CurrentFiancee;		
 
 	TArray<AActor*> GetGuests(AActor* Other);
-	void MoveShelter(AActor* Actor);
 	void ChangeName(AActor* Actor);
 
 	// Example usage GetEnumValueAsString<EVictoryEnum>("EVictoryEnum", VictoryEnum)));

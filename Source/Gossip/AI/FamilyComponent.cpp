@@ -84,12 +84,12 @@ void UFamilyComponent::Marry()
 	case EFamilySystem::Matriarcal:
 		if (CharacterGender == ECharacterProfile::Female) break;
 		ChangeName(CurrentFiancee);
-		MoveShelter(CurrentFiancee);
+		OnMovingShelter.Broadcast(CurrentFiancee);
 		break;
 	case EFamilySystem::Patriarcal:
 		if (CharacterGender == ECharacterProfile::Male) break;
 		ChangeName(CurrentFiancee);
-		MoveShelter(CurrentFiancee);
+		OnMovingShelter.Broadcast(CurrentFiancee);
 		break;
 	case EFamilySystem::Free:
 		break;
@@ -102,11 +102,6 @@ void UFamilyComponent::ChangeName(AActor* Actor)
 	UFamilyComponent* OtherFamilyComp = Cast<UFamilyComponent>(Actor->GetComponentByClass(UFamilyComponent::StaticClass()));
 	CharacterName.LastName = OtherFamilyComp->CharacterName.LastName;
 	OnLastNameChanged.Broadcast(CharacterName);
-}
-
-void UFamilyComponent::MoveShelter(AActor* Actor)
-{
-	OnMovingShelter.Broadcast(CurrentFiancee);
 }
 
 // ISaveGameInterface

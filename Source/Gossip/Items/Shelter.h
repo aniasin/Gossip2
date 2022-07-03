@@ -17,6 +17,11 @@ class GOSSIP_API AShelter : public AActor, public ISaveGameInterface
 public:	
 	AShelter();
 
+	UPROPERTY(EditAnywhere)
+	bool bDebug;
+	UPROPERTY(EditAnywhere)
+	AShelter* DebugOtherShelter;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USaveableEntity* SaveComponent;
 
@@ -103,7 +108,6 @@ public:
 
 	ERessourceSubType GetRessourceSubTypeForImprovement() { return RessourceForImprovement; }
 
-	//this is Called by GameInstance
 	void SpawnNPC();
 	void InitializeShelter();
 	void MoveShelter(AShelter* NewShelter);

@@ -122,6 +122,7 @@ bool AGS_PlayerController::HideOccludedActor(const AActor* Actor)
 		OccludedActor.StaticMeshes = StaticMeshes;
 		for (UStaticMeshComponent* StaticMesh : StaticMeshes)
 		{
+			if (!IsValid(StaticMesh->GetStaticMesh())) continue;
 			OccludedActor.Materials.Append(StaticMesh->GetMaterials());
 		}
 		OccludedActor.bOccluded = true;
@@ -160,6 +161,7 @@ bool AGS_PlayerController::OnShowOccludedActor(const FCameraOccludedActor& Occlu
 	int32 Index = 0;
 	for (UStaticMeshComponent* StaticMesh : OccludedActor.StaticMeshes)
 	{
+		if (!IsValid(StaticMesh->GetStaticMesh())) continue;
 		StaticMesh->SetMaterial(0, OccludedActor.Materials[Index]);
 		Index++;
 	}
