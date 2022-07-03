@@ -328,9 +328,7 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 		NewShelterWall = 3;
 		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
 	}
-	//NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
-	NewTransform.SetLocation(FreeLocation);
-	NewTransform.SetRotation(NewShelter->GetActorTransform().GetRotation());
+	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
 
 	TArray<FTransform>FurnituresTransforms;
 	for (ARessource* Furniture : Furnitures)
@@ -358,12 +356,16 @@ FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Directi
 {
 	FHitResult Hit;
 	UWorld* World = GetWorld();
-	FVector BoxExtent = CollisionBox->GetScaledBoxExtent();
+
+	FVector BoxExtent = NewShelter->CollisionBox->GetScaledBoxExtent();
+	float BoxExtentOffset = 0;
+	Direction == FVector(-1, 0, 0) ? BoxExtentOffset = BoxExtent.X : BoxExtentOffset = BoxExtent.Y;
+
 	FVector Start = NewShelter->GetActorLocation();
 	FQuat Rotation = NewShelter->GetActorTransform().GetRotation();
-	FVector Center = Start + ((BoxExtent * 2) * Direction) + (BoxExtent * GetActorUpVector());
+	FVector Center = Start + ((BoxExtentOffset * 2) * Direction) + (BoxExtent * GetActorUpVector());
 	FCollisionShape Box = FCollisionShape::MakeBox(FVector(BoxExtent.X - 50, BoxExtent.Y - 50, BoxExtent.Z / 2));
-	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X - 50, BoxExtent.Y -50, BoxExtent.Z / 2), Rotation, FColor::Purple, true, -1, 0, 10);
+	DrawDebugBox(GetWorld(), Center, FVector(BoxExtent.X - 50, BoxExtent.Y -50, BoxExtent.Z / 2), Rotation, FColor::Purple, true, -1, 0, 10);
 
 	bool bHit = World->SweepSingleByChannel(Hit, Center, Center, Rotation, ECC_Visibility, Box);
 	if (bHit) 
