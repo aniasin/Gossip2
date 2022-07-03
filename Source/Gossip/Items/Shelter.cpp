@@ -9,6 +9,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Inventory.h"
 #include "Ressource.h"
+#include "RessourceCollector.h"
+#include "RessourceProcessor.h"
 #include "CityHall.h"
 
 #include "Gossip/Core/GS_Singleton.h"
@@ -143,17 +145,15 @@ void AShelter::SpawnNPC()
 		if (PlayerRuler == nullptr) PlayerRuler = GetWorld()->GetFirstPlayerController()->GetPawn();
 		NPC->InventoryComp->PlayerRuler = PlayerRuler;
 
-		if (!SleepCollector || !FoodProcessor) { UE_LOG(LogTemp, Warning, TEXT("No Ressource has been set in %s"), *GetName()) return; }
-		SleepCollector->Owners.AddUnique(NPC);
-		FoodProcessor->Owners.AddUnique(NPC);
-
 		UInventoryComponent* NpcInventory = Cast<UInventoryComponent>(NPC->GetComponentByClass(UInventoryComponent::StaticClass()));
-		if (NpcInventory)
+		for (ARessource* Furniture : Furnitures)
 		{
-			NpcInventory->AddKnownRessourceCollector(SleepCollector);
-			NpcInventory->AddKnownRessourceProcessor(FoodProcessor);
-			NpcInventory->RessourceForShelter = RessourceForImprovement;
+			if (!IsValid(Furniture)) continue;
+			Furniture->Owners.AddUnique(NPC);
+			if (Furniture->IsA(ARessourceCollector::StaticClass())) NpcInventory->AddKnownRessourceCollector(Furniture);			
+			if (Furniture->IsA(ARessourceProcessor::StaticClass())) NpcInventory->AddKnownRessourceProcessor(Furniture);
 		}
+		NpcInventory->RessourceForShelter = RessourceForImprovement;
 
 		NPC->SetCharacterProfile(this);
 		AddToOwners(NPC);
@@ -203,48 +203,6 @@ void AShelter::InitializeShelter()
 	}
 }
 
-
-void AShelter::MoveShelter(AShelter* NewShelter)
-{
-	FTransform NewTransform = FTransform::Identity;
-	FVector FreeLocation = FVector::ZeroVector;
-	int32 NewShelterWall = 0;
-	int32 ShelterWall = 0;
-
-	if (FreeLocation.IsZero())
-	{
-		ShelterWall = 4;
-		NewShelterWall = 3;
-		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
-	}
-
-	if (FreeLocation.IsZero())
-	{
-		ShelterWall = 1;
-		NewShelterWall = 2;
-		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
-	}
-
-	if (FreeLocation.IsZero())
-	{
-		ShelterWall = 2;
-		NewShelterWall = 3;
-		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
-	}
-	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
-
-	FTransform RelativeBedTransform = SleepCollector->GetActorTransform().GetRelativeTransform(GetActorTransform());
-	FTransform RelativeFireTransform = FoodProcessor->GetActorTransform().GetRelativeTransform(GetActorTransform());
-	SetActorRotation(NewTransform.GetRotation());
-	SetActorLocation(NewTransform.GetLocation());
-
-	NewShelter->RemoveWall(NewShelterWall);
-	RemoveWall(ShelterWall);
-
-	SleepCollector->SetActorLocation(RelativeBedTransform.GetLocation() + NewTransform.GetLocation());
-	FoodProcessor->SetActorLocation(RelativeFireTransform.GetLocation() + NewTransform.GetLocation());
-}
-
 float AShelter::BeginConstruct(AActor* Controller)
 {
 	AGossipGameMode* GM = Cast<AGossipGameMode>(GetWorld()->GetAuthGameMode());
@@ -289,16 +247,12 @@ void AShelter::StopConstruct(AActor* Controller)
 
 float AShelter::BeginHandwork(AActor* Controller)
 {
-	TArray<ARessource*>ImprovableFurnitures;
-	 if (IsValid(SleepCollector)) ImprovableFurnitures.Add(SleepCollector);
-	 if (IsValid(FoodProcessor)) ImprovableFurnitures.Add(FoodProcessor);
-	 if (IsValid(RestCollector)) ImprovableFurnitures.Add(RestCollector);
-	int32 Index = FMath::RandRange(0, ImprovableFurnitures.Num() - 1);
+	int32 Index = FMath::RandRange(0, Furnitures.Num() - 1);
 
-	if (ImprovableFurnitures[Index]->GetPossibleUpgrade())
+	if (Furnitures[Index]->GetPossibleUpgrade())
 	{
-		CurrentImprovingFurniture = ImprovableFurnitures[Index];
-		 return 0.1 * ImprovableFurnitures[Index]->DiversityIndex;
+		CurrentImprovingFurniture = Furnitures[Index];
+		 return 0.1 * Furnitures[Index]->DiversityIndex;
 	}
 	return 0.1;
 }
@@ -347,6 +301,59 @@ void AShelter::UpgradeShelter()
 	InitializeShelter();
 }
 
+void AShelter::MoveShelter(AShelter* NewShelter)
+{
+	FTransform NewTransform = FTransform::Identity;
+	FVector FreeLocation = FVector::ZeroVector;
+	int32 NewShelterWall = 0;
+	int32 ShelterWall = 0;
+
+	if (FreeLocation.IsZero())
+	{
+		ShelterWall = 4;
+		NewShelterWall = 3;
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorForwardVector() * -1);
+	}
+
+	if (FreeLocation.IsZero())
+	{
+		ShelterWall = 1;
+		NewShelterWall = 2;
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector());
+	}
+
+	if (FreeLocation.IsZero())
+	{
+		ShelterWall = 2;
+		NewShelterWall = 3;
+		FreeLocation = TraceForSpaceInDirection(NewShelter, NewShelter->GetActorRightVector() * -1);
+	}
+	//NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
+	NewTransform.SetLocation(FreeLocation);
+	NewTransform.SetRotation(NewShelter->GetActorTransform().GetRotation());
+
+	TArray<FTransform>FurnituresTransforms;
+	for (ARessource* Furniture : Furnitures)
+	{
+		if (!IsValid(Furniture)) continue;
+		FurnituresTransforms.Add(Furniture->GetActorTransform().GetRelativeTransform(GetActorTransform()));
+	}
+
+	SetActorRotation(NewTransform.GetRotation());
+	SetActorLocation(NewTransform.GetLocation());
+
+	NewShelter->RemoveWall(NewShelterWall);
+	RemoveWall(ShelterWall);
+
+	int32 Index = 0;
+	for (ARessource* Furniture : Furnitures)
+	{
+		if (!IsValid(Furniture)) continue;
+		Furniture->SetActorLocation(FurnituresTransforms[Index].GetLocation() + NewTransform.GetLocation());
+		Index++;
+	}
+}
+
 FVector AShelter::TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction)
 {
 	FHitResult Hit;
@@ -377,7 +384,7 @@ FTransform AShelter::TraceForTerrainHeight(AShelter* NewShelter, FVector FreeLoc
 	FCollisionShape Box = FCollisionShape::MakeBox(BoxExtent);
 	bool bHit = World->SweepSingleByChannel(Hit, FreeLocation, FreeLocation, Rotation, ECC_Visibility, Box);
 
-	FVector NewLocation = FreeLocation + BoxExtent * (NewShelter->GetActorUpVector() * -1);
+	FVector NewLocation = FreeLocation;
 	//DrawDebugBox(GetWorld(), Center, FVector(BoxExtent), Rotation, FColor::Purple, true, -1, 0, 10);
 	if (bHit)
 	{

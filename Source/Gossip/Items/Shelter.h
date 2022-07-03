@@ -75,11 +75,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class ACityHall* CityHall;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class ARessource* SleepCollector;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class ARessource* FoodProcessor;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class ARessource* RestCollector;
+	TArray<class ARessource*> Furnitures;
 	UPROPERTY(EditAnywhere)
 	ESocialPosition ShelterGrade;
 	UPROPERTY(EditAnywhere)
