@@ -47,6 +47,8 @@ void AGS_PlayerController::SyncOccludedActors()
 		return;
 	}
 
+
+
 	FVector Start = GetPawn()->GetActorLocation();
 	FVector End = Start + ActiveCamera->GetForwardVector() * 1000;
 
@@ -59,12 +61,15 @@ void AGS_PlayerController::SyncOccludedActors()
 
 	auto ShouldDebug = bDebugLineTraces ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 
-	bool bGotHits = UKismetSystemLibrary::CapsuleTraceMultiForObjects( 
-		GetWorld(), Start, End, ActiveCapsuleComponent->GetScaledCapsuleRadius() * CapsulePercentageForTrace,
-		ActiveCapsuleComponent->GetScaledCapsuleHalfHeight() * CapsulePercentageForTrace, CollisionObjectTypes, true,
-		ActorsToIgnore,
-		ShouldDebug,
-		OutHits, true);
+	FHitResult Hit;
+	bool bGotHits = GetHitResultUnderCursorForObjects(CollisionObjectTypes, false, Hit);
+
+// 	bool bGotHits = UKismetSystemLibrary::CapsuleTraceMultiForObjects( 
+// 		GetWorld(), Start, End, ActiveCapsuleComponent->GetScaledCapsuleRadius() * CapsulePercentageForTrace,
+// 		ActiveCapsuleComponent->GetScaledCapsuleHalfHeight() * CapsulePercentageForTrace, CollisionObjectTypes, true,
+// 		ActorsToIgnore,
+// 		ShouldDebug,
+// 		OutHits, true);
 
 	if (bGotHits)
 	{
@@ -72,12 +77,16 @@ void AGS_PlayerController::SyncOccludedActors()
 		TSet<const AActor*> ActorsJustOccluded;
 
 		// Hide actors that are occluded by the camera
-		for (FHitResult Hit : OutHits)
-		{
-			const AActor* HitActor = Cast<AActor>(Hit.GetActor());
-			HideOccludedActor(HitActor);
-			ActorsJustOccluded.Add(HitActor);
-		}
+// 		for (FHitResult Hit : OutHits)
+// 		{
+// 			const AActor* HitActor = Cast<AActor>(Hit.GetActor());
+// 			HideOccludedActor(HitActor);
+// 			ActorsJustOccluded.Add(HitActor);
+// 		}
+
+		const AActor* HitActor = Cast<AActor>(Hit.GetActor());
+		HideOccludedActor(HitActor);
+		ActorsJustOccluded.Add(HitActor);
 
 		// Show actors that are currently hidden but that are not occluded by the camera anymore 
 		for (auto& Elem : OccludedActors)
