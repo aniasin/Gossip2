@@ -46,11 +46,19 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallFront;
 	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* NavModifierFront;
+	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallBack;
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* NavModifierBack;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallRight;
 	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* NavModifierRight;
+	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallLeft;
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* NavModifierLeft;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* PillarA;
 	UPROPERTY(VisibleAnywhere)

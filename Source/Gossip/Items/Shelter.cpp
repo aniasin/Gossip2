@@ -47,12 +47,32 @@ AShelter::AShelter()
 
 	WallFront = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
 	WallFront->SetupAttachment(CollisionBox);
+	NavModifierFront = CreateDefaultSubobject<UBoxComponent>(TEXT("NavModifierFront"));
+	NavModifierFront->SetupAttachment(WallFront);
+	NavModifierFront->SetBoxExtent(FVector(50, 50, 100));
+	NavModifierFront->bDynamicObstacle = true;
+
+
 	WallBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
 	WallBack->SetupAttachment(CollisionBox);
+	NavModifierBack = CreateDefaultSubobject<UBoxComponent>(TEXT("NavModifierBack"));
+	NavModifierBack->SetupAttachment(WallBack);
+	NavModifierBack->SetBoxExtent(FVector(50, 50, 100));
+	NavModifierBack->bDynamicObstacle = true;
+
 	WallRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallC"));
 	WallRight->SetupAttachment(CollisionBox);
+	NavModifierRight = CreateDefaultSubobject<UBoxComponent>(TEXT("NavModifierRight"));
+	NavModifierRight->SetupAttachment(WallRight);
+	NavModifierRight->SetBoxExtent(FVector(50, 50, 100));
+	NavModifierRight->bDynamicObstacle = true;
+
 	WallLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallD"));
 	WallLeft->SetupAttachment(CollisionBox);
+	NavModifierLeft = CreateDefaultSubobject<UBoxComponent>(TEXT("NavModifierLeft"));
+	NavModifierLeft->SetupAttachment(WallLeft);
+	NavModifierLeft->SetBoxExtent(FVector(50, 50, 100));
+	NavModifierLeft->bDynamicObstacle = true;
 
 	PillarA = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PillarA"));
 	PillarA->SetupAttachment(CollisionBox);
@@ -268,6 +288,7 @@ void AShelter::ConstructShelter(AActor* Controller)
 	UE_LOG(LogTemp, Log, TEXT("Shelter has been worked on! Step: %s/%s"), *FString::SanitizeFloat(CurrentConstructionStep), *FString::SanitizeFloat(ConstructionTime));
 	if (CurrentConstructionStep >= ConstructionTime)
 	{
+		if (CurrentLevel >= 3) return;
 		UpgradeShelter();
 	}
 }
@@ -309,11 +330,11 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 	}
 	NewTransform = TraceForTerrainHeight(NewShelter, FreeLocation);
 
-	TArray<FTransform>FurnituresTransforms;
+	TMap<ARessource*, FTransform>FurnituresTransforms;
 	for (ARessource* Furniture : Furnitures)
 	{
 		if (!IsValid(Furniture)) continue;
-		FurnituresTransforms.Add(Furniture->GetActorTransform().GetRelativeTransform(GetActorTransform()));
+		FurnituresTransforms.Add(Furniture, Furniture->GetActorTransform().GetRelativeTransform(GetActorTransform()));
 	}
 
 	SetActorRotation(NewTransform.GetRotation());
@@ -322,12 +343,10 @@ void AShelter::MoveShelter(AShelter* NewShelter)
 	NewShelter->RemoveWall(NewShelterWall);
 	RemoveWall(ShelterWall);
 
-	int32 Index = 0;
 	for (ARessource* Furniture : Furnitures)
 	{
 		if (!IsValid(Furniture)) continue;
-		Furniture->SetActorLocation(FurnituresTransforms[Index].GetLocation() + NewTransform.GetLocation());
-		Index++;
+		Furniture->SetActorLocation(FurnituresTransforms[Furniture].GetLocation() + NewTransform.GetLocation());
 	}
 }
 
@@ -412,17 +431,30 @@ void AShelter::OnAsyncLoadComplete()
 		PillarMesh = ShelterData.PillarMeshesPath.Get();
 		RoofMesh = ShelterData.RoofMeshesPath.Get();
 	case 2:
+		WallMesh = ShelterData.WallMeshesPath.Get();
+		PillarMesh = ShelterData.PillarMeshesPath.Get();
+		RoofMesh = ShelterData.RoofMeshesPath.Get();
 		break;
 	case 3:
+		WallMesh = ShelterData.WallMeshesPath.Get();
+		PillarMesh = ShelterData.PillarMeshesPath.Get();
+		RoofMesh = ShelterData.RoofMeshesPath.Get();
 		break;
 	}
 
 	if (WallMesh)
 	{
-		if (!ShelterRemovedWalls.Contains(1)) WallFront->SetStaticMesh(WallMesh);
-		if (!ShelterRemovedWalls.Contains(2)) WallBack->SetStaticMesh(WallMesh);
-		if (!ShelterRemovedWalls.Contains(3)) WallRight->SetStaticMesh(WallMesh);
-		if (!ShelterRemovedWalls.Contains(4)) WallLeft->SetStaticMesh(WallMesh);
+		if (!ShelterRemovedWalls.Contains(1)) { WallFront->SetStaticMesh(WallMesh); }
+		else { NavModifierFront->SetCollisionEnabled(ECollisionEnabled::NoCollision); }
+
+		if (!ShelterRemovedWalls.Contains(2)) { WallBack->SetStaticMesh(WallMesh); } 
+		else { NavModifierBack->SetCollisionEnabled(ECollisionEnabled::NoCollision); }
+
+		if (!ShelterRemovedWalls.Contains(3)) { WallRight->SetStaticMesh(WallMesh); } 
+		else { NavModifierRight->SetCollisionEnabled(ECollisionEnabled::NoCollision); }
+
+		if (!ShelterRemovedWalls.Contains(4)) { WallLeft->SetStaticMesh(WallMesh); } 
+		else { NavModifierLeft->SetCollisionEnabled(ECollisionEnabled::NoCollision); }
 	}
 
 	if (PillarMesh)
@@ -476,6 +508,11 @@ void AShelter::SetShelterSize()
 	PillarB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
 	PillarC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, -300));
 	PillarD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
+
+	NavModifierFront->SetRelativeLocation(FVector(50, 0, 0));
+	NavModifierBack->SetRelativeLocation(FVector(50, 0, 0));
+	NavModifierRight->SetRelativeLocation(FVector(50, 0, 0));
+	NavModifierLeft->SetRelativeLocation(FVector(50, 0, 0));
 }
 
 // ISaveGameInterface
