@@ -222,6 +222,8 @@ struct FShelterData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UStaticMesh> PillarMeshesPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UStaticMesh> RoofMeshesPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UStaticMesh> ConstructionMeshPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSoftObjectPath ConstructionMontagePath;

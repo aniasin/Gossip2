@@ -17,11 +17,6 @@ class GOSSIP_API AShelter : public AActor, public ISaveGameInterface
 public:	
 	AShelter();
 
-	UPROPERTY(EditAnywhere)
-	bool bDebug;
-	UPROPERTY(EditAnywhere)
-	AShelter* DebugOtherShelter;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USaveableEntity* SaveComponent;
 
@@ -46,6 +41,8 @@ public:
 	UStaticMeshComponent* Floor;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Ramp;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Roof;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WallFront;
 	UPROPERTY(VisibleAnywhere)
@@ -114,20 +111,17 @@ public:
 	virtual void RestoreState(FSaveValues SaveValues)override;
 
 protected:
-	virtual void BeginPlay() override;
-
-
-
-	void RegisterNpcToCityHall(ANonPlayerCharacter* NPC);
-
-	void SetShelterSize();
-
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)override;
 #endif WITH_EDITOR
+	virtual void BeginPlay() override;
+
+	void RegisterNpcToCityHall(ANonPlayerCharacter* NPC);
+	void SetShelterSize();
 
 private:	
 	void UpgradeShelter();
+	void SetRessouceForImprovement();
 	FVector TraceForSpaceInDirection(AShelter* NewShelter, FVector Direction);
 	FTransform TraceForTerrainHeight(AShelter* NewShelter, FVector FreeLocation);
 

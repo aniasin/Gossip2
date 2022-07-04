@@ -42,6 +42,9 @@ AShelter::AShelter()
 	Ramp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ramp"));
 	Ramp->SetupAttachment(CollisionBox);
 
+	Roof = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Roof"));
+	Roof->SetupAttachment(CollisionBox);
+
 	WallFront = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallA"));
 	WallFront->SetupAttachment(CollisionBox);
 	WallBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallB"));
@@ -72,31 +75,7 @@ void AShelter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEven
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	CollisionBox->SetBoxExtent(FVector(ShelterSizeX, ShelterSizeY, 300));
-
-	Floor->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, CollisionBox->GetScaledBoxExtent().Y / 50, 2));
-	Floor->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, -500));
-
-	Ramp->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, -500));
-	Ramp->SetRelativeRotation(FRotator(0, -180, 0));
-	Ramp->SetRelativeScale3D(FVector(2, 4, 2));
-
-	WallFront->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
-	WallFront->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
-	WallBack->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, -300));
-	WallBack->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
-	WallRight->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, -300));
-	WallRight->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
-	WallLeft->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
-	WallLeft->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().Y / 50, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
-
-	PillarA->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y, -300));
-	PillarB->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
-	PillarC->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y, -300));
-	PillarD->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
-
+	SetShelterSize();
 }
 #endif WITH_EDITOR
 
@@ -108,30 +87,8 @@ void AShelter::BeginPlay()
 	CurrentLevel = ShelterData.ShelterLevel;
 	ConstructionTime = ShelterData.ConstructionTime;
 
-	switch (ShelterGrade)
-	{
-	case ESocialPosition::Noble:
-		RessourceForImprovement = ERessourceSubType::Stone;
-		break;
-	case ESocialPosition::Bourgeois:
-		RessourceForImprovement = ERessourceSubType::Stone;
-		break;
-	case ESocialPosition::Worker:
-		RessourceForImprovement = ERessourceSubType::Wood;
-		break;
-	case ESocialPosition::Tchandala:
-		RessourceForImprovement = ERessourceSubType::Wood;
-		break;
-	}
-
-	if (bDebug) CurrentLevel = 1;
 	InitializeShelter();
 	SpawnNPC();
-
-	if (bDebug && IsValid(DebugOtherShelter))
-	{
-		MoveShelter(DebugOtherShelter);
-	}
 }
 
 void AShelter::SpawnNPC()
@@ -172,6 +129,8 @@ void AShelter::RegisterNpcToCityHall(ANonPlayerCharacter* NPC)
 
 void AShelter::InitializeShelter()
 {
+	SetRessouceForImprovement();
+
 	FStreamableManager& Streamable = UGS_Singleton::Get().AssetLoader;
 
 	TArray<FSoftObjectPath> ItemsPath;
@@ -182,6 +141,7 @@ void AShelter::InitializeShelter()
 		case 1:
 			ItemsPath.AddUnique(ShelterData.WallMeshesPath.ToSoftObjectPath());
 			ItemsPath.AddUnique(ShelterData.PillarMeshesPath.ToSoftObjectPath());
+			ItemsPath.AddUnique(ShelterData.RoofMeshesPath.ToSoftObjectPath());
 			break;
 		case 2:
 			break;
@@ -200,6 +160,25 @@ void AShelter::InitializeShelter()
 	{
 		AGS_AIController* AIController = Cast<AGS_AIController>(Owners[0]->GetInstigatorController());
 		AIController->SetHomeLocation(GetActorLocation());
+	}
+}
+
+void AShelter::SetRessouceForImprovement()
+{
+	switch (ShelterGrade)
+	{
+	case ESocialPosition::Noble:
+		RessourceForImprovement = ERessourceSubType::Stone;
+		break;
+	case ESocialPosition::Bourgeois:
+		RessourceForImprovement = ERessourceSubType::Stone;
+		break;
+	case ESocialPosition::Worker:
+		RessourceForImprovement = ERessourceSubType::Wood;
+		break;
+	case ESocialPosition::Tchandala:
+		RessourceForImprovement = ERessourceSubType::Wood;
+		break;
 	}
 }
 
@@ -422,6 +401,7 @@ void AShelter::OnAsyncLoadComplete()
 {
 	UStaticMesh* WallMesh = nullptr;
 	UStaticMesh* PillarMesh = nullptr;
+	UStaticMesh* RoofMesh = nullptr;
 
 	switch (CurrentLevel)
 	{
@@ -430,6 +410,7 @@ void AShelter::OnAsyncLoadComplete()
 	case 1:
 		WallMesh = ShelterData.WallMeshesPath.Get();
 		PillarMesh = ShelterData.PillarMeshesPath.Get();
+		RoofMesh = ShelterData.RoofMeshesPath.Get();
 	case 2:
 		break;
 	case 3:
@@ -451,7 +432,10 @@ void AShelter::OnAsyncLoadComplete()
 		PillarC->SetStaticMesh(PillarMesh);
 		PillarD->SetStaticMesh(PillarMesh);
 	}
-
+	if (RoofMesh)
+	{
+		Roof->SetStaticMesh(RoofMesh);
+	}
 
 	SetShelterSize();
 }
@@ -472,6 +456,9 @@ void AShelter::SetShelterSize()
 	Ramp->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X, CollisionBox->GetScaledBoxExtent().Y * -1, -500));
 	Ramp->SetRelativeRotation(FRotator(0, -180, 0));
 	Ramp->SetRelativeScale3D(FVector(2, 4, 2));
+
+	Roof->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 50, CollisionBox->GetScaledBoxExtent().Y / 50, 1));
+	Roof->SetRelativeLocation(FVector(0, 0, 0));
 
 	WallFront->SetRelativeLocation(FVector(CollisionBox->GetScaledBoxExtent().X * -1, CollisionBox->GetScaledBoxExtent().Y * -1, -300));
 	WallFront->SetRelativeScale3D(FVector(CollisionBox->GetScaledBoxExtent().X / 65, 0.2, CollisionBox->GetScaledBoxExtent().Z / 100));
