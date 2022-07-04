@@ -27,12 +27,12 @@ void AGS_PlayerController::BeginPlay()
 
 void AGS_PlayerController::StartCheckingForActorToOcclude()
 {
-	GetWorldTimerManager().SetTimer(OcclusionTimerHandle, this, &AGS_PlayerController::SyncOccludedActors, 0.5, true, 1);
+	//GetWorldTimerManager().SetTimer(OcclusionTimerHandle, this, &AGS_PlayerController::SyncOccludedActors, 0.5, true, 1);
 }
 
 void AGS_PlayerController::StopCheckingForActorToOcclude()
 {
-	GetWorldTimerManager().ClearTimer(OcclusionTimerHandle);
+	//GetWorldTimerManager().ClearTimer(OcclusionTimerHandle);
 }
 
 void AGS_PlayerController::SyncOccludedActors()
@@ -170,7 +170,7 @@ bool AGS_PlayerController::OnShowOccludedActor(const FCameraOccludedActor& Occlu
 	int32 Index = 0;
 	for (UStaticMeshComponent* StaticMesh : OccludedActor.StaticMeshes)
 	{
-		if (!IsValid(StaticMesh->GetStaticMesh())) continue;
+		if (!IsValid(StaticMesh->GetStaticMesh())) { Index++; continue;	}
 		StaticMesh->SetMaterial(0, OccludedActor.Materials[Index]);
 		Index++;
 	}
